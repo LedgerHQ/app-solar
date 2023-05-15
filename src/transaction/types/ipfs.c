@@ -7,7 +7,7 @@
 
 #include "ipfs.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e ipfs_type_deserialise(buffer_t *buf, ipfs_transaction_asset_t *tx) {
     // ipfs

@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,14 +30,14 @@
 
 #include "os.h"
 #include "cx.h"
+#include "buffer.h"
+#include "io.h"
 
 #include "../globals.h"
 #include "../types.h"
 #include "../context.h"
-#include "../io.h"
 #include "../sw.h"
 #include "../crypto/crypto.h"
-#include "../common/buffer.h"
 #include "../ui/display.h"
 #include "../helper/send_response.h"
 

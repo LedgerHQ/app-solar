@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../errors.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 typedef struct {
     uint8_t hash_type;             /// hashing algorithm (1 byte)

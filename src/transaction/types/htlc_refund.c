@@ -7,7 +7,7 @@
 
 #include "htlc_refund.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e htlc_refund_type_deserialise(buffer_t *buf, htlc_refund_transaction_asset_t *tx) {
     // lock transaction id

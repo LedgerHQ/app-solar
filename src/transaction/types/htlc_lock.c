@@ -7,7 +7,7 @@
 
 #include "htlc_lock.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e htlc_lock_type_deserialise(buffer_t *buf, htlc_lock_transaction_asset_t *tx) {
     // amount

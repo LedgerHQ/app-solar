@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../errors.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 typedef struct {
     uint8_t *lockId;  /// lock transaction id (32 bytes)

@@ -7,7 +7,7 @@
 
 #include "htlc_claim.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e htlc_claim_type_deserialise(buffer_t *buf, htlc_claim_transaction_asset_t *tx) {
     // hash type

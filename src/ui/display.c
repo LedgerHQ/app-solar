@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,17 +29,17 @@
 #include "os.h"
 #include "ux.h"
 #include "glyphs.h"
+#include "io.h"
 
 #include "constants.h"
 #include "ctx.h"
 #include "../globals.h"
-#include "../io.h"
 #include "../sw.h"
 #include "action/validate.h"
 #include "../transaction/types.h"
-#include "../common/bip32.h"
-#include "../common/buffer.h"
-#include "../common/format.h"
+#include "bip32.h"
+#include "buffer.h"
+#include "format.h"
 #include "../address.h"
 #include "transactions/multi_signature_registration_display.h"
 #include "transactions/ipfs_display.h"

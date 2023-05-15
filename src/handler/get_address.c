@@ -14,15 +14,15 @@
 
 #include "os.h"
 #include "cx.h"
+#include "io.h"
 
-#include "../io.h"
 #include "../sw.h"
 #include "../context.h"
 
 #include "../globals.h"
 #include "../types.h"
 
-#include "../common/buffer.h"
+#include "buffer.h"
 #include "../crypto/crypto.h"
 
 #include "../ui/display.h"

@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 #include "utils.h"
 #include "types.h"
 #include "../constants.h"
-#include "../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e transaction_deserialise(buffer_t *buf, transaction_t *tx) {
     parser_status_e parse_common = transaction_deserialise_common(buf, tx);

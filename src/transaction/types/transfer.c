@@ -7,7 +7,7 @@
 
 #include "transfer.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e transfer_type_deserialise(buffer_t *buf, transfer_transaction_asset_t *tx) {
     // length

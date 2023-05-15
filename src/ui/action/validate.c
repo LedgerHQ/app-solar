@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@
 
 #include <stdbool.h>  // bool
 
+#include "io.h"
+
 #include "validate.h"
 #include "../menu.h"
 #include "../../sw.h"
-#include "../../io.h"
 #include "../../crypto/crypto.h"
 #include "../../globals.h"
 #include "../../context.h"

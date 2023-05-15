@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../errors.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 #define MIN_NUM_VOTES       0
 #define MAX_NUM_VOTES       53

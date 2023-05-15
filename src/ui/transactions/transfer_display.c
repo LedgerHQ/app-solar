@@ -10,9 +10,10 @@
 #include "types.h"
 #include "constants.h"
 #include "address.h"
-#include "../../common/buffer.h"
-#include "../../common/format.h"
-#include "../../common/read.h"
+#include "buffer.h"
+#include "format.h"
+#include "read.h"
+#include "utils.h"
 
 bool transfer_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     // transfers (amount + recipient)

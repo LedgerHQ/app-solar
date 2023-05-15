@@ -7,7 +7,7 @@
 
 #include <cmocka.h>
 
-#include "common/format.h"
+#include "format.h"
 
 static void test_format_i64(void **state) {
     (void) state;

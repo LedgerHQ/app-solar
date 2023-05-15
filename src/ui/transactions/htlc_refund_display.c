@@ -9,9 +9,10 @@
 #include "htlc_refund_display.h"
 #include "types.h"
 #include "constants.h"
-#include "../../common/buffer.h"
-#include "../../common/format.h"
-#include "../../common/base58.h"
+#include "buffer.h"
+#include "format.h"
+#include "base58.h"
+#include "utils.h"
 
 bool htlc_refund_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     switch (step) {

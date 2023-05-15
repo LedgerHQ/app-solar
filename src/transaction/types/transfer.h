@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../errors.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 #define MIN_NUM_TRANSFERS 1
 #define MAX_NUM_TRANSFERS 40  // Limited respect to protocol maximum due to SRAM limitations

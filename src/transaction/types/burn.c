@@ -7,7 +7,7 @@
 
 #include "burn.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e burn_type_deserialise(buffer_t *buf, burn_transaction_asset_t *tx) {
     // amount

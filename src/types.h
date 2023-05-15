@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,16 +29,7 @@
 
 #include "constants.h"
 #include "transaction/types.h"
-#include "common/bip32.h"
-
-/**
- * Enumeration for the status of IO.
- */
-typedef enum {
-    READY,     /// ready for new event
-    RECEIVED,  /// data received
-    WAITING    /// waiting
-} io_state_e;
+#include "bip32.h"
 
 /**
  * Enumeration with expected INS of APDU commands.
@@ -51,18 +42,6 @@ typedef enum {
     SIGN_MESSAGE = 0xc1,    /// sign message with BIP32 path
     SIGN_TX = 0xc2          /// sign transaction with BIP32 path
 } command_e;
-
-/**
- * Structure with fields of APDU command.
- */
-typedef struct {
-    uint8_t cla;    /// Instruction class
-    command_e ins;  /// Instruction code
-    uint8_t p1;     /// Instruction parameter 1
-    uint8_t p2;     /// Instruction parameter 2
-    uint8_t lc;     /// Lenght of command data
-    uint8_t *data;  /// Command data
-} command_t;
 
 /**
  * Enumeration with parsing state.

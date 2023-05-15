@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../errors.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 typedef struct {
     uint64_t amount;  /// amount (8 bytes)

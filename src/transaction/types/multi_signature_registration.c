@@ -7,7 +7,7 @@
 
 #include "multi_signature_registration.h"
 #include "constants.h"
-#include "../../common/buffer.h"
+#include "buffer.h"
 
 parser_status_e multisignature_type_deserialise(buffer_t *buf,
                                                 multisignature_transaction_asset_t *tx) {

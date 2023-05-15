@@ -6,7 +6,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) 2020 Ledger SAS.
+ *   (c) 2023 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 #pragma once
 
 #include "types.h"
-#include "../common/buffer.h"
+#include "buffer.h"
 
 /**
  * Deserialise raw transaction in structure.
