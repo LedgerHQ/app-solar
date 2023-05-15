@@ -23,7 +23,7 @@ jobs:
     outputs:
       sha7: ${{ steps.short-sha.outputs.sha }}
 
-  job_nanoS_build:
+  job_nanos_build:
     name: Build for the Nano S
     runs-on: ubuntu-latest
     needs: prepare
@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+          path: bin/nanos
 
   job_nanox_build:
     name: Build for the Nano X
@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+          path: bin/nanox
 
   job_nanosp_build:
     name: Build for the Nano S Plus
@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+          path: bin/nanosp
 
   job_scan_build:
     name: Clang Static Analyser
