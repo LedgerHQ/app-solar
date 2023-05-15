@@ -33,7 +33,7 @@ class Transaction:
         self.startingByte: int = startingByte
 
         if not (0 <= self.network <= UINT8_MAX):
-            raise TransactionError(f"Bad netowrk: '{self.network}'!")
+            raise TransactionError(f"Bad network: '{self.network}'!")
 
         if not (0 <= self.version <= UINT8_MAX):
             raise TransactionError(f"Bad version: '{self.version}'!")

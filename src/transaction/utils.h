@@ -77,7 +77,7 @@ bool format_percentage(char *dst, size_t dst_len, const uint16_t value, uint8_t 
  * @param[in] text
  *   Pointer to input byte buffer.
  * @param[in] text_len
- *   Lenght of input byte buffer.
+ *   Length of input byte buffer.
  * @param[in] allow_new_lines
  *   Allow ASCII text to contain new lines.
  *

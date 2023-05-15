@@ -94,6 +94,6 @@ typedef struct {
     };
     request_type_e req_type;              /// user request
     uint32_t bip32_path[MAX_BIP32_PATH];  /// BIP32 path
-    uint8_t bip32_path_len;               /// lenght of BIP32 path
+    uint8_t bip32_path_len;               /// length of BIP32 path
     uint8_t network;                      /// network byte
 } global_ctx_t;
