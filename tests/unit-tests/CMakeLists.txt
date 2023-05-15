@@ -7,7 +7,7 @@ endif()
 # project information
 project(unit_tests
         VERSION 0.1
-	      DESCRIPTION "Unit tests for Ledger Nano application"
+        DESCRIPTION "Unit tests for Ledger Nano application"
         LANGUAGES C)
 
 
@@ -38,18 +38,12 @@ add_compile_definitions(TEST)
 add_definitions(-DNANO_PXLS_PER_LINE=114 -DIS_NANOS=1)
 
 include_directories(../../src)
-include_directories($ENV{BOLOS_SDK}/lib_standard_app)
 
-add_executable(test_base58 test_base58.c)
-add_executable(test_bip32 test_bip32.c)
-add_executable(test_buffer test_buffer.c)
-add_executable(test_format test_format.c)
-add_executable(test_write test_write.c)
-add_executable(test_apdu_parser test_apdu_parser.c)
 add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_utils test_tx_utils.c)
 
 add_library(nano_char_table nano_char_table.c)
+include_directories($ENV{BOLOS_SDK}/lib_standard_app)
 
 add_library(base58 SHARED $ENV{BOLOS_SDK}/lib_standard_app/base58.c)
 add_library(bip32 SHARED $ENV{BOLOS_SDK}/lib_standard_app/bip32.c)
@@ -70,13 +64,8 @@ add_library(transaction_types_htlc_claim ../../src/transaction/types/htlc_claim.
 add_library(transaction_types_burn ../../src/transaction/types/burn.c)
 add_library(transaction_types_vote ../../src/transaction/types/vote.c)
 
+target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
 
-target_link_libraries(test_base58 PUBLIC cmocka gcov base58)
-target_link_libraries(test_bip32 PUBLIC cmocka gcov bip32 read)
-target_link_libraries(test_buffer PUBLIC cmocka gcov buffer bip32 varint write read)
-target_link_libraries(test_format PUBLIC cmocka gcov format nano_char_table)
-target_link_libraries(test_write PUBLIC cmocka gcov write)
-target_link_libraries(test_apdu_parser PUBLIC cmocka gcov apdu_parser)
 target_link_libraries(test_tx_parser PUBLIC
                       transaction_deserialise
                       buffer
@@ -100,11 +89,5 @@ target_link_libraries(test_tx_utils PUBLIC
                       gcov
                       transaction_utils)
 
-add_test(test_base58 test_base58)
-add_test(test_bip32 test_bip32)
-add_test(test_buffer test_buffer)
-add_test(test_format test_format)
-add_test(test_write test_write)
-add_test(test_apdu_parser test_apdu_parser)
 add_test(test_tx_parser test_tx_parser)
 add_test(test_tx_utils test_tx_utils)

@@ -421,14 +421,14 @@ static void test_tx_vote_serialization(void **state) {
         0x02,
         // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
         0x88, 0x13,
         // length username 2 (1)
         0x03,
-        // delegate username 2
+        // bp username 2
         0x66, 0x75, 0x6E,
         // percentage 2 (2)
         0x88, 0x13
@@ -451,14 +451,14 @@ static void test_tx_vote_serialization(void **state) {
         0x03,
         // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
         0x88, 0x13,
         // length username 2 (1)
         0x03,
-        // delegate username 2
+        // bp username 2
         0x66, 0x75, 0x6E,
         // percentage 2 (2)
         0x88, 0x13
@@ -469,14 +469,14 @@ static void test_tx_vote_serialization(void **state) {
         0x01,
          // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
         0x10, 0x27,
         // length username 2 (1)
         0x03,
-        // delegate username 2
+        // bp username 2
         0x66, 0x75, 0x6E,
         // percentage 2 (2)
         0x88, 0x13
@@ -487,7 +487,7 @@ static void test_tx_vote_serialization(void **state) {
         0x01,
         // length username 1 (1)
         0x15,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39, 0x63, 0x61, 0x63, 0x74, 0x75, 0x73,
         0x31, 0x35, 0x34, 0x39, 0x63,
@@ -500,7 +500,7 @@ static void test_tx_vote_serialization(void **state) {
         0x01,
         // length username 1 (1)
         0x0b,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
@@ -512,7 +512,7 @@ static void test_tx_vote_serialization(void **state) {
         0x01,
         // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x0a,
         // percentage 1 (2)
@@ -524,14 +524,14 @@ static void test_tx_vote_serialization(void **state) {
         0x02,
         // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
         0x88, 0x13,
         // length username 2 (1)
         0x03,
-        // delegate username 2
+        // bp username 2
         0x66, 0x75, 0x6E,
         // percentage 2 (2)
         0x88, 0x12
@@ -542,14 +542,14 @@ static void test_tx_vote_serialization(void **state) {
         0x02,
         // length username 1 (1)
         0x0a,
-        // delegate username 1
+        // bp username 1
         0x63, 0x61, 0x63, 0x74, 0x75, 0x73, 0x31, 0x35,
         0x34, 0x39,
         // percentage 1 (2)
         0x00, 0x00,
         // length username 2 (1)
         0x03,
-        // delegate username 2
+        // bp username 2
         0x66, 0x75, 0x6E,
         // percentage 2 (2)
         0x10, 0x27
