@@ -15,7 +15,7 @@ jobs:
     name: Unit test
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-lite:latest
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
@@ -30,7 +30,7 @@ jobs:
       - name: Build unit tests
         run: |
           cd tests/unit-tests/
-          export BOLOS_SDK=../sdk
+          export BOLOS_SDK=../../sdk
           cmake -Bbuild -H. && make -C build && make -C build test
 
       - name: Generate code coverage
