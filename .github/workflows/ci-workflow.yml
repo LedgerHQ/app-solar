@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Parse short sha
-        uses: benjlevesque/short-sha@v1.2
+        uses: benjlevesque/short-sha@v2.2
         id: short-sha
         with:
           length: 7
@@ -183,7 +183,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
-          path: bin/nanos
+          path: bin
 
       - name: Install tests dependencies
         run: |
