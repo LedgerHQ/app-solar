@@ -43,29 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
-          path: bin/nanos
-
-  job_nanox_build:
-    name: Build for the Nano X
-    runs-on: ubuntu-latest
-    needs: prepare
-
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
-
-    steps:
-      - name: Clone
-        uses: actions/checkout@v3
-
-      - name: Build
-        run: |
-          make BOLOS_SDK=$NANOX_SDK
-
-      - name: Upload app binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
-          path: bin/nanox
+          path: bin
 
   job_nanosp_build:
     name: Build for the Nano S Plus
@@ -87,7 +65,29 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
-          path: bin/nanosp
+          path: bin
+
+  job_nanox_build:
+    name: Build for the Nano X
+    runs-on: ubuntu-latest
+    needs: prepare
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          make BOLOS_SDK=$NANOX_SDK
+
+      - name: Upload app binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
+          path: bin
 
   job_scan_build:
     name: Clang Static Analyser
