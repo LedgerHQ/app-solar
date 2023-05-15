@@ -38,6 +38,7 @@ add_compile_definitions(TEST)
 add_definitions(-DNANO_PXLS_PER_LINE=114 -DIS_NANOS=1)
 
 include_directories(../../src)
+include_directories($ENV{BOLOS_SDK}/lib_standard_app)
 
 add_executable(test_base58 test_base58.c)
 add_executable(test_bip32 test_bip32.c)
@@ -50,6 +51,14 @@ add_executable(test_tx_utils test_tx_utils.c)
 
 add_library(nano_char_table nano_char_table.c)
 
+add_library(base58 SHARED $ENV{BOLOS_SDK}/lib_standard_app/base58.c)
+add_library(bip32 SHARED $ENV{BOLOS_SDK}/lib_standard_app/bip32.c)
+add_library(buffer SHARED $ENV{BOLOS_SDK}/lib_standard_app/buffer.c)
+add_library(read SHARED $ENV{BOLOS_SDK}/lib_standard_app/read.c)
+add_library(write SHARED $ENV{BOLOS_SDK}/lib_standard_app/write.c)
+add_library(format SHARED $ENV{BOLOS_SDK}/lib_standard_app/format.c)
+add_library(varint SHARED $ENV{BOLOS_SDK}/lib_standard_app/varint.c)
+add_library(apdu_parser SHARED $ENV{BOLOS_SDK}/lib_standard_app/parser.c)
 add_library(transaction_deserialise ../../src/transaction/deserialise.c)
 add_library(transaction_utils ../../src/transaction/utils.c)
 add_library(transaction_types_multi_signature_registration ../../src/transaction/types/multi_signature_registration.c)
