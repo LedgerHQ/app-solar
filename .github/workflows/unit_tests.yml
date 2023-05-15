@@ -14,6 +14,7 @@ jobs:
   job_unit_test:
     name: Unit test
     runs-on: ubuntu-latest
+
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
@@ -38,13 +39,13 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: code-coverage
-          path: unit-tests/coverage
+          path: tests/unit-tests/coverage
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./unit-tests/coverage.info
+          file: ./tests/unit-tests/coverage.info
           flags: unittests
           name: codecov-app-solar
           fail_ci_if_error: true
