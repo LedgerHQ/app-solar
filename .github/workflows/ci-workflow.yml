@@ -33,39 +33,17 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build
         run: |
           make
 
       - name: Upload app binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
           path: bin/nanos
-
-  job_nanosp_build:
-    name: Build for the Nano S Plus
-    runs-on: ubuntu-latest
-    needs: prepare
-
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
-
-    steps:
-      - name: Clone
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: |
-          make BOLOS_SDK=$NANOSP_SDK
-
-      - name: Upload app binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
-          path: bin/nanosp
 
   job_nanox_build:
     name: Build for the Nano X
@@ -77,17 +55,39 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build
         run: |
           make BOLOS_SDK=$NANOX_SDK
 
       - name: Upload app binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
           path: bin/nanox
+
+  job_nanosp_build:
+    name: Build for the Nano S Plus
+    runs-on: ubuntu-latest
+    needs: prepare
+
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          make BOLOS_SDK=$NANOSP_SDK
+
+      - name: Upload app binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
+          path: bin/nanosp
 
   job_scan_build:
     name: Clang Static Analyser
@@ -98,13 +98,13 @@ jobs:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build with Clang Static Analyser
         run: |
           make clean
           scan-build --use-cc=clang -analyze-headers -enable-checker security -enable-checker unix -enable-checker valist -o scan-build --status-bugs make default
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: scan-build
@@ -119,7 +119,7 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build unit tests
         run: |
@@ -135,12 +135,12 @@ jobs:
           lcov --directory . -b "$(realpath build/)" --remove coverage.info '*/unit-tests/*' -o coverage.info && \
           genhtml coverage.info -o coverage
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: code-coverage
           path: tests/unit-tests/coverage
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -160,12 +160,12 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: HTML documentation
         run: doxygen .doxygen/Doxyfile
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: app-solar-docs-${{ needs.prepare.outputs.sha7 }}
           path: doc/html
@@ -177,10 +177,10 @@ jobs:
 
     steps:
       - name: Clone
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download app binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
           path: bin/nanos
