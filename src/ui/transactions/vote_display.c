@@ -40,7 +40,7 @@ bool vote_type_display(transaction_t *tx, char title[], char text[], uint16_t st
                      vote_number >= 9 ? "Vote %%(%d/%d)" : "Vote %% (%d/%d)",
                      vote_number + 1,
                      tx->core_asset.Vote.vote_length);
-                     
+
             format_percentage(text, MAX_TEXT_LEN, asset.percentage, 2);
         }
         return true;
