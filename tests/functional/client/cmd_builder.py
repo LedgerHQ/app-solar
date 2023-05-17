@@ -1,304 +1,304 @@
-import enum
-import logging
-import struct
-from typing import List, Tuple, Union, Iterator, cast
+# import enum
+# import logging
+# import struct
+# from typing import List, Tuple, Union, Iterator, cast
 
-from client.transaction import Transaction
-from client.utils import bip32_path_from_string
+# from client.transaction import Transaction
+# from client.utils import bip32_path_from_string
 
-MAX_APDU_LEN: int = 255
-
-
-def chunkify(data: bytes, chunk_len: int) -> Iterator[Tuple[bool, bytes]]:
-    size: int = len(data)
-
-    if size <= chunk_len:
-        yield True, data
-        return
-
-    remainder: int = size % chunk_len
-    chunk: int = size // chunk_len if remainder == 0 else (size // chunk_len) + 1
-    offset: int = 0
-
-    for i in range(chunk - 1):
-        yield False, data[offset : offset + chunk_len]
-        offset += chunk_len
-
-    yield True, data[offset:]
+# MAX_APDU_LEN: int = 255
 
 
-class InsType(enum.IntEnum):
-    INS_GET_APP_NAME = 0xA1
-    INS_GET_VERSION = 0xA2
-    INS_GET_PUBLIC_KEY = 0xB1
-    INS_GET_ADDRESS = 0xB2
-    INS_SIGN_MESSAGE = 0xC1
-    INS_SIGN_TX = 0xC2
+# def chunkify(data: bytes, chunk_len: int) -> Iterator[Tuple[bool, bytes]]:
+#     size: int = len(data)
+
+#     if size <= chunk_len:
+#         yield True, data
+#         return
+
+#     remainder: int = size % chunk_len
+#     chunk: int = size // chunk_len if remainder == 0 else (size // chunk_len) + 1
+#     offset: int = 0
+
+#     for i in range(chunk - 1):
+#         yield False, data[offset : offset + chunk_len]
+#         offset += chunk_len
+
+#     yield True, data[offset:]
 
 
-class CommandBuilder:
-    """APDU command builder for the Solar application.
+# class InsType(enum.IntEnum):
+#     INS_GET_APP_NAME = 0xA1
+#     INS_GET_VERSION = 0xA2
+#     INS_GET_PUBLIC_KEY = 0xB1
+#     INS_GET_ADDRESS = 0xB2
+#     INS_SIGN_MESSAGE = 0xC1
+#     INS_SIGN_TX = 0xC2
 
-    Parameters
-    ----------
-    debug: bool
-        Whether you want to see logging or not.
 
-    Attributes
-    ----------
-    debug: bool
-        Whether you want to see logging or not.
+# class CommandBuilder:
+#     """APDU command builder for the Solar application.
 
-    """
+#     Parameters
+#     ----------
+#     debug: bool
+#         Whether you want to see logging or not.
 
-    CLA: int = 0xE0
+#     Attributes
+#     ----------
+#     debug: bool
+#         Whether you want to see logging or not.
 
-    def __init__(self, debug: bool = False):
-        """Init constructor."""
-        self.debug = debug
+#     """
 
-    def serialise(
-        self,
-        cla: int,
-        ins: Union[int, enum.IntEnum],
-        p1: int = 0,
-        p2: int = 0,
-        cdata: bytes = b"",
-    ) -> bytes:
-        """Serialise the whole APDU command (header + data).
+#     CLA: int = 0xE0
 
-        Parameters
-        ----------
-        cla : int
-            Instruction class: CLA (1 byte)
-        ins : Union[int, IntEnum]
-            Instruction code: INS (1 byte)
-        p1 : int
-            Instruction parameter 1: P1 (1 byte).
-        p2 : int
-            Instruction parameter 2: P2 (1 byte).
-        cdata : bytes
-            Bytes of command data.
+#     def __init__(self, debug: bool = False):
+#         """Init constructor."""
+#         self.debug = debug
 
-        Returns
-        -------
-        bytes
-            Bytes of a complete APDU command.
+#     def serialise(
+#         self,
+#         cla: int,
+#         ins: Union[int, enum.IntEnum],
+#         p1: int = 0,
+#         p2: int = 0,
+#         cdata: bytes = b"",
+#     ) -> bytes:
+#         """Serialise the whole APDU command (header + data).
 
-        """
-        ins = cast(int, ins.value) if isinstance(ins, enum.IntEnum) else cast(int, ins)
+#         Parameters
+#         ----------
+#         cla : int
+#             Instruction class: CLA (1 byte)
+#         ins : Union[int, IntEnum]
+#             Instruction code: INS (1 byte)
+#         p1 : int
+#             Instruction parameter 1: P1 (1 byte).
+#         p2 : int
+#             Instruction parameter 2: P2 (1 byte).
+#         cdata : bytes
+#             Bytes of command data.
 
-        header: bytes = struct.pack(
-            "BBBBB", cla, ins, p1, p2, len(cdata)
-        )  # add Lc to APDU header
+#         Returns
+#         -------
+#         bytes
+#             Bytes of a complete APDU command.
 
-        if self.debug:
-            logging.info("header: %s", header.hex())
-            logging.info("cdata:  %s", cdata.hex())
+#         """
+#         ins = cast(int, ins.value) if isinstance(ins, enum.IntEnum) else cast(int, ins)
 
-        return header + cdata
+#         header: bytes = struct.pack(
+#             "BBBBB", cla, ins, p1, p2, len(cdata)
+#         )  # add Lc to APDU header
 
-    def get_app_and_version(self) -> bytes:
-        """Command builder for GET_APP_AND_VERSION (builtin in BOLOS SDK).
+#         if self.debug:
+#             logging.info("header: %s", header.hex())
+#             logging.info("cdata:  %s", cdata.hex())
 
-        Returns
-        -------
-        bytes
-            APDU command for GET_APP_AND_VERSION.
+#         return header + cdata
 
-        """
-        return self.serialise(
-            cla=0xB0, ins=0x01, p1=0x00, p2=0x00, cdata=b""  # specific CLA for BOLOS
-        )
+#     # def get_app_and_version(self) -> bytes:
+#     #     """Command builder for GET_APP_AND_VERSION (builtin in BOLOS SDK).
 
-    def get_app_name(self) -> bytes:
-        """Command builder for GET_APP_NAME.
+#     #     Returns
+#     #     -------
+#     #     bytes
+#     #         APDU command for GET_APP_AND_VERSION.
 
-        Returns
-        -------
-        bytes
-            APDU command for GET_APP_NAME.
+#     #     """
+#     #     return self.serialise(
+#     #         cla=0xB0, ins=0x01, p1=0x00, p2=0x00, cdata=b""  # specific CLA for BOLOS
+#     #     )
 
-        """
-        return self.serialise(
-            cla=self.CLA, ins=InsType.INS_GET_APP_NAME, p1=0x00, p2=0x00, cdata=b""
-        )
+#     # def get_app_name(self) -> bytes:
+#     #     """Command builder for GET_APP_NAME.
 
-    def get_version(self) -> bytes:
-        """Command builder for GET_VERSION.
+#     #     Returns
+#     #     -------
+#     #     bytes
+#     #         APDU command for GET_APP_NAME.
 
-        Returns
-        -------
-        bytes
-            APDU command for GET_VERSION.
+#     #     """
+#     #     return self.serialise(
+#     #         cla=self.CLA, ins=InsType.INS_GET_APP_NAME, p1=0x00, p2=0x00, cdata=b""
+#     #     )
 
-        """
-        return self.serialise(
-            cla=self.CLA, ins=InsType.INS_GET_VERSION, p1=0x00, p2=0x00, cdata=b""
-        )
+#     # def get_version(self) -> bytes:
+#     #     """Command builder for GET_VERSION.
 
-    def get_public_key(
-        self, bip32_path: str, display: int = 0, chaincode: int = 0
-    ) -> bytes:
-        """Command builder for GET_PUBLIC_KEY.
+#     #     Returns
+#     #     -------
+#     #     bytes
+#     #         APDU command for GET_VERSION.
 
-        Parameters
-        ----------
-        bip32_path: str
-            String representation of BIP32 path.
-        display : bool
-            Whether you want to display the public key on the device.
-        chaincode : bool
-            Whether you want to include the chain code in the response.
+#     #     """
+#     #     return self.serialise(
+#     #         cla=self.CLA, ins=InsType.INS_GET_VERSION, p1=0x00, p2=0x00, cdata=b""
+#     #     )
 
-        Returns
-        -------
-        bytes
-            APDU command for GET_PUBLIC_KEY.
+#     # def get_public_key(
+#     #     self, bip32_path: str, display: int = 0, chaincode: int = 0
+#     # ) -> bytes:
+#     #     """Command builder for GET_PUBLIC_KEY.
 
-        """
-        bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
+#     #     Parameters
+#     #     ----------
+#     #     bip32_path: str
+#     #         String representation of BIP32 path.
+#     #     display : bool
+#     #         Whether you want to display the public key on the device.
+#     #     chaincode : bool
+#     #         Whether you want to include the chain code in the response.
 
-        cdata: bytes = b"".join(
-            [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
-        )
+#     #     Returns
+#     #     -------
+#     #     bytes
+#     #         APDU command for GET_PUBLIC_KEY.
 
-        return self.serialise(
-            cla=self.CLA,
-            ins=InsType.INS_GET_PUBLIC_KEY,
-            p1=display,
-            p2=chaincode,
-            cdata=cdata,
-        )
+#     #     """
+#     #     bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
 
-    def get_address(self, bip32_path: str, display: int = 0, network: int = 0) -> bytes:
-        """Command builder for GET_ADDRESS.
+#     #     cdata: bytes = b"".join(
+#     #         [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+#     #     )
 
-        Parameters
-        ----------
-        bip32_path: str
-            String representation of BIP32 path.
-        display : bool
-            Whether you want to display the public key on the device.
-        network : bool
-            Which network the publicKey should be encoded for.
+#     #     return self.serialise(
+#     #         cla=self.CLA,
+#     #         ins=InsType.INS_GET_PUBLIC_KEY,
+#     #         p1=display,
+#     #         p2=chaincode,
+#     #         cdata=cdata,
+#     #     )
 
-        Returns
-        -------
-        bytes
-            APDU command for GET_ADDRESS.
+#     # def get_address(self, bip32_path: str, display: int = 0, network: int = 0) -> bytes:
+#     #     """Command builder for GET_ADDRESS.
 
-        """
-        bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
+#     #     Parameters
+#     #     ----------
+#     #     bip32_path: str
+#     #         String representation of BIP32 path.
+#     #     display : bool
+#     #         Whether you want to display the public key on the device.
+#     #     network : bool
+#     #         Which network the publicKey should be encoded for.
 
-        cdata: bytes = b"".join(
-            [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
-        )
+#     #     Returns
+#     #     -------
+#     #     bytes
+#     #         APDU command for GET_ADDRESS.
 
-        return self.serialise(
-            cla=self.CLA,
-            ins=InsType.INS_GET_ADDRESS,
-            p1=display,
-            p2=network,
-            cdata=cdata,
-        )
+#     #     """
+#     #     bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
 
-    def sign_message(
-        self, bip32_path: str, message: str
-    ) -> Iterator[Tuple[bool, bytes]]:
-        """Command builder for INS_SIGN_TX.
+#     #     cdata: bytes = b"".join(
+#     #         [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+#     #     )
 
-        Parameters
-        ----------
-        bip32_path : str
-            String representation of BIP32 path.
-        message : str
-            Message to be signed.
+#     #     return self.serialise(
+#     #         cla=self.CLA,
+#     #         ins=InsType.INS_GET_ADDRESS,
+#     #         p1=display,
+#     #         p2=network,
+#     #         cdata=cdata,
+#     #     )
 
-        Yields
-        -------
-        bytes
-            APDU command chunk for INS_SIGN_MESSAGE.
+#     # def sign_message(
+#     #     self, bip32_path: str, message: str
+#     # ) -> Iterator[Tuple[bool, bytes]]:
+#     #     """Command builder for INS_SIGN_TX.
 
-        """
-        bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
+#     #     Parameters
+#     #     ----------
+#     #     bip32_path : str
+#     #         String representation of BIP32 path.
+#     #     message : str
+#     #         Message to be signed.
 
-        cdata: bytes = b"".join(
-            [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
-        )
+#     #     Yields
+#     #     -------
+#     #     bytes
+#     #         APDU command chunk for INS_SIGN_MESSAGE.
 
-        yield False, self.serialise(
-            cla=self.CLA, ins=InsType.INS_SIGN_MESSAGE, p1=0x00, p2=0x80, cdata=cdata
-        )
+#     #     """
+#     #     bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
 
-        tx: bytes = b"".join(
-            [len(message).to_bytes(2, byteorder="little"), bytes(message, "ascii")]
-        )
+#     #     cdata: bytes = b"".join(
+#     #         [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+#     #     )
 
-        for i, (is_last, chunk) in enumerate(chunkify(tx, MAX_APDU_LEN)):
-            if is_last:
-                yield True, self.serialise(
-                    cla=self.CLA,
-                    ins=InsType.INS_SIGN_MESSAGE,
-                    p1=i + 1,
-                    p2=0x00,
-                    cdata=chunk,
-                )
-                return
-            else:
-                yield False, self.serialise(
-                    cla=self.CLA,
-                    ins=InsType.INS_SIGN_MESSAGE,
-                    p1=i + 1,
-                    p2=0x80,
-                    cdata=chunk,
-                )
+#     #     yield False, self.serialise(
+#     #         cla=self.CLA, ins=InsType.INS_SIGN_MESSAGE, p1=0x00, p2=0x80, cdata=cdata
+#     #     )
 
-    def sign_tx(
-        self, bip32_path: str, transaction: Transaction
-    ) -> Iterator[Tuple[bool, bytes]]:
-        """Command builder for INS_SIGN_TX.
+#     #     tx: bytes = b"".join(
+#     #         [len(message).to_bytes(2, byteorder="little"), bytes(message, "ascii")]
+#     #     )
 
-        Parameters
-        ----------
-        bip32_path : str
-            String representation of BIP32 path.
-        transaction : Transaction
-            Representation of the transaction to be signed.
+#     #     for i, (is_last, chunk) in enumerate(chunkify(tx, MAX_APDU_LEN)):
+#     #         if is_last:
+#     #             yield True, self.serialise(
+#     #                 cla=self.CLA,
+#     #                 ins=InsType.INS_SIGN_MESSAGE,
+#     #                 p1=i + 1,
+#     #                 p2=0x00,
+#     #                 cdata=chunk,
+#     #             )
+#     #             return
+#     #         else:
+#     #             yield False, self.serialise(
+#     #                 cla=self.CLA,
+#     #                 ins=InsType.INS_SIGN_MESSAGE,
+#     #                 p1=i + 1,
+#     #                 p2=0x80,
+#     #                 cdata=chunk,
+#     #             )
 
-        Yields
-        -------
-        bytes
-            APDU command chunk for INS_SIGN_TX.
+#     # def sign_tx(
+#     #     self, bip32_path: str, transaction: Transaction
+#     # ) -> Iterator[Tuple[bool, bytes]]:
+#     #     """Command builder for INS_SIGN_TX.
 
-        """
-        bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
+#     #     Parameters
+#     #     ----------
+#     #     bip32_path : str
+#     #         String representation of BIP32 path.
+#     #     transaction : Transaction
+#     #         Representation of the transaction to be signed.
 
-        cdata: bytes = b"".join(
-            [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
-        )
+#     #     Yields
+#     #     -------
+#     #     bytes
+#     #         APDU command chunk for INS_SIGN_TX.
 
-        yield False, self.serialise(
-            cla=self.CLA, ins=InsType.INS_SIGN_TX, p1=0x00, p2=0x80, cdata=cdata
-        )
+#     #     """
+#     #     # bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)
 
-        tx: bytes = transaction.serialise()
+#     #     # cdata: bytes = b"".join(
+#     #     #     [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+#     #     # )
 
-        for i, (is_last, chunk) in enumerate(chunkify(tx, MAX_APDU_LEN)):
-            if is_last:
-                yield True, self.serialise(
-                    cla=self.CLA,
-                    ins=InsType.INS_SIGN_TX,
-                    p1=i + 1,
-                    p2=0x00,
-                    cdata=chunk,
-                )
-                return
-            else:
-                yield False, self.serialise(
-                    cla=self.CLA,
-                    ins=InsType.INS_SIGN_TX,
-                    p1=i + 1,
-                    p2=0x80,
-                    cdata=chunk,
-                )
+#     #     yield False, self.serialise(
+#     #         cla=self.CLA, ins=InsType.INS_SIGN_TX, p1=0x00, p2=0x80, cdata=cdata
+#     #     )
+
+#     #     tx: bytes = transaction.serialise()
+
+#     #     for i, (is_last, chunk) in enumerate(chunkify(tx, MAX_APDU_LEN)):
+#     #         if is_last:
+#     #             yield True, self.serialise(
+#     #                 cla=self.CLA,
+#     #                 ins=InsType.INS_SIGN_TX,
+#     #                 p1=i + 1,
+#     #                 p2=0x00,
+#     #                 cdata=chunk,
+#     #             )
+#     #             return
+#     #         else:
+#     #             yield False, self.serialise(
+#     #                 cla=self.CLA,
+#     #                 ins=InsType.INS_SIGN_TX,
+#     #                 p1=i + 1,
+#     #                 p2=0x80,
+#     #                 cdata=chunk,
+#     #             )

@@ -1,4 +1,4 @@
-# Functional Tests
+<!-- # Functional Tests
 
 > :point_right: Every path on this document assumes you are at the root of the repository.
 
@@ -39,4 +39,4 @@ through USB, without any other software interacting with it. Then run:
 
 ```shell
 pytest tests/functional/ --hid
-```
+``` -->
