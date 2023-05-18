@@ -2,6 +2,9 @@ from enum import IntEnum
 from typing import Generator, List, Optional
 from contextlib import contextmanager
 
+from client.transaction import Transaction
+# from client.utils import bip32_path_from_string
+
 from ragger.backend.interface import BackendInterface, RAPDU
 from ragger.bip import pack_derivation_path
 
@@ -25,10 +28,12 @@ class P2(IntEnum):
     P2_MORE = 0x80
 
 class InsType(IntEnum):
-    GET_VERSION    = 0x03
-    GET_APP_NAME   = 0x04
-    GET_PUBLIC_KEY = 0x05
-    SIGN_TX        = 0x06
+    GET_APP_NAME = 0xA1
+    GET_VERSION = 0xA2
+    GET_PUBLIC_KEY = 0xB1
+    GET_ADDRESS = 0xB2
+    SIGN_MESSAGE = 0xC1
+    SIGN_TX = 0xC2
 
 class Errors(IntEnum):
     SW_DENY                    = 0x6985
@@ -55,6 +60,26 @@ class SolarCommandSender:
     def __init__(self, backend: BackendInterface) -> None:
         self.backend = backend
 
+    def serialise(
+        self,
+        cla: int,
+        ins: Union[int, enum.IntEnum],
+        p1: int = 0,
+        p2: int = 0,
+        data: bytes = b"",
+    ) -> bytes:
+
+        ins = cast(int, ins.value) if isinstance(ins, enum.IntEnum) else cast(int, ins)
+
+        header: bytes = struct.pack(
+            "BBBBB", cla, ins, p1, p2, len(data)
+        )  # add Lc to APDU header
+
+        if self.debug:
+            logging.info("header: %s", header.hex())
+            logging.info("data:  %s", data.hex())
+
+        return header + data
 
     def get_app_and_version(self) -> RAPDU:
         return self.backend.exchange(cla=0xB0,  # specific CLA for BOLOS
@@ -80,13 +105,33 @@ class SolarCommandSender:
                                      data=b"")
 
 
-    def get_public_key(self, path: str) -> RAPDU:
+    # def get_public_key(self, path: str) -> RAPDU:
+    def get_public_key(
+        self, path: str, display: int = 0, chaincode: int = 0
+    ) -> RAPDU:
+
+        # bip32_paths: List[bytes] = bip32_path_from_string(path)
+        # cdata: bytes = b"".join(
+        #     [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+        # )
+
         return self.backend.exchange(cla=CLA,
                                      ins=InsType.GET_PUBLIC_KEY,
-                                     p1=P1.P1_START,
-                                     p2=P2.P2_LAST,
+                                     p1=display,
+                                     p2=chaincode,
                                      data=pack_derivation_path(path))
 
+    def get_address(self, path: str, display: int = 0, network: int = 0) -> RAPDU:
+        # bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)=
+        # cdata: bytes = b"".join(
+        #     [len(bip32_paths).to_bytes(1, byteorder="big"), *bip32_paths]
+        # )
+
+        return self.backend.exchange(cla=CLA,
+                                     ins=InsType.GET_ADDRESS,
+                                     p1=display,
+                                     p2=network,
+                                     data=pack_derivation_path(path))
 
     @contextmanager
     def get_public_key_with_confirmation(self, path: str) -> Generator[None, None, None]:
@@ -97,15 +142,53 @@ class SolarCommandSender:
                                          data=pack_derivation_path(path)) as response:
             yield response
 
-
     @contextmanager
-    def sign_tx(self, path: str, transaction: bytes) -> Generator[None, None, None]:
+    def sign_tx(self, path: str, transaction: Transaction) -> Generator[None, None, None]:
+
+        yield False, self.serialise(
+            cla=self.CLA, ins=InsType.SIGN_MESSAGE, p1=P1.P1_START, p2=P2.P2_LAST, data=cdata
+        )
+
+        tx: bytes = transaction.serialise()
+
         self.backend.exchange(cla=CLA,
                               ins=InsType.SIGN_TX,
                               p1=P1.P1_START,
                               p2=P2.P2_MORE,
                               data=pack_derivation_path(path))
-        messages = split_message(transaction, MAX_APDU_LEN)
+        messages = split_message(tx, MAX_APDU_LEN)
+        idx: int = P1.P1_START + 1
+
+        for msg in messages[:-1]:
+            self.backend.exchange(cla=CLA,
+                                  ins=InsType.SIGN_TX,
+                                  p1=idx,
+                                  p2=P2.P2_MORE,
+                                  data=msg)
+            idx += 1
+
+        with self.backend.exchange_async(cla=CLA,
+                                         ins=InsType.SIGN_TX,
+                                         p1=idx,
+                                         p2=P2.P2_LAST,
+                                         data=messages[-1]) as response:
+            yield response
+
+    @contextmanager
+    def sign_tx(self, path: str, transaction: Transaction) -> Generator[None, None, None]:
+
+        yield False, self.serialise(
+            cla=self.CLA, ins=InsType.INS_SIGN_TX, p1=P1.P1_START, p2=P2.P2_LAST, data=cdata
+        )
+
+        tx: bytes = transaction.serialise()
+
+        self.backend.exchange(cla=CLA,
+                              ins=InsType.SIGN_TX,
+                              p1=P1.P1_START,
+                              p2=P2.P2_MORE,
+                              data=pack_derivation_path(path))
+        messages = split_message(tx, MAX_APDU_LEN)
         idx: int = P1.P1_START + 1
 
         for msg in messages[:-1]:

@@ -1,5 +1,5 @@
-from application_client.boilerplate_command_sender import SolarCommandSender
-from application_client.boilerplate_response_unpacker import unpack_get_version_response
+from application_client.solar_command_sender import SolarCommandSender
+from application_client.solar_response_unpacker import unpack_get_version_response
 
 # Taken from the Makefile, to update every time the Makefile version is bumped
 MAJOR = 1
