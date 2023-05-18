@@ -18,8 +18,8 @@ pytest_plugins = ("ragger.conftest.base_conftest", )
 
 # import pytest
 
-# from client.client_interface import Speculos, Ledgercomm
-# from client.cmd import Command
+# from application_application_client.client_interface import Speculos, Ledgercomm
+# from application_client.cmd import Command
 
 # SCRIPT_DIR = Path(__file__).absolute().parent
 

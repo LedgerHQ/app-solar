@@ -62,7 +62,7 @@ def test_invalid_state(backend):
 
 # import pytest
 
-# from client.exception import *
+# from application_client.exception import *
 # from speculos.client import ApduException
 
 

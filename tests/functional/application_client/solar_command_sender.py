@@ -2,8 +2,8 @@ from enum import IntEnum
 from typing import Generator, List, Optional
 from contextlib import contextmanager
 
-from client.transaction import Transaction
-# from client.utils import bip32_path_from_string
+from application_client.solar_transaction import Transaction
+# from application_client.solar_utils import bip32_path_from_string
 
 from ragger.backend.interface import BackendInterface, RAPDU
 from ragger.bip import pack_derivation_path

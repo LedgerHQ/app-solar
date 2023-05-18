@@ -1,6 +1,6 @@
 from typing import Union
 
-from client.utils import write_varint, UINT64_MAX, UINT32_MAX, UINT16_MAX, UINT8_MAX
+from application_client.solar_utils import write_varint, UINT64_MAX, UINT32_MAX, UINT16_MAX, UINT8_MAX
 
 
 class TransactionError(Exception):

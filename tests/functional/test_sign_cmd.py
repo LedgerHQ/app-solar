@@ -1,11 +1,11 @@
 # from btclib.ecc import ssa
 # import pytest
-# from client.exception import *
+# from application_client.exception import *
 
 # from speculos.client import ApduException
-# from client.cmd_builder import InsType
+# from application_client.cmd_builder import InsType
 
-# from client.transaction import Transaction
+# from application_client.solar_transaction import Transaction
 # from transactions.multi_signature_registration import Multisignature
 # from transactions.ipfs import Ipfs
 # from transactions.transfer import Transfer

@@ -2,7 +2,7 @@
 # from typing import List, Dict, Any, Tuple
 # import re
 
-# from client.exception import DeviceException
+# from application_client.exception import DeviceException
 
 
 # SW_RE = re.compile(r"""(?x)

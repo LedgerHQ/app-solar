@@ -1,8 +1,8 @@
 # import pytest
 
-# from client.exception import *
+# from application_client.exception import *
 # from speculos.client import ApduException
-# from client.cmd_builder import InsType
+# from application_client.cmd_builder import InsType
 
 
 # def test_get_address(cmd):
