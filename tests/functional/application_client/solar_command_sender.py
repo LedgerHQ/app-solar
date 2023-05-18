@@ -63,13 +63,13 @@ class SolarCommandSender:
     def serialise(
         self,
         cla: int,
-        ins: Union[int, enum.IntEnum],
+        ins: Union[int, IntEnum],
         p1: int = 0,
         p2: int = 0,
         data: bytes = b"",
     ) -> bytes:
 
-        ins = cast(int, ins.value) if isinstance(ins, enum.IntEnum) else cast(int, ins)
+        ins = cast(int, ins.value) if isinstance(ins, IntEnum) else cast(int, ins)
 
         header: bytes = struct.pack(
             "BBBBB", cla, ins, p1, p2, len(data)
