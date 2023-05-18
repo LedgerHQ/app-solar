@@ -9,6 +9,6 @@ def test_app_name(backend):
     client = SolarCommandSender(backend)
     # Send the GET_APP_NAME instruction to the app
     response = client.get_app_name()
-    print("client.get_app_name()::response: " + response)
+    print("client.get_app_name()::response: " + unpack_get_app_name_response(response.data))
     # Assert that we have received the correct appname
     assert unpack_get_app_name_response(response.data) == "Solar"
