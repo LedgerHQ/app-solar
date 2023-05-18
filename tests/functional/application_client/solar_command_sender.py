@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import Generator, List, Optional
+from typing import Generator, List, Optional, Union
 from contextlib import contextmanager
 
 from application_client.solar_transaction import Transaction
