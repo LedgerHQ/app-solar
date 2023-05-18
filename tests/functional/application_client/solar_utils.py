@@ -1,10 +1,25 @@
 from io import BytesIO
-from typing import Optional, Literal
+from typing import List, Optional, Literal
 
 
-UINT64_MAX: int = 2**64-1
-UINT32_MAX: int = 2**32-1
-UINT16_MAX: int = 2**16-1
+UINT64_MAX: int = 18446744073709551615
+UINT32_MAX: int = 4294967295
+UINT16_MAX: int = 65535
+UINT8_MAX: int = 255
+
+
+def bip32_path_from_string(path: str) -> List[bytes]:
+    splitted_path: List[str] = path.split("/")
+
+    if not splitted_path:
+        raise Exception(f"BIP32 path format error: '{path}'")
+
+    if "m" in splitted_path and splitted_path[0] == "m":
+        splitted_path = splitted_path[1:]
+
+    return [int(p).to_bytes(4, byteorder="big") if "'" not in p
+            else (0x80000000 | int(p[:-1])).to_bytes(4, byteorder="big")
+            for p in splitted_path]
 
 
 def write_varint(n: int) -> bytes:
@@ -28,7 +43,7 @@ def read_varint(buf: BytesIO,
     b: bytes = prefix if prefix else buf.read(1)
 
     if not b:
-        raise ValueError(f"Can't read prefix: '{b.hex()}'!")
+        raise ValueError(f"Can't read prefix: '{b}'!")
 
     n: int = {b"\xfd": 2, b"\xfe": 4, b"\xff": 8}.get(b, 1)  # default to 1
 
