@@ -20,7 +20,8 @@ jobs:
 
   ragger_tests:
     name: Generate ragger snapshots
-    needs: build_application 
+    needs: build_application
+    runs-on: ubuntu-latest 
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
