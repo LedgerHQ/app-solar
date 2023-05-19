@@ -134,11 +134,11 @@ class SolarCommandSender:
                                      data=pack_derivation_path(path))
 
     @contextmanager
-    def get_public_key_with_confirmation(self, path: str) -> Generator[None, None, None]:
+    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> RAPDU:
         with self.backend.exchange_async(cla=CLA,
                                          ins=InsType.GET_PUBLIC_KEY,
                                          p1=P1.P1_CONFIRM,
-                                         p2=P2.P2_LAST,
+                                         p2=chaincode,
                                          data=pack_derivation_path(path)) as response:
             yield response
 

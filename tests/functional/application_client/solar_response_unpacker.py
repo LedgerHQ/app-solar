@@ -52,7 +52,7 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
     response, chain_code_len, chain_code = pop_size_prefixed_buf_from_buf(response)
 
     print("response: " + response.decode('hex'))
-    print("pub_key_len: " + pub_key_len)
+    print("pub_key_len: " + str(pub_key_len))
     
     assert pub_key_len == 33
     assert chain_code_len == 32
