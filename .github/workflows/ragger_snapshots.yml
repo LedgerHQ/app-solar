@@ -18,7 +18,7 @@ jobs:
       upload_app_binaries_artifact: "compiled_app_binaries"
       run_for_devices: '["nanos", "nanox", "nanosp"]'
 
-  ragger_snapshots:
+  ragger_tests:
     name: Generate ragger snapshots
     runs-on: ubuntu-latest
     needs: build_application 
