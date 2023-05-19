@@ -32,6 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y qemu-user-static tesseract-ocr libtesseract-dev
+          apk add gcc musl-dev python3-dev
           pip install --extra-index-url https://test.pypi.org/simple/ -r tests/functional/requirements.txt
 
       - name: Generate snapshots
