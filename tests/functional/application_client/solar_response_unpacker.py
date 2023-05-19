@@ -54,7 +54,7 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
     print("response: " + response.decode('hex'))
     print("pub_key_len: " + pub_key_len)
     
-    assert pub_key_len == 66
+    assert pub_key_len == 33
     assert chain_code_len == 32
     assert len(response) == 0
 
