@@ -28,10 +28,13 @@ jobs:
     steps:
       - name: Clone
         uses: actions/checkout@v3
+        
+      - name: Instsll requirements
+        run: |
+          apk add gcc musl-dev python3-dev && pip install --extra-index-url https://test.pypi.org/simple/ -r tests/functional/requirements.txt 
 
       - name: Generate snapshots
         run: |
-          pip install --extra-index-url https://test.pypi.org/simple/ -r tests/functional/requirements.txt
           pytest --device nanos tests/functional/test_pubkey_cmd.py --golden_run -v
           pytest --device nanosp tests/functional/test_pubkey_cmd.py --golden_run -v
           pytest --device nanox tests/functional/test_pubkey_cmd.py --golden_run -v
