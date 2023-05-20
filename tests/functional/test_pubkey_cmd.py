@@ -33,6 +33,14 @@ def test_get_public_key_chaincode_no_confirm(backend):
     assert public_key.hex() == ref_public_key
     assert chain_code.hex() == ref_chain_code
 
+def test_get_public_key_unsupported_path(backend):
+    client = SolarCommandSender(backend)
+    path = "m/44'/33'/0'/0/0"
+
+    with pytest.raises(ExceptionRAPDU) as e:
+        client.get_public_key(path=path)
+    assert e.value.status == Errors.SW_INS_NOT_SUPPORTED
+
 # In this test we check that the GET_PUBLIC_KEY works in confirmation mode
 def test_get_public_key_no_chaincode_confirm_accepted(firmware, backend, navigator, test_name):
     client = SolarCommandSender(backend)
@@ -45,7 +53,7 @@ def test_get_public_key_no_chaincode_confirm_accepted(firmware, backend, navigat
                                                 "Approve",
                                                 ROOT_SCREENSHOT_PATH,
                                                 test_name)
-        # else:
+        # else: # stax
         #     instructions = [
         #         NavInsID.USE_CASE_REVIEW_TAP,
         #         NavIns(NavInsID.TOUCH, (200, 335)),
@@ -76,7 +84,7 @@ def test_get_public_key_chaincode_confirm_accepted(firmware, backend, navigator,
                                                 "Approve",
                                                 ROOT_SCREENSHOT_PATH,
                                                 test_name)
-        # else:
+        # else: # stax
         #     instructions = [
         #         NavInsID.USE_CASE_REVIEW_TAP,
         #         NavIns(NavInsID.TOUCH, (200, 335)),
@@ -112,7 +120,7 @@ def test_get_public_key_confirm_refused(firmware, backend, navigator, test_name)
     # Assert that we have received a refusal
     assert e.value.status == Errors.SW_DENY
     assert len(e.value.data) == 0
-    # else:
+    # else: # stax
     #     instructions_set = [
     #         [
     #             NavInsID.USE_CASE_REVIEW_REJECT,

@@ -14,6 +14,3 @@ def test_version(backend):
     rapdu = client.get_version()
     # Use an helper to parse the response, assert the values
     assert unpack_get_version_response(rapdu.data) == (MAJOR, MINOR, PATCH)
-
-# def test_version(cmd):
-#     assert cmd.get_version() == (1, 0, 0)

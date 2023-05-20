@@ -61,6 +61,17 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
     return pub_key_len, pub_key, chain_code_len, chain_code
 
 # Unpack from response:
+# response = address_len (1)
+#            address (var)
+def unpack_get_address_response(response: bytes) -> Tuple[int, str]:
+    address_len = response[0]
+    address = response[1:]
+
+    assert address_len == 34
+
+    return address_len, address
+
+# Unpack from response:
 # response = der_sig_len (1)
 #            der_sig (var)
 #            v (1)
