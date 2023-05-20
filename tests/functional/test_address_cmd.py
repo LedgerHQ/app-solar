@@ -1,6 +1,6 @@
 import pytest
 
-from application_client.solar_command_sender import SolarCommandSender, Errors
+from application_client.solar_command_sender import CLA, InsType, SolarCommandSender, Errors
 from application_client.solar_response_unpacker import unpack_get_address_response
 from ragger.error import ExceptionRAPDU
 # from ragger.navigator import NavInsID, NavIns

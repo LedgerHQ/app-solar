@@ -40,7 +40,7 @@ def test_get_public_key_unsupported_path(backend):
     response = client.get_public_key(path=path).data
     _, public_key, _, _ = unpack_get_public_key_response(response)
 
-    print("public (unsupported) res: " + public_key.hex())
+    print("(unsupported) public_key: " + public_key.hex())
 
     assert True
 

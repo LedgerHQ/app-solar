@@ -64,8 +64,11 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
 # response = address_len (1)
 #            address (var)
 def unpack_get_address_response(response: bytes) -> Tuple[int, str]:
-    address_len = response[0]
-    address = response[1:]
+    print("\nunpack_get_address_response: " + response.hex())
+    response, address_len, address = pop_size_prefixed_buf_from_buf(response)
+
+    print("\nunpack_get_address_response::address_len: " + str(address_len))
+    print("\nunpack_get_address_response::address: " + address)
 
     assert address_len == 34
 
