@@ -20,17 +20,22 @@ def test_get_address_no_confirm(backend):
 
         address_len, address = unpack_get_address_response(response)
 
+        print("\naddress_len: " + str(address_len))
+        print("\naddress: " + address_len)
+
+
         assert address_len == 34
         assert address[0] == (ord("D") if network == TESTNET else ord("S"))
 
 def test_get_address_unsupported_network(backend):
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
+    no_confirm = 0x00
     unsupported_network = 0x3E
 
     with pytest.raises(ExceptionRAPDU) as e:
-        client.get_address(path=path, network=unsupported_network).data
-    assert e.value.status == Errors.SW_INS_NOT_SUPPORTED
+        backend.exchange(cla=CLA, ins=InsType.GET_ADDRESS, p1=no_confirm, p2=unsupported_network)
+    assert e.value.status == Errors.SW_WRONG_P1P2
 
 # def test_get_address_confirm(backend):
 #     client = SolarCommandSender(backend)
