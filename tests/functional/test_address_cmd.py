@@ -12,6 +12,7 @@ MAINNET: int = 0x3F
 
 def test_get_address_no_confirm(backend):
     client = SolarCommandSender(backend)
+    path = "m/44'/3333'/0'/0/0"
     networks = [TESTNET, MAINNET]
 
     for network in networks:
@@ -24,6 +25,7 @@ def test_get_address_no_confirm(backend):
 
 def test_get_address_unsupported_network(backend):
     client = SolarCommandSender(backend)
+    path = "m/44'/3333'/0'/0/0"
     unsupported_network = 0x3E
 
     with pytest.raises(ExceptionRAPDU) as e:
@@ -32,8 +34,9 @@ def test_get_address_unsupported_network(backend):
 
 # def test_get_address_confirm(backend):
 #     client = SolarCommandSender(backend)
+#     path = "m/44'/3333'/0'/0/0"
 #     networks = [TESTNET, MAINNET]
-
+#
 #     for network in networks:
 #         with client.get_address(path=path, display=1, network=network):
 #             navigator.navigate_until_text_and_compare(NavInsID.RIGHT_CLICK,
@@ -43,6 +46,6 @@ def test_get_address_unsupported_network(backend):
 #                                                     test_name)
 #         response = client.get_async_response().data
 #         address_len, address = unpack_get_address_response(response)
-
+#
 #         assert address_len == 34
 #         assert address[0] == (ord("D") if network == TESTNET else ord("S"))
