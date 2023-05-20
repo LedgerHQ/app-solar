@@ -20,7 +20,7 @@ def test_get_address_no_confirm(backend):
         address_len, address = unpack_get_address_response(response)
 
         assert address_len == 34
-        assert address[0] == (network == TESTNET ? ord("D") : ord("S"))
+        assert address[0] == (ord("D") if network == TESTNET else ord("S"))
 
 def test_get_address_unsupported_network(backend):
     client = SolarCommandSender(backend)
@@ -45,4 +45,4 @@ def test_get_address_unsupported_network(backend):
 #         address_len, address = unpack_get_address_response(response)
 
 #         assert address_len == 34
-#         assert address[0] == (network == TESTNET ? ord("D") : ord("S"))
+#         assert address[0] == (ord("D") if network == TESTNET else ord("S"))
