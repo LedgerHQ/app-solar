@@ -7,7 +7,7 @@ from ragger.error import ExceptionRAPDU
 # from utils import ROOT_SCREENSHOT_PATH
 
 
-TESTNET: int = 0xE0
+TESTNET: int = 0x1E
 MAINNET: int = 0x3F
 
 def test_get_address_no_confirm(backend):
