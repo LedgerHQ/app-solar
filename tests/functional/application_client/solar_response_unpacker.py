@@ -68,7 +68,7 @@ def unpack_get_address_response(response: bytes) -> Tuple[int, str]:
     response, address_len, address = pop_size_prefixed_buf_from_buf(response)
 
     print("\nunpack_get_address_response::address_len: " + str(address_len))
-    print("\nunpack_get_address_response::address: " + address)
+    print("\nunpack_get_address_response::address: " + address.decode('UTF-8'))
 
     assert address_len == 34
 
