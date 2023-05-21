@@ -20,10 +20,6 @@ def test_get_address_no_confirm(backend):
 
         address_len, address = unpack_get_address_response(response)
 
-        print("\naddress_len: " + str(address_len))
-        print("\naddress: " + address.decode('UTF-8'))
-
-
         assert address_len == 34
         assert address[0] == (ord("D") if network == TESTNET else ord("S"))
 
