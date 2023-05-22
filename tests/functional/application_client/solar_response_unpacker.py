@@ -51,9 +51,6 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
     response, pub_key_len, pub_key = pop_size_prefixed_buf_from_buf(response)
     response, chain_code_len, chain_code = pop_size_prefixed_buf_from_buf(response)
 
-    print("response: " + response.decode('hex'))
-    print("pub_key_len: " + str(pub_key_len))
-    
     assert pub_key_len == 33
     assert chain_code_len == 32
     assert len(response) == 0
@@ -64,11 +61,7 @@ def unpack_get_public_key_response(response: bytes) -> Tuple[int, bytes, int, by
 # response = address_len (1)
 #            address (var)
 def unpack_get_address_response(response: bytes) -> Tuple[int, str]:
-    print("\nunpack_get_address_response: " + response.hex())
     response, address_len, address = pop_size_prefixed_buf_from_buf(response)
-
-    print("\nunpack_get_address_response::address_len: " + str(address_len))
-    print("\nunpack_get_address_response::address: " + address.decode('UTF-8'))
 
     assert address_len == 34
 
