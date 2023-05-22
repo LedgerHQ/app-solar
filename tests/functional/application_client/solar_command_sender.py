@@ -121,6 +121,16 @@ class SolarCommandSender:
                                      p2=chaincode,
                                      data=pack_derivation_path(path))
 
+    @contextmanager
+    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> RAPDU:
+        with self.backend.exchange_async(cla=CLA,
+                                         ins=InsType.GET_PUBLIC_KEY,
+                                         p1=P1.P1_CONFIRM,
+                                         p2=chaincode,
+                                         data=pack_derivation_path(path)) as response:
+            yield response
+
+
     def get_address(self, path: str, display: int = 0, network: int = 0) -> RAPDU:
         # bip32_paths: List[bytes] = bip32_path_from_string(bip32_path)=
         # cdata: bytes = b"".join(
@@ -134,11 +144,11 @@ class SolarCommandSender:
                                      data=pack_derivation_path(path))
 
     @contextmanager
-    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> RAPDU:
+    def get_address_with_confirmation(self, path: str, network: int = 0) -> RAPDU:
         with self.backend.exchange_async(cla=CLA,
-                                         ins=InsType.GET_PUBLIC_KEY,
+                                         ins=InsType.GET_ADDRESS,
                                          p1=P1.P1_CONFIRM,
-                                         p2=chaincode,
+                                         p2=network,
                                          data=pack_derivation_path(path)) as response:
             yield response
 
