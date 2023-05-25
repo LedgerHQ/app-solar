@@ -26,8 +26,8 @@
 #include <string.h>   // memmove
 #include <stdio.h>    // snprintf
 
-#if !defined (TARGET_STAX)
-    #include "bagl.h"
+#if !defined(TARGET_STAX)
+#include "bagl.h"
 #endif
 
 #include "format.h"

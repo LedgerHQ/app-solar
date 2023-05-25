@@ -10,8 +10,8 @@
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
 
-#if !defined (TARGET_STAX)
-    #include "bagl.h"
+#if !defined(TARGET_STAX)
+#include "bagl.h"
 #endif
 
 #include "ux.h"
@@ -38,18 +38,15 @@ void unpad_amount(char *amount, size_t len, size_t padding);
  * @return estimated pixel count if Nano S, otherwise zero.
  *
  */
-
 #ifdef IS_TARGET_NANOS
-    #define GET_NANOS_PIXELS(num_str) (             \
-        bagl_compute_line_width(                    \
-            (BAGL_FONT_OPEN_SANS_REGULAR_8_11PX),   \
-            (0),                                    \
-            (num_str),                              \
-            (strlen((num_str))),                    \
-            (G_ux.layout_paging.format)             \
-        ))
+#define GET_NANOS_PIXELS(num_str)                                  \
+    (bagl_compute_line_width((BAGL_FONT_OPEN_SANS_REGULAR_8_11PX), \
+                             (0),                                  \
+                             (num_str),                            \
+                             (strlen((num_str))),                  \
+                             (G_ux.layout_paging.format)))
 #else
-    #define GET_NANOS_PIXELS(num_str) (0)
+#define GET_NANOS_PIXELS(num_str) (0)
 #endif
 
 /**
@@ -63,8 +60,5 @@ void unpad_amount(char *amount, size_t len, size_t padding);
  * @return new line (page) character if needed.
  *
  */
-#define GET_TICKER_PAGING(num_str) (                                                    \
-    ((IS_TARGET_NANOS) && (GET_NANOS_PIXELS((num_str)) >= (PIXEL_PER_LINE - 1)))        \
-    ? ('\n')                                                                            \
-    : (' ')                                                                             \
-)
+#define GET_TICKER_PAGING(num_str) \
+    (((IS_TARGET_NANOS) && (GET_NANOS_PIXELS((num_str)) >= (PIXEL_PER_LINE - 1))) ? ('\n') : (' '))
