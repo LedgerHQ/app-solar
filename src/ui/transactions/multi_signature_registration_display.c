@@ -11,7 +11,7 @@
 #include "constants.h"
 #include "buffer.h"
 #include "format.h"
-#include "utils.h"
+#include "transaction/transaction_utils.h"
 
 bool multisignature_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     // Public keys

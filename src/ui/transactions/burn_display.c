@@ -10,8 +10,8 @@
 #include "types.h"
 #include "constants.h"
 #include "buffer.h"
-#include "utils.h"
 #include "base58.h"
+#include "transaction/transaction_utils.h"
 
 bool burn_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     switch (step) {

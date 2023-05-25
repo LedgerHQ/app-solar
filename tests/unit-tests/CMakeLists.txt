@@ -35,7 +35,9 @@ endif()
 
 add_compile_definitions(TEST)
 
-add_definitions(-DNANO_PXLS_PER_LINE=114 -DIS_NANOS=1)
+if(TARGET_NAME STREQUAL "TARGET_NANOS")
+  add_definitions(-DIS_TARGET_NANOS=1)
+endif
 
 include_directories(../../src)
 
@@ -75,7 +77,6 @@ target_link_libraries(test_tx_parser PUBLIC
                       gcov
                       write
                       read
-                      transaction_types_burn
                       transaction_types_htlc_claim
                       transaction_types_htlc_lock
                       transaction_types_htlc_refund
@@ -83,6 +84,7 @@ target_link_libraries(test_tx_parser PUBLIC
                       transaction_types_multi_signature_registration
                       transaction_types_transfer
                       transaction_types_vote
+                      transaction_types_burn
                       transaction_utils)
 target_link_libraries(test_tx_utils PUBLIC
                       cmocka

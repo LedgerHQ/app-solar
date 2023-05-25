@@ -106,14 +106,13 @@ ENABLE_NBGL_QRCODE = 1
 #DISABLE_STANDARD_BAGL_UX_FLOW = 1
 
 ########################################
-#           Custom Variables           #
+#            Custom defines            #
 ########################################
-# These are custom variables used by the Solar app.
-DEFINES += NANO_PXLS_PER_LINE=114
+# These are custom definitions used by the Solar app.
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-    DEFINES += IS_NANOS=1
+    DEFINES += IS_TARGET_NANOS=1
 else
-    DEFINES += IS_NANOS=0
+    DEFINES += IS_TARGET_NANOS=0
 endif
 
 include $(BOLOS_SDK)/Makefile.standard_app

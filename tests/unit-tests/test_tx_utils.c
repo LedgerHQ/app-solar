@@ -9,7 +9,7 @@
 
 #include "format.h"
 
-#include "transaction/utils.h"
+#include "transaction/transaction_utils.h"
 #include "transaction/types.h"
 
 static void test_tx_utils_format_amount(void **state) {

@@ -22,10 +22,10 @@
  *****************************************************************************/
 
 #include "deserialise.h"
-#include "utils.h"
 #include "types.h"
 #include "../constants.h"
 #include "buffer.h"
+#include "transaction/transaction_utils.h"
 
 parser_status_e transaction_deserialise(buffer_t *buf, transaction_t *tx) {
     parser_status_e parse_common = transaction_deserialise_common(buf, tx);

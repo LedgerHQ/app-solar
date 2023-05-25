@@ -7,8 +7,8 @@
 
 #include "vote.h"
 #include "constants.h"
-#include "../utils.h"
 #include "buffer.h"
+#include "transaction/transaction_utils.h"
 
 parser_status_e vote_type_deserialise(buffer_t *buf, vote_transaction_asset_t *tx) {
     // length

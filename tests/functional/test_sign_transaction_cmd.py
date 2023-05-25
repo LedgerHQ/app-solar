@@ -1,3 +1,149 @@
+import pytest
+
+from application_client.solar_command_sender import (
+    SolarCommandSender,
+    Errors,
+)
+from application_client.solar_response_unpacker import (
+    unpack_get_public_key_response,
+)
+
+from ragger.error import ExceptionRAPDU
+from ragger.navigator import NavInsID, NavIns
+from utils import ROOT_SCREENSHOT_PATH
+
+# from solar_transaction.transfer import Transfer
+from transactions.transfer import Transfer
+# from solar_transaction.ipfs import Ipfs
+# from solar_transaction.burn import Burn
+# from solar_transaction.vote import Vote
+
+from btclib.ecc import ssa
+
+
+# In this tests we check the behavior of the device when asked to sign a short message
+def test_sign_transacction_transfer(firmware, backend, navigator, test_name):
+    client = SolarCommandSender(backend)
+
+    rapdu = client.get_public_key(path=PATH_MAINNET)
+    _, public_key, _, _ = unpack_get_public_key_response(rapdu.data)
+
+    transfer_transaction = Transfer(
+        typeGroup=1,
+        type=6,
+        nonce=0,
+        senderPkey=context["pkey"],
+        fee=5645365,
+        memo="This is an optional memo.",
+        addresses=[
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+            "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+        ],
+        [
+            123456,
+            1234567,
+            12345678,
+            123456789,
+            1234567890,
+            12345678900,
+            123456789000,
+            1234567890000,
+            12345678900000,
+            123456789000000,
+            1234567890000000,
+            12345678900000000,
+            123456789000000000,
+            18446744073709551615,
+        ],
+    )
+
+#     schnorr_sig = cmd.sign_tx(bip32_path=context["bip32"], transaction=tx, n_screens=60)
+#     assert ssa.verify(tx.serialise(), context["pkey"][1:], schnorr_sig) is True
+
+    with client.sign_tx(path=PATH_MAINNET, transaction=transfer_transaction):
+        # if firmware.device.startswith("nano"):
+        navigator.navigate_until_text_and_compare(
+            NavInsID.RIGHT_CLICK,
+            [NavInsID.BOTH_CLICK],
+            "Approve",
+            ROOT_SCREENSHOT_PATH,
+            test_name,
+        )
+        # else:
+        #     navigator.navigate_until_text_and_compare(NavInsID.USE_CASE_REVIEW_TAP,
+        #                                               [NavInsID.USE_CASE_REVIEW_CONFIRM,
+        #                                                NavInsID.USE_CASE_STATUS_DISMISS],
+        #                                               "Hold to sign",
+        #                                               ROOT_SCREENSHOT_PATH,
+        #                                               test_name)
+    response = client.get_async_response().data
+
+    assert ssa.verify(tx.serialise(), context["pkey"][1:], schnorr_sig) is True
+
+
+
+# def test_transfer_tx(cmd, context):
+
+#     schnorr_sig = cmd.sign_tx(bip32_path=context["bip32"], transaction=tx, n_screens=7)
+#     assert ssa.verify(tx.serialise(), context["pkey"][1:], schnorr_sig) is True
+
+#     tx = Transfer(
+#         1,
+#         context["pkey"],
+#         5645365,
+#         "",
+#         [
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#             "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3",
+#         ],
+#         [
+#             123456,
+#             1234567,
+#             12345678,
+#             123456789,
+#             1234567890,
+#             12345678900,
+#             123456789000,
+#             1234567890000,
+#             12345678900000,
+#             123456789000000,
+#             1234567890000000,
+#             12345678900000000,
+#             123456789000000000,
+#             18446744073709551615,
+#         ],
+#     )
+#     schnorr_sig = cmd.sign_tx(bip32_path=context["bip32"], transaction=tx, n_screens=60)
+#     assert ssa.verify(tx.serialise(), context["pkey"][1:], schnorr_sig) is True
+
+
+
+
+
 # from btclib.ecc import ssa
 # import pytest
 # from application_client.exception import *

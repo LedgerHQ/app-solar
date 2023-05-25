@@ -15,7 +15,7 @@
 #include "format.h"
 #include "read.h"
 #include "base58.h"
-#include "utils.h"
+#include "transaction/transaction_utils.h"
 
 bool vote_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     // Votes

@@ -12,7 +12,7 @@
 #include "buffer.h"
 #include "format.h"
 #include "base58.h"
-#include "utils.h"
+#include "transaction/transaction_utils.h"
 
 bool htlc_refund_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     switch (step) {

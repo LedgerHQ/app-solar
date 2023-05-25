@@ -13,7 +13,7 @@
 #include "buffer.h"
 #include "format.h"
 #include "read.h"
-#include "utils.h"
+#include "transaction/transaction_utils.h"
 
 bool transfer_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     // transfers (amount + recipient)
