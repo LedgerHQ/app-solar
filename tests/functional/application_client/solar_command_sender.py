@@ -159,17 +159,42 @@ class SolarCommandSender:
             p2=P2.P2_MORE,
             data=pack_derivation_path(path),
         )
-        messages = split_message(msg, MAX_APDU_LEN)
+        chunks = split_message(msg, MAX_APDU_LEN)
         idx: int = P1.P1_START + 1
 
-        for msg in messages[:-1]:
+        for chunk in chunks[:-1]:
             self.backend.exchange(
-                cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_MORE, data=msg
+                cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_MORE, data=chunk
             )
             idx += 1
 
         with self.backend.exchange_async(
-            cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_LAST, data=messages[-1]
+            cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_LAST, data=chunks[-1]
+        ) as response:
+            yield response
+
+    @contextmanager
+    def sign_transaction(self, path: str, transaction: Transaction) -> RAPDU:
+        tx: bytes = transaction.serialise()
+
+        self.backend.exchange(
+            cla=CLA,
+            ins=InsType.SIGN_TX,
+            p1=P1.P1_START,
+            p2=P2.P2_MORE,
+            data=pack_derivation_path(path),
+        )
+        chunks = split_message(tx, MAX_APDU_LEN)
+        idx: int = P1.P1_START + 1
+
+        for chunk in chunks[:-1]:
+            self.backend.exchange(
+                cla=CLA, ins=InsType.SIGN_TX, p1=idx, p2=P2.P2_MORE, data=chunk
+            )
+            idx += 1
+
+        with self.backend.exchange_async(
+            cla=CLA, ins=InsType.SIGN_TX, p1=idx, p2=P2.P2_LAST, data=chunks[-1]
         ) as response:
             yield response
 
