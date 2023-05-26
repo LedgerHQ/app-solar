@@ -1,5 +1,9 @@
 import pytest
 
+from ragger.error import ExceptionRAPDU
+from ragger.navigator import NavInsID, NavIns
+from utils import ROOT_SCREENSHOT_PATH
+
 from application_client.solar_command_sender import (
     CLA,
     InsType,
@@ -7,18 +11,14 @@ from application_client.solar_command_sender import (
     Errors,
 )
 from application_client.solar_response_unpacker import unpack_get_address_response
+from constants import {
+    NETWORK_MAINNET,
+    NETWORK_TESTNET,
+    NETWORKS,
+    PATH_MAINNET,
+    PATH_TESTNET,
+}
 
-from ragger.error import ExceptionRAPDU
-from ragger.navigator import NavInsID, NavIns
-from utils import ROOT_SCREENSHOT_PATH
-
-
-NETWORK_TESTNET: int = 0x1E
-NETWORK_MAINNET: int = 0x3F
-NETWORKS: [int] = [NETWORK_TESTNET, NETWORK_MAINNET]
-
-PATH_TESTNET: str = "m/44'/1'/0'/0/0"
-PATH_MAINNET: str = "m/44'/3333'/0'/0/0"
 
 # In this test we check that the GET_ADDRESS works in non-confirmation mode
 def test_get_address_no_confirm(backend):

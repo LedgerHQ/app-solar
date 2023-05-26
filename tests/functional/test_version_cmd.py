@@ -7,7 +7,7 @@ MAJOR = 1
 MINOR = 0
 PATCH = 1
 
-# In this test we check the behavior of the device when asked to provide the app version
+# In this test we check the behaviour of the device when asked to provide the app version
 def test_version(backend):
     # Use the app interface instead of raw interface
     client = SolarCommandSender(backend)
