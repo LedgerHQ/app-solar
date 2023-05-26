@@ -21,18 +21,14 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
 #include <string.h>   // memmove
 #include <stdio.h>    // snprintf
 
-#if !defined(TARGET_STAX)
-#include "bagl.h"
-#endif
-
 #include "format.h"
 #include "types.h"
-#include "ux.h"
 
 #include "transaction/transaction_utils.h"
 #include "ui/ui_utils.h"
