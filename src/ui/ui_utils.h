@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <stddef.h>   // size_t
+#include <stddef.h>  // size_t
 
 /**
  * Remove trailing zeros up to the decimal + padding.
