@@ -83,7 +83,7 @@ bool format_amount(char *dst,
 
     unpad_amount(amount, strlen(amount), 2);
 
-    snprintf(dst, dst_len, "%s%c%s", amount, GET_TICKER_PAGING(amount), ticker);
+    snprintf(dst, dst_len, "%s%c%s", amount, get_ticker_line_break(amount), ticker);
     return true;
 }
 
