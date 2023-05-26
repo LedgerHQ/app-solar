@@ -11,13 +11,13 @@ from application_client.solar_command_sender import (
     Errors,
 )
 from application_client.solar_response_unpacker import unpack_get_address_response
-from constants import {
+from constants import (
     NETWORK_MAINNET,
     NETWORK_TESTNET,
     NETWORKS,
     PATH_MAINNET,
     PATH_TESTNET,
-}
+)
 
 
 # In this test we check that the GET_ADDRESS works in non-confirmation mode
