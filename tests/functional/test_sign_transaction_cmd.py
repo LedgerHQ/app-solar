@@ -171,78 +171,78 @@ def test_sign_transaction_burn(firmware, backend, navigator, test_name):
     assert ssa.verify(burn_transaction.serialise(), public_key, response) is True
 
 
-# # # Check the behaviour of the device when asked to sign a vote transaction.
-# # # TypeGroup 2, Type 2
-# # def test_sign_transaction_vote(firmware, backend, navigator, test_name):
-# #     client = SolarCommandSender(backend)
+# Check the behaviour of the device when asked to sign a vote transaction.
+# TypeGroup 2, Type 2
+def test_sign_transaction_vote(firmware, backend, navigator, test_name):
+    client = SolarCommandSender(backend)
 
-# #     rapdu = client.get_public_key(path=PATH_MAINNET)
-# #     _, public_key, _, _ = unpack_get_public_key_response(rapdu.data)
+    rapdu = client.get_public_key(path=PATH_MAINNET)
+    _, public_key, _, _ = unpack_get_public_key_response(rapdu.data)
 
-# #     vote_transaction = Vote(
-# #         nonce=4,
-# #         senderPkey=public_key,
-# #         fee=10000000,
-# #         memo="",
-# #         votes=[["gym", 2000], ["cactus1549", 4000], ["sl33p", 4000]],
-# #     )
+    vote_transaction = Vote(
+        nonce=4,
+        senderPkey=public_key,
+        fee=10000000,
+        memo="",
+        votes=[["gym", 2000], ["cactus1549", 4000], ["sl33p", 4000]],
+    )
 
-# #     with client.sign_transaction(path=PATH_MAINNET, transaction=vote_transaction):
-# #         # if firmware.device.startswith("nano"):
-# #         navigator.navigate_until_text_and_compare(
-# #             NavInsID.RIGHT_CLICK,
-# #             [NavInsID.BOTH_CLICK],
-# #             "Approve",
-# #             ROOT_SCREENSHOT_PATH,
-# #             test_name,
-# #         )
-# #         # else:
-# #         #     navigator.navigate_until_text_and_compare(NavInsID.USE_CASE_REVIEW_TAP,
-# #         #                                               [NavInsID.USE_CASE_REVIEW_CONFIRM,
-# #         #                                                NavInsID.USE_CASE_STATUS_DISMISS],
-# #         #                                               "Hold to sign",
-# #         #                                               ROOT_SCREENSHOT_PATH,
-# #         #                                               test_name)
-# #     response = client.get_async_response().data
+    with client.sign_transaction(path=PATH_MAINNET, transaction=vote_transaction):
+        # if firmware.device.startswith("nano"):
+        navigator.navigate_until_text_and_compare(
+            NavInsID.RIGHT_CLICK,
+            [NavInsID.BOTH_CLICK],
+            "Approve",
+            ROOT_SCREENSHOT_PATH,
+            test_name,
+        )
+        # else:
+        #     navigator.navigate_until_text_and_compare(NavInsID.USE_CASE_REVIEW_TAP,
+        #                                               [NavInsID.USE_CASE_REVIEW_CONFIRM,
+        #                                                NavInsID.USE_CASE_STATUS_DISMISS],
+        #                                               "Hold to sign",
+        #                                               ROOT_SCREENSHOT_PATH,
+        #                                               test_name)
+    response = client.get_async_response().data
 
-# #     assert ssa.verify(vote_transaction.serialise(), public_key, response) is True
+    assert ssa.verify(vote_transaction.serialise(), public_key, response) is True
 
 
-# # # Check the behaviour of the device when asked to sign a cancel vote transaction.
-# # # TypeGroup 2, Type 2
-# # def test_sign_transaction_vote_cancel(firmware, backend, navigator, test_name):
-# #     client = SolarCommandSender(backend)
+# Check the behaviour of the device when asked to sign a cancel vote transaction.
+# TypeGroup 2, Type 2
+def test_sign_transaction_vote_cancel(firmware, backend, navigator, test_name):
+    client = SolarCommandSender(backend)
 
-# #     rapdu = client.get_public_key(path=PATH_MAINNET)
-# #     _, public_key, _, _ = unpack_get_public_key_response(rapdu.data)
+    rapdu = client.get_public_key(path=PATH_MAINNET)
+    _, public_key, _, _ = unpack_get_public_key_response(rapdu.data)
 
-# #     cancel_vote_transaction = Vote(
-# #         nonce=5,
-# #         senderPkey=public_key,
-# #         fee=10000000,
-# #         memo="",
-# #         votes=[],
-# #     )
+    cancel_vote_transaction = Vote(
+        nonce=5,
+        senderPkey=public_key,
+        fee=10000000,
+        memo="",
+        votes=[],
+    )
 
-# #     with client.sign_transaction(path=PATH_MAINNET, transaction=cancel_vote_transaction):
-# #         # if firmware.device.startswith("nano"):
-# #         navigator.navigate_until_text_and_compare(
-# #             NavInsID.RIGHT_CLICK,
-# #             [NavInsID.BOTH_CLICK],
-# #             "Approve",
-# #             ROOT_SCREENSHOT_PATH,
-# #             test_name,
-# #         )
-# #         # else:
-# #         #     navigator.navigate_until_text_and_compare(NavInsID.USE_CASE_REVIEW_TAP,
-# #         #                                               [NavInsID.USE_CASE_REVIEW_CONFIRM,
-# #         #                                                NavInsID.USE_CASE_STATUS_DISMISS],
-# #         #                                               "Hold to sign",
-# #         #                                               ROOT_SCREENSHOT_PATH,
-# #         #                                               test_name)
-# #     response = client.get_async_response().data
+    with client.sign_transaction(path=PATH_MAINNET, transaction=cancel_vote_transaction):
+        # if firmware.device.startswith("nano"):
+        navigator.navigate_until_text_and_compare(
+            NavInsID.RIGHT_CLICK,
+            [NavInsID.BOTH_CLICK],
+            "Approve",
+            ROOT_SCREENSHOT_PATH,
+            test_name,
+        )
+        # else:
+        #     navigator.navigate_until_text_and_compare(NavInsID.USE_CASE_REVIEW_TAP,
+        #                                               [NavInsID.USE_CASE_REVIEW_CONFIRM,
+        #                                                NavInsID.USE_CASE_STATUS_DISMISS],
+        #                                               "Hold to sign",
+        #                                               ROOT_SCREENSHOT_PATH,
+        #                                               test_name)
+    response = client.get_async_response().data
 
-# #     assert ssa.verify(cancel_vote_transaction.serialise(), public_key, response) is True
+    assert ssa.verify(cancel_vote_transaction.serialise(), public_key, response) is True
 
 
 # Check the behaviour of the device when the transfer uses an invalid typegroup.
