@@ -33,12 +33,12 @@ static void test_tx_utils_format_amount(void **state) {
     assert_true(format_amount(temp, sizeof(temp), amount, 8, "SXP", 3));
     assert_string_equal(temp, "0.000001 SXP");
 
-    // amount = 10000000000000000000ull;
-    // assert_true(format_amount(temp, sizeof(temp), amount, 8, "SXP", 3));
-    // assert_string_equal(temp, "100000000000.00 SXP");
+    amount = 10000000000000000000ull;
+    assert_true(format_amount(temp, sizeof(temp), amount, 8, "SXP", 3));
+    assert_string_equal(temp, "100000000000.00 SXP");
 
-    // // buffer too small
-    // assert_false(format_amount(temp, sizeof(temp) - 1, amount, 8, "SXP", 3));
+    // buffer too small
+    assert_false(format_amount(temp, sizeof(temp) - 2, amount, 8, "SXP", 3));
 }
 
 static void test_tx_utils_format_percentage(void **state) {

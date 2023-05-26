@@ -37,7 +37,7 @@ add_compile_definitions(TEST)
 
 if(TARGET_NAME STREQUAL "TARGET_NANOS")
   add_definitions(-DIS_TARGET_NANOS=1)
-endif
+endif()
 
 include_directories(../../src)
 
@@ -56,7 +56,7 @@ add_library(format SHARED $ENV{BOLOS_SDK}/lib_standard_app/format.c)
 add_library(varint SHARED $ENV{BOLOS_SDK}/lib_standard_app/varint.c)
 add_library(apdu_parser SHARED $ENV{BOLOS_SDK}/lib_standard_app/parser.c)
 add_library(transaction_deserialise ../../src/transaction/deserialise.c)
-add_library(transaction_utils ../../src/transaction/utils.c)
+add_library(transaction_utils ../../src/transaction/transaction_utils.c ../../src/ui/ui_utils.c)
 add_library(transaction_types_multi_signature_registration ../../src/transaction/types/multi_signature_registration.c)
 add_library(transaction_types_ipfs ../../src/transaction/types/ipfs.c)
 add_library(transaction_types_transfer ../../src/transaction/types/transfer.c)
