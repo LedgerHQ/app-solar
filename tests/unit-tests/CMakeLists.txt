@@ -57,16 +57,12 @@ add_library(varint SHARED $ENV{BOLOS_SDK}/lib_standard_app/varint.c)
 add_library(apdu_parser SHARED $ENV{BOLOS_SDK}/lib_standard_app/parser.c)
 add_library(transaction_deserialise ../../src/transaction/deserialise.c)
 add_library(transaction_utils ../../src/transaction/transaction_utils.c ../../src/ui/ui_utils.c)
-add_library(transaction_types_multi_signature_registration ../../src/transaction/types/multi_signature_registration.c)
 add_library(transaction_types_ipfs ../../src/transaction/types/ipfs.c)
 add_library(transaction_types_transfer ../../src/transaction/types/transfer.c)
-add_library(transaction_types_htlc_lock ../../src/transaction/types/htlc_lock.c)
-add_library(transaction_types_htlc_refund ../../src/transaction/types/htlc_refund.c)
-add_library(transaction_types_htlc_claim ../../src/transaction/types/htlc_claim.c)
 add_library(transaction_types_burn ../../src/transaction/types/burn.c)
 add_library(transaction_types_vote ../../src/transaction/types/vote.c)
 
-target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
+# target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
 
 target_link_libraries(test_tx_parser PUBLIC
                       transaction_deserialise
@@ -77,11 +73,7 @@ target_link_libraries(test_tx_parser PUBLIC
                       gcov
                       write
                       read
-                      transaction_types_htlc_claim
-                      transaction_types_htlc_lock
-                      transaction_types_htlc_refund
                       transaction_types_ipfs
-                      transaction_types_multi_signature_registration
                       transaction_types_transfer
                       transaction_types_vote
                       transaction_types_burn

@@ -99,11 +99,6 @@
 #define MAX_MEMO_LEN 255
 
 /**
- * Max length for the hash on HTLC transactions.
- */
-#define MAX_HTLC_HASH_LEN 192
-
-/**
  * The default ticker name used for displaying amounts.
  */
 #define TICKER_DEFAULT "SXP"
