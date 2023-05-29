@@ -198,37 +198,5 @@ class SolarCommandSender:
         ) as response:
             yield response
 
-    # @contextmanager
-    # def sign_tx(self, path: str, transaction: Transaction) -> Generator[None, None, None]:
-
-    #     yield False, self.serialise(
-    #         cla=self.CLA, ins=InsType.INS_SIGN_TX, p1=P1.P1_START, p2=P2.P2_LAST, data=cdata
-    #     )
-
-    #     tx: bytes = transaction.serialise()
-
-    #     self.backend.exchange(cla=CLA,
-    #                           ins=InsType.SIGN_TX,
-    #                           p1=P1.P1_START,
-    #                           p2=P2.P2_MORE,
-    #                           data=pack_derivation_path(path))
-    #     messages = split_message(tx, MAX_APDU_LEN)
-    #     idx: int = P1.P1_START + 1
-
-    #     for msg in messages[:-1]:
-    #         self.backend.exchange(cla=CLA,
-    #                               ins=InsType.SIGN_TX,
-    #                               p1=idx,
-    #                               p2=P2.P2_MORE,
-    #                               data=msg)
-    #         idx += 1
-
-    #     with self.backend.exchange_async(cla=CLA,
-    #                                      ins=InsType.SIGN_TX,
-    #                                      p1=idx,
-    #                                      p2=P2.P2_LAST,
-    #                                      data=messages[-1]) as response:
-    #         yield response
-
     def get_async_response(self) -> Optional[RAPDU]:
         return self.backend.last_async_response
