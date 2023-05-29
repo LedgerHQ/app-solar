@@ -62,7 +62,7 @@ add_library(transaction_types_transfer ../../src/transaction/types/transfer.c)
 add_library(transaction_types_burn ../../src/transaction/types/burn.c)
 add_library(transaction_types_vote ../../src/transaction/types/vote.c)
 
-# target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
+target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
 
 target_link_libraries(test_tx_parser PUBLIC
                       transaction_deserialise
