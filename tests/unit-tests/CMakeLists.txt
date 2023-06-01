@@ -42,6 +42,7 @@ endif()
 include_directories(
   ../../src
   $ENV{BOLOS_SDK}
+  $ENV{BOLOS_SDK}/include
 )
 
 add_executable(test_tx_parser test_tx_parser.c)
