@@ -39,16 +39,16 @@ if(TARGET_NAME STREQUAL "TARGET_NANOS")
   add_definitions(-DTARGET_NANOS=1)
 endif()
 
-include_directories(
-  ../../src
-  $ENV{BOLOS_SDK}/include
-)
+include_directories(../../src)
 
 add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_utils test_tx_utils.c)
 
 add_library(nano_char_table nano_char_table.c)
-include_directories($ENV{BOLOS_SDK}/lib_standard_app)
+include_directories(
+  $ENV{BOLOS_SDK}/include
+  $ENV{BOLOS_SDK}/lib_standard_app
+)
 
 add_library(base58 SHARED $ENV{BOLOS_SDK}/lib_standard_app/base58.c)
 add_library(bip32 SHARED $ENV{BOLOS_SDK}/lib_standard_app/bip32.c)
