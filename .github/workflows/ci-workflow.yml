@@ -1,90 +1,91 @@
-name: Compilation of build artifacts
+# name: Compilation of build artifacts
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-      - develop
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+#       - develop
+#   pull_request:
+#     branches:
+#       - main
+#       - develop
 
-jobs:
-  prepare:
-    name: Prepare commit hash
-    runs-on: ubuntu-latest
-    steps:
-      - name: Parse short sha
-        uses: benjlevesque/short-sha@v2.2
-        id: short-sha
-        with:
-          length: 7
-    outputs:
-      sha7: ${{ steps.short-sha.outputs.sha }}
+# jobs:
+#   prepare:
+#     name: Prepare commit hash
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Parse short sha
+#         uses: benjlevesque/short-sha@v2.2
+#         id: short-sha
+#         with:
+#           length: 7
+#     outputs:
+#       sha7: ${{ steps.short-sha.outputs.sha }}
 
-  job_nanos_build:
-    name: Build for the Nano S
-    runs-on: ubuntu-latest
-    needs: prepare
+#   job_nanos_build:
+#     name: Build for the Nano S
+#     runs-on: ubuntu-latest
+#     needs: prepare
 
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+#     container:
+#       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
-    steps:
-      - name: Clone
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Clone
+#         uses: actions/checkout@v3
 
-      - name: Build
-        run: |
-          make
+#       - name: Build
+#         run: |
+#           make
 
-      - name: Upload app binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+#       - name: Upload app binary
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: app-solar-nanos-${{ needs.prepare.outputs.sha7 }}
+#           path: bin
 
-  job_nanosp_build:
-    name: Build for the Nano S Plus
-    runs-on: ubuntu-latest
-    needs: prepare
+#   job_nanosp_build:
+#     name: Build for the Nano S Plus
+#     runs-on: ubuntu-latest
+#     needs: prepare
 
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+#     container:
+#       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
-    steps:
-      - name: Clone
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Clone
+#         uses: actions/checkout@v3
 
-      - name: Build
-        run: |
-          make BOLOS_SDK=$NANOSP_SDK
+#       - name: Build
+#         run: |
+#           make BOLOS_SDK=$NANOSP_SDK
 
-      - name: Upload app binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+#       - name: Upload app binary
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: app-solar-nanosp-${{ needs.prepare.outputs.sha7 }}
+#           path: bin
 
-  job_nanox_build:
-    name: Build for the Nano X
-    runs-on: ubuntu-latest
-    needs: prepare
+#   job_nanox_build:
+#     name: Build for the Nano X
+#     runs-on: ubuntu-latest
+#     needs: prepare
 
-    container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+#     container:
+#       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
-    steps:
-      - name: Clone
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Clone
+#         uses: actions/checkout@v3
 
-      - name: Build
-        run: |
-          make BOLOS_SDK=$NANOX_SDK
+#       - name: Build
+#         run: |
+#           make BOLOS_SDK=$NANOX_SDK
 
-      - name: Upload app binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
-          path: bin
+#       - name: Upload app binary
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: app-solar-nanox-${{ needs.prepare.outputs.sha7 }}
+#           path: bin
