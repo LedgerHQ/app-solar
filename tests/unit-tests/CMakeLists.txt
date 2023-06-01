@@ -39,17 +39,17 @@ if(TARGET_NAME STREQUAL "TARGET_NANOS")
   add_definitions(-DTARGET_NANOS=1)
 endif()
 
-include_directories(
-  ../../src
-  $ENV{BOLOS_SDK}/include
-  $ENV{BOLOS_SDK}/lib_ux
-)
+include_directories(../../src)
 
 add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_utils test_tx_utils.c)
 
 add_library(nano_char_table nano_char_table.c)
-include_directories($ENV{BOLOS_SDK}/lib_standard_app)
+include_directories(
+  $ENV{BOLOS_SDK}/include
+  $ENV{BOLOS_SDK}/lib_standard_app
+)
+target_include_directories(lib_ux SHARED $ENV{BOLOS_SDK}/lib_ux)
 
 add_library(base58 SHARED $ENV{BOLOS_SDK}/lib_standard_app/base58.c)
 add_library(bip32 SHARED $ENV{BOLOS_SDK}/lib_standard_app/bip32.c)
@@ -66,7 +66,7 @@ add_library(transaction_types_transfer ../../src/transaction/types/transfer.c)
 add_library(transaction_types_burn ../../src/transaction/types/burn.c)
 add_library(transaction_types_vote ../../src/transaction/types/vote.c)
 
-target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table)
+target_link_libraries(transaction_utils PUBLIC cmocka gcov format nano_char_table lib_ux)
 
 target_link_libraries(test_tx_parser PUBLIC
                       transaction_deserialise
