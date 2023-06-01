@@ -39,9 +39,6 @@
 
 #if defined(TARGET_NANOS)  // Estimate amount/fee line pixel count for the Nano S.
 
-#include "bagl.h"
-#include "ux.h"
-
 // extern from:
 // https://github.com/LedgerHQ/nanos-secure-sdk/blob/master/lib_ux/src/ux_layout_paging_compute.c#L20-#L117
 extern const char nanos_characters_width[96];
