@@ -39,7 +39,10 @@ if(TARGET_NAME STREQUAL "TARGET_NANOS")
   add_definitions(-DTARGET_NANOS=1)
 endif()
 
-include_directories(../../src)
+include_directories(
+  ../../src
+  $ENV{BOLOS_SDK}/include
+)
 
 add_executable(test_tx_parser test_tx_parser.c)
 add_executable(test_tx_utils test_tx_utils.c)

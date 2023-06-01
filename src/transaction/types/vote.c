@@ -7,7 +7,7 @@
 
 #include "vote.h"
 
-#include <stdint.h>   // uint*_t
+#include <stdint.h>  // uint*_t
 
 #include "buffer.h"
 

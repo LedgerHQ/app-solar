@@ -4,6 +4,7 @@
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
  * 
+ * 
  *****************************************************************************
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
@@ -33,11 +34,11 @@
 #include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
-#include <string.h>  // strlen
+#include <string.h>   // strlen
 
 #include "bolos_target.h"
 
-#if defined (TARGET_NANOS)  // Estimate amount/fee line pixel count for the Nano S.
+#if defined(TARGET_NANOS)  // Estimate amount/fee line pixel count for the Nano S.
 
 #include "bagl.h"
 #include "ux.h"

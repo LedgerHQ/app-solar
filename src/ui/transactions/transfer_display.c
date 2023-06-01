@@ -7,8 +7,8 @@
 
 #include "ui/transactions/transfer_display.h"
 
-#include <stdio.h>    // snprintf
-#include <stdint.h>   // uint*_t
+#include <stdio.h>   // snprintf
+#include <stdint.h>  // uint*_t
 
 #include "buffer.h"
 #include "format.h"
