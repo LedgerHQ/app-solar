@@ -1,6 +1,6 @@
 # ****************************************************************************
 #    Ledger App Boilerplate
-#    (c) 2023 Ledger SAS.
+#    (c) Ledger SAS.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ APPNAME = "Solar"
 
 # Application version
 APPVERSION_M = 1
-APPVERSION_N = 1
+APPVERSION_N = 0
 APPVERSION_P = 0
 APPVERSION = "$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)"
 
