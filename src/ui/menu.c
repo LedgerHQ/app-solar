@@ -21,12 +21,14 @@
  *  limitations under the License.
  *****************************************************************************/
 
-#include "os.h"
-#include "ux.h"
+#include "ui/menu.h"
+
 #include "glyphs.h"
 
-#include "../globals.h"
-#include "menu.h"
+#include "os.h"
+#include "ux.h"
+
+#include "globals.h"
 
 UX_STEP_NOCB(ux_menu_ready_step, pnn, {&C_solar_logo, "Solar", "is ready"});
 UX_STEP_NOCB(ux_menu_version_step, bn, {"Version", APPVERSION});

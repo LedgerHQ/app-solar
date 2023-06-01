@@ -5,13 +5,19 @@
  *  4.0 International License.
  *****************************************************************************/
 
-#include <stdio.h>
-#include "burn_display.h"
-#include "types.h"
-#include "constants.h"
-#include "buffer.h"
+#include "ui/transactions/burn_display.h"
+
+#include <stdio.h>   // snprintf
+#include <stdint.h>  // uint*_t
+
 #include "base58.h"
+#include "buffer.h"
+
+#include "constants.h"
+
 #include "transaction/transaction_utils.h"
+#include "transaction/types.h"
+#include "ui/ctx.h"
 
 bool burn_type_display(transaction_t *tx, char title[], char text[], uint16_t step) {
     switch (step) {

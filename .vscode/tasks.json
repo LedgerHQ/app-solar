@@ -53,7 +53,7 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }, 
+            },
             "problemMatcher": [
                 "$gcc"
             ]
@@ -88,7 +88,7 @@
             "label": "Test app with Speculos",
             "type": "shell",
             // Runs the app on the speculos emulator for the selected device model, in the docker container.
-            "command":"docker exec -it ${config:container_name} bash -c 'speculos --model ${input:model} build/${input:model}/bin/app.elf'",
+            "command": "docker exec -it ${config:container_name} bash -c 'speculos --model ${input:model} build/${input:model}/bin/app.elf'",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -131,8 +131,8 @@
         {
             "label": "Install tests requirements",
             "type": "shell",
-            // Installs functional tests python requirements in the docker container. 
-            "command":"docker exec -it -u 0 ${config:container_name} bash -c 'apk add gcc musl-dev python3-dev && pip install -r tests/functional/requirements.txt'",
+            // Installs functional tests python requirements in the docker container.
+            "command": "docker exec -it -u 0 ${config:container_name} bash -c 'apk add gcc musl-dev python3-dev && pip install -r tests/functional/requirements.txt'",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -220,7 +220,7 @@
     ],
     "inputs": [
         {
-            "id" : "sdk",
+            "id": "sdk",
             "type": "pickString",
             "description": "Choose a SDK to build with",
             "options": [
@@ -231,7 +231,7 @@
             ]
         },
         {
-            "id" : "model",
+            "id": "model",
             "type": "pickString",
             "description": "Which model to run speculos for ?",
             "options": [

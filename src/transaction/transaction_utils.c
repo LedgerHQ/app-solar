@@ -21,16 +21,16 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "transaction/transaction_utils.h"
+
 #include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
-#include <string.h>   // memmove
+#include <string.h>   // strlen
 #include <stdio.h>    // snprintf
 
 #include "format.h"
-#include "types.h"
 
-#include "transaction/transaction_utils.h"
 #include "ui/ui_utils.h"
 
 static bool _format_fpu64(char *dst, size_t dst_len, const uint64_t value, uint8_t decimals) {
@@ -74,10 +74,10 @@ bool format_amount(char *dst,
                    const char *ticker,
                    size_t ticker_len) {
     char amount[22] = {0};
-    if (dst_len < 22 + 5 || ticker_len > 5) {
+    if (dst_len < sizeof(amount) + 5 || ticker_len > 5) {
         return false;
     }
-    if (!_format_fpu64(amount, 22, value, decimals)) {
+    if (!_format_fpu64(amount, sizeof(amount), value, decimals)) {
         return false;
     }
 
@@ -92,7 +92,7 @@ bool format_percentage(char *dst, size_t dst_len, const uint16_t value, uint8_t 
     if (dst_len < 9) {
         return false;
     }
-    if (!_format_fpu64(amount, 22, (const uint64_t) value, decimals)) {
+    if (!_format_fpu64(amount, sizeof(amount), (const uint64_t) value, decimals)) {
         return false;
     }
     snprintf(dst, dst_len, "%s%%", amount);

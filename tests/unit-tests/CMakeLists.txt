@@ -36,7 +36,7 @@ endif()
 add_compile_definitions(TEST)
 
 if(TARGET_NAME STREQUAL "TARGET_NANOS")
-  add_definitions(-DIS_TARGET_NANOS=1)
+  add_definitions(-DTARGET_NANOS=1)
 endif()
 
 include_directories(../../src)

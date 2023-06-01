@@ -27,9 +27,11 @@
 #include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 
-#include "constants.h"
-#include "transaction/types.h"
 #include "bip32.h"
+
+#include "constants.h"
+
+#include "transaction/types.h"
 
 /**
  * Enumeration with expected INS of APDU commands.
@@ -75,7 +77,7 @@ typedef struct {
  * Structure for transaction information context.
  */
 typedef struct {
-    uint8_t raw_tx[MAX_TRANSACTION_LEN];  /// raw transaction serialised
+    uint8_t raw_tx[TRANSACTION_MAX_LEN];  /// raw transaction serialised
     size_t raw_tx_len;                    /// length of raw transaction
     transaction_t transaction;            /// structured transaction
     uint8_t m_hash[32];                   /// message hash digest

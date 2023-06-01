@@ -23,10 +23,9 @@
 
 #pragma once
 
+#include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
-
-#include "types.h"
 
 /**
  * Format 64-bit unsigned integer as string with decimals and ticker.

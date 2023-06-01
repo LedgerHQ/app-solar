@@ -21,17 +21,19 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "send_response.h"
+
 #include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 #include <string.h>  // memmove
 
-#include "send_response.h"
-#include "../constants.h"
-#include "../globals.h"
-#include "../context.h"
-#include "../sw.h"
 #include "buffer.h"
-#include "../address.h"
+
+#include "address.h"
+#include "constants.h"
+#include "context.h"
+#include "globals.h"
+#include "sw.h"
 
 int helper_send_response_pubkey() {
     uint8_t resp[1 + PUBLIC_KEY_LEN + 1 + CHAINCODE_LEN] = {0};

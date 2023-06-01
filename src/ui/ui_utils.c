@@ -3,8 +3,9 @@
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
+ * 
  *****************************************************************************
- *****************************************************************************
+ *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
  *
@@ -27,13 +28,16 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "ui/ui_utils.h"
+
 #include <stddef.h>   // size_t
 #include <stdint.h>   // uint*_t
 #include <stdbool.h>  // bool
+#include <string.h>  // strlen
 
-#include "ui/ui_utils.h"
+#include "bolos_target.h"
 
-#if (IS_TARGET_NANOS)  // Estimate amount/fee line pixel count for the Nano S.
+#if defined (TARGET_NANOS)  // Estimate amount/fee line pixel count for the Nano S.
 
 #include "bagl.h"
 #include "ux.h"

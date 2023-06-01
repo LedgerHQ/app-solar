@@ -21,21 +21,23 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "apdu/dispatcher.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 
 #include "buffer.h"
 #include "io.h"
 
-#include "dispatcher.h"
-#include "../constants.h"
-#include "../types.h"
-#include "../sw.h"
-#include "../handler/get_version.h"
-#include "../handler/get_app_name.h"
-#include "../handler/get_public_key.h"
-#include "../handler/get_address.h"
-#include "../handler/sign_tx.h"
+#include "constants.h"
+#include "sw.h"
+#include "types.h"
+
+#include "handler/get_version.h"
+#include "handler/get_app_name.h"
+#include "handler/get_public_key.h"
+#include "handler/get_address.h"
+#include "handler/sign_tx.h"
 
 int apdu_dispatcher(const command_t *cmd) {
     if (cmd->cla != CLA) {

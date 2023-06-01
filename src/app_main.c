@@ -18,15 +18,16 @@
 #include <stdint.h>  // uint*_t
 #include <string.h>  // memset, explicit_bzero
 
+#include "io.h"
 #include "os.h"
+#include "sw.h"
 #include "ux.h"
 
-#include "types.h"
 #include "globals.h"
-#include "io.h"
-#include "sw.h"
-#include "ui/menu.h"
+#include "types.h"
+
 #include "apdu/dispatcher.h"
+#include "ui/menu.h"
 
 global_ctx_t G_context;
 

@@ -21,17 +21,19 @@
  *  limitations under the License.
  *****************************************************************************/
 
+#include "ui/action/validate.h"
+
 #include <stdbool.h>  // bool
 
 #include "io.h"
 
-#include "validate.h"
-#include "../menu.h"
-#include "../../sw.h"
-#include "../../crypto/crypto.h"
-#include "../../globals.h"
-#include "../../context.h"
-#include "../../helper/send_response.h"
+#include "context.h"
+#include "globals.h"
+#include "sw.h"
+
+#include "crypto/crypto.h"
+#include "helper/send_response.h"
+#include "ui/menu.h"
 
 void ui_action_validate_pubkey(bool choice) {
     if (choice) {

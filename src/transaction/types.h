@@ -23,14 +23,12 @@
 
 #pragma once
 
-//#include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
-#include "types/types.h"
+
+#include "transaction/types/types.h"
 
 #define STARTING_BYTE         0xFF
 #define TRANSACTION_VERSION_3 0x03
-#define NONCE_LENGTH          0x08
-#define MAX_MEMO_LEN          255
 
 typedef enum { TYPEGROUP_CORE = 1, TYPEGROUP_SOLAR = 2 } transaction_typegroup;
 

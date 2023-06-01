@@ -47,11 +47,11 @@ ICON_NANOSP = icons/app_solar_14px.gif
 CURVE_APP_LOAD_PARAMS = secp256k1
 
 # Application allowed derivation paths.
-PATH_APP_LOAD_PARAMS = "44'/1'" "44'/3333'"
+PATH_APP_LOAD_PARAMS = "44'/3333'" "44'/1'"
 
 # Setting to allow building variant applications
 VARIANT_PARAM = COIN
-VARIANT_VALUES = SOL
+VARIANT_VALUES = SXP
 
 # Enabling DEBUG flag will enable PRINTF and disable optimizations
 #DEBUG = 1
@@ -68,15 +68,5 @@ ENABLE_BLUETOOTH = 1
 #ENABLE_NBGL_QRCODE = 1
 #ENABLE_NBGL_KEYBOARD = 1
 #ENABLE_NBGL_KEYPAD = 1
-
-########################################
-#            Custom defines            #
-########################################
-# These are custom definitions used by the Solar app.
-ifeq ($(TARGET_NAME),TARGET_NANOS)
-    DEFINES += IS_TARGET_NANOS=1
-else
-    DEFINES += IS_TARGET_NANOS=0
-endif
 
 include $(BOLOS_SDK)/Makefile.standard_app
