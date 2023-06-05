@@ -29,10 +29,7 @@ bool vote_type_display(transaction_t *tx, char title[], char text[], uint16_t st
     // Check if we are still in the voting phase
     if (vote_count < tx->core_asset.Vote.vote_length) {
         vote_deserialised_t asset = {0};
-        vote_search(tx->core_asset.Vote.votes,
-                    vote_count,
-                    tx->core_asset.Vote.vote_length,
-                    &asset);
+        vote_search(tx->core_asset.Vote.votes, vote_count, tx->core_asset.Vote.vote_length, &asset);
 
         if (step % 2 == 0) {
             // Prepare the vote screen
@@ -41,11 +38,7 @@ bool vote_type_display(transaction_t *tx, char title[], char text[], uint16_t st
                      "Vote (%d/%d)",
                      vote_count + 1,
                      tx->core_asset.Vote.vote_length);
-            snprintf(text,
-                     MAX_TEXT_LEN,
-                     "%.*s",
-                     asset.username_length,
-                     asset.username);
+            snprintf(text, MAX_TEXT_LEN, "%.*s", asset.username_length, asset.username);
         } else {
             // Prepare the vote percentage screen
             snprintf(title,
@@ -60,7 +53,7 @@ bool vote_type_display(transaction_t *tx, char title[], char text[], uint16_t st
     }
 
     // Prepare the fee screen
-    if(step - (tx->core_asset.Vote.vote_length * 2) == 0) {
+    if (step - (tx->core_asset.Vote.vote_length * 2) == 0) {
         snprintf(title, MAX_TITLE_LEN, "Fee");
         format_amount(text,
                       MAX_TEXT_LEN,
