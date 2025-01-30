@@ -18,6 +18,7 @@ tests/unit-tests/build/
 tests/unit-tests/coverage/
 tests/unit-tests/coverage.info
 cppcheck/
+!tools/cppcheck
 cppcheck_report/
 compile_commands.json
 cppcheck_output.xml
