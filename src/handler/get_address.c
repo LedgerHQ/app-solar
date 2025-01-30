@@ -1,10 +1,5 @@
-/*****************************************************************************
- *  Copyright (c) Solar Network <hello@solar.org>
- *
- *  This work is licensed under a Creative Commons Attribution-NoDerivatives
- *  4.0 International License.
- *
- *****************************************************************************
+/*******************************************************************************
+ *  Copyright (c) Solar Network [hello@solar.org]
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
@@ -13,7 +8,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) Ledger SAS.
+ *   (c) 2020 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,55 +21,55 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *****************************************************************************/
+ ******************************************************************************/
 
-#include "get_address.h"
+#include "handler/get_address.h"
 
-#include <stdint.h>   // uint*_t
-#include <stdbool.h>  // bool
-#include <stddef.h>   // size_t
-#include <string.h>   // memset, explicit_bzero
+#include <stdbool.h>
+#include <stdint.h>  // uint*_t
 
-#include "cx.h"
-#include "io.h"
-#include "os.h"
+#include <buffer.h>     // buffer_t
+#include <cx_errors.h>  // CX_OK
+#include <io.h>         // io_send_sw
 
-#include "buffer.h"
-
+#include "app_types.h"
 #include "context.h"
 #include "globals.h"
-#include "sw.h"
-#include "app_types.h"
 
 #include "crypto/crypto.h"
-#include "helper/send_response.h"
-#include "ui/display.h"
 
+#include "helper/send_response.h"
+
+#include "ui/operations/address/display_address.h"
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Handler for GET_ADDRESS command.
+ *
+ * Sends an APDU response containing an address.
+ *
+ * @see G_context.bip32_path, G_context.pk_info.raw_public_key.
+ *
+ * @param[in,out]   cdata           Command data with BIP32 path.
+ * @param[in]       user_approval   0 for not displaying on screen, otherwise 1.
+ *
+ * @return zero or positive integer if successful, otherwise -1.
+ */
 int handler_get_address(buffer_t *cdata, bool user_approval, uint8_t network) {
     reset_app_context();
+
     G_context.req_type = CONFIRM_ADDRESS;
     G_context.network = network;
 
-    cx_ecfp_private_key_t private_key = {0};
-    cx_ecfp_public_key_t public_key = {0};
-
-    if (!buffer_read_u8(cdata, &G_context.bip32_path_len) ||
-        !buffer_read_bip32_path(cdata, G_context.bip32_path, (size_t) G_context.bip32_path_len)) {
-        return io_send_sw(SW_WRONG_DATA_LENGTH);
+    const int status = prepare_public_key(cdata, false);
+    if (status != CX_OK) {
+        return io_send_sw(status);
     }
 
-    // derive private key according to BIP32 path
-    crypto_derive_private_key(&private_key, NULL, G_context.bip32_path, G_context.bip32_path_len);
-
-    // generate corresponding public key
-    crypto_init_public_key(&private_key, &public_key, G_context.pk_info.raw_public_key);
-
-    // reset private key
-    explicit_bzero(&private_key, sizeof(private_key));
-
-    if (user_approval > 0) {
+    if (user_approval) {
         return ui_display_address();
     }
 
-    return helper_send_response_address();
+    return helper_send(ADDRESS_RESPONSE);
 }

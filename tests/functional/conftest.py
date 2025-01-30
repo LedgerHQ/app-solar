@@ -1,11 +1,17 @@
-from ragger.conftest import configuration
-from ragger.navigator import NavInsID
+# from ragger.conftest import configuration
 import pytest
+from ragger.firmware import Firmware
+from ragger.navigator import NavIns, NavInsID
+
+# from ragger.backend import RaisePolicy
+
+
 ###########################
 ### CONFIGURATION START ###
 ###########################
 
-# You can configure optional parameters by overriding the value of ragger.configuration.OPTIONAL_CONFIGURATION
+# You can configure optional parameters by overriding the value of
+# ragger.configuration.OPTIONAL_CONFIGURATION
 # Please refer to ragger/conftest/configuration.py for their descriptions and accepted values
 
 #########################
@@ -13,7 +19,8 @@ import pytest
 #########################
 
 # Pull all features from the base ragger conftest using the overridden configuration
-pytest_plugins = ("ragger.conftest.base_conftest", )
+pytest_plugins = ("ragger.conftest.base_conftest",)
+
 
 # Notes :
 # 1. Remove this fixture once the pending review screen is removed from the app
@@ -23,13 +30,16 @@ pytest_plugins = ("ragger.conftest.base_conftest", )
 @pytest.fixture(scope="class", autouse=True)
 def clear_pending_review(firmware, navigator):
     print("Clearing pending review")
-    # Press a button to clear the pending review
-    if firmware.device.startswith("nano"):
-        instructions = [
-            NavInsID.BOTH_CLICK,
-        ]
-    else:
-        instructions = [
-            NavInsID.TAPPABLE_CENTER_TAP,
-        ]
-    navigator.navigate(instructions,screen_change_before_first_instruction=False)
+    # Press / tap a button to clear the pending review
+    pending_review_clear = (
+        NavInsID.BOTH_CLICK  # nanosp, nanox
+        if firmware.device.startswith("nano")
+        else (
+            NavIns(NavInsID.TOUCH, (200, 545))  # stax
+            if firmware is Firmware.STAX
+            else NavIns(NavInsID.TOUCH, (240, 488))
+        )  # flex
+    )
+    navigator.navigate(
+        [pending_review_clear], screen_change_before_first_instruction=False
+    )

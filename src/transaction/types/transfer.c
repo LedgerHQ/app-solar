@@ -1,32 +1,50 @@
-/*****************************************************************************
- *  Copyright (c) Solar Network <hello@solar.org>
+/*******************************************************************************
+ *  Copyright (c) Solar Network [hello@solar.org]
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
- *****************************************************************************/
+ ******************************************************************************/
 
 #include "transfer.h"
 
-#include "buffer.h"
+#include <stdint.h>  // uint*_t
+
+#include <buffer.h>  // buffer_t, buffer_read_u16
 
 #include "constants.h"
 
 #include "transaction/transaction_errors.h"
 
-parser_status_e transfer_type_deserialise(buffer_t *buf, transfer_transaction_asset_t *tx) {
+/* -------------------------------------------------------------------------- */
+
+static const uint16_t PAYMENT_COUNT_MIN = 1u;
+static const uint16_t PAYMENT_COUNT_MAX = 127u;
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Deserialise a Transfer asset.
+ *
+ * @param[in, out]  buf     Pointer to buffer with serialised transaction.
+ * @param[out]      asset   Pointer to transaction asset structure.
+ *
+ * @return PARSING_OK if successful, otherwise an error status (parser_status_e)
+ */
+parser_status_e deserialise_transfer(buffer_t *buf, transfer_asset_t *transfer) {
     // length
-    if (!buffer_read_u16(buf, &tx->transfers_length, LE)) {
+    if (!buffer_read_u16(buf, &transfer->payment_count, LE)) {
         return WRONG_LENGTH_ERROR;
     }
 
-    if (tx->transfers_length < MIN_NUM_TRANSFERS || tx->transfers_length > MAX_NUM_TRANSFERS) {
-        return CORE_ASSET_PARSING_ERROR;
+    if ((transfer->payment_count < PAYMENT_COUNT_MIN) ||
+        (transfer->payment_count > PAYMENT_COUNT_MAX)) {
+        return TX_ASSET_PARSING_ERROR;
     }
 
-    // Transfers
-    tx->transfers = (uint8_t *) (buf->ptr + buf->offset);
+    // payments
+    transfer->payments = &buf->ptr[buf->offset];
 
-    if (!buffer_seek_cur(buf, (ADDRESS_HASH_LEN + 8) * tx->transfers_length)) {
+    if (!buffer_seek_cur(buf, (PUBKEY_HASH_LEN + sizeof(uint64_t)) * transfer->payment_count)) {
         return WRONG_LENGTH_ERROR;
     }
 

@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
   workflow_dispatch:
@@ -12,27 +12,34 @@ on:
       - develop
     # Excluded path: add the paths you want to ignore instead of deleting the workflow
     paths-ignore:
-      - '.github/workflows/*.yml'
-      - 'tests/*'
+      - .github/workflows/*.yml
+      - tests/*
 
 jobs:
   analyse:
     name: Analyse
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
     strategy:
       matrix:
-        sdk: [ "$NANOS_SDK", "$NANOX_SDK", "$NANOSP_SDK" ]
+        sdk: ["$NANOSP_SDK", "$NANOX_SDK", "$FLEX_SDK", "$STAX_SDK"]
         #'cpp' covers C and C++
         language: [ 'cpp' ]
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-legacy:3.22.1
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder-legacy:3.47.0
 
     steps:
       - name: Clone
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3.25.5
+        uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
@@ -43,4 +50,4 @@ jobs:
           make BOLOS_SDK=${{ matrix.sdk }}
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3.25.5
+        uses: github/codeql-action/analyze@v2

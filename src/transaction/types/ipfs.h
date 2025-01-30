@@ -1,23 +1,19 @@
 #pragma once
 
-#include "buffer.h"
+#include <stdint.h>  // uint*_t
+
+#include <buffer.h>  // buffer_t
 
 #include "transaction/transaction_errors.h"
 
-typedef struct {
-    uint8_t ipfs_length;  /// ipfs length (1 byte)
-    uint8_t *ipfs;        /// ipfs (MAX 64 bytes)
-} ipfs_transaction_asset_t;
+/* -------------------------------------------------------------------------- */
 
-/**
- * Deserialise asset of transaction in structure.
- *
- * @param[in, out] buf
- *   Pointer to buffer with serialised transaction.
- * @param[out]     tx
- *   Pointer to transaction asset structure.
- *
- * @return PARSING_OK if success, error status otherwise.
- *
- */
-parser_status_e ipfs_type_deserialise(buffer_t *buf, ipfs_transaction_asset_t *tx);
+typedef struct {
+    const uint8_t *hash;  // (MAX 64 bytes)
+    uint8_t hash_length;
+    uint8_t reserved[3];  // padding for alignment
+} ipfs_asset_t;
+
+/* -------------------------------------------------------------------------- */
+
+parser_status_e deserialise_ipfs(buffer_t *buf, ipfs_asset_t *ipfs);
