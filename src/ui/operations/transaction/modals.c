@@ -215,9 +215,10 @@ static bool prepare_paged_modal_fields(
     const uint8_t label_len = strnlen(ctx->asset.label, MAX_VALUE_LEN);
     const uint8_t available_len =
         SUMMARY_LINE_LENGTH_MAX - label_len - sizeof(TEXT_TRUNCATION_SUFFIX);
+    const uint16_t total_fields = field_count_for_page * EXTENDED_ASSET_MULTIPLIER;
 
     // Prepare asset record fields
-    for (uint16_t idx = 0u; idx < (field_count_for_page * EXTENDED_ASSET_MULTIPLIER); idx++) {
+    for (uint16_t idx = 0u; idx < total_fields; idx++) {
         if ((pair_offset + idx) > UINT8_MAX) {
             return false;
         }
@@ -264,6 +265,22 @@ static bool prepare_paged_modal_fields(
     return true;
 }
 
+/**
+ * @brief Handles rendering of a paged modal dialog UI component.
+ *
+ * The `draw_paged_modal` function is responsible for creating and displaying a modal dialog
+ * that can span multiple pages, with each page containing a variable number of interactive
+ * UI elements (bars). It supports both single-page and multi-page modals, adjusting the
+ * footer design accordingly.
+ *
+ * @param[in]   page                    The index of the current page to display (0-based)
+ * @param[in]   field_count_for_page    The number of fields/bars to display on the current page
+ * @param[in]   title                   The title text to display in the modal header
+ * @param[in]   text_ptrs               An array of text strings to display in the bars for the
+ * current page
+ *
+ * @return true if the modal was drawn successfully, otherwise false.
+ */
 static bool draw_paged_modal(uint8_t page,
                              uint16_t field_count_for_page,
                              const char *title,

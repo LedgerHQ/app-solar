@@ -25,8 +25,6 @@
 
 #include "handler/get_version.h"
 
-// #include <assert.h>  // _Static_assert
-// #include <limits.h>  // UINT8_MAX
 #include <stdint.h>  // uint*_t
 
 #include <io.h>  // io_send_response_pointer
