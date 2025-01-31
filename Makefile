@@ -31,8 +31,8 @@ DEFINES += APPNAME=\"Solar\"
 
 # Application version
 APPVERSION_M = 1
-APPVERSION_N = 1
-APPVERSION_P = 3
+APPVERSION_N = 2
+APPVERSION_P = 0
 APPVERSION = "$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)"
 
 # Application source files

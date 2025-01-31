@@ -3,7 +3,7 @@
 ################################################################################
 
 project(UiUtils
-  VERSION 1.1.3
+  VERSION 1.2.0
   DESCRIPTION "UI utils of the Solar app"
   LANGUAGES C)
 

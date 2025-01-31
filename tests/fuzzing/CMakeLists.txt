@@ -10,7 +10,7 @@ endif()
 
 project(
   SolarFuzzing
-  VERSION 1.1.3
+  VERSION 1.2.0
   DESCRIPTION "Fuzzing of the Solar app"
   LANGUAGES C)
 

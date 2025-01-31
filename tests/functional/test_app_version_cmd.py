@@ -4,8 +4,8 @@ from application_client.solar_response_unpacker import unpack_get_version_respon
 
 # Taken from the Makefile, to update every time the Makefile version is bumped
 MAJOR = 1
-MINOR = 1
-PATCH = 3
+MINOR = 2
+PATCH = 0
 
 
 # Verify the behaviour when getting the Solar app's version.

@@ -3,7 +3,7 @@
 ################################################################################
 
 project(MessageDeserialiser
-  VERSION 1.1.3
+  VERSION 1.2.0
   DESCRIPTION "Message deserialiser of the Solar app"
   LANGUAGES C)
 

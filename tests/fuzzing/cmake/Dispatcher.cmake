@@ -3,7 +3,7 @@
 ################################################################################
 
 project(Dispatcher
-  VERSION 1.1.3
+  VERSION 1.2.0
   DESCRIPTION "Apdu dispatcher of the Solar app"
   LANGUAGES C)
 
@@ -13,10 +13,10 @@ project(Dispatcher
 
 add_definitions(
   -DAPPNAME=\"Solar\"
-  -DAPPVERSION=\"1.1.3\"
+  -DAPPVERSION=\"1.2.0\"
   -DMAJOR_VERSION=1
-  -DMINOR_VERSION=1
-  -DPATCH_VERSION=3
+  -DMINOR_VERSION=2
+  -DPATCH_VERSION=0
   -DBAGL_HEIGHT=64
   -DBAGL_WIDTH=128
   -DHAVE_BAGL
