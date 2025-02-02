@@ -44,19 +44,13 @@ static const char SIGN_ACTION_TEXT[] = "Hold to sign";
 
 /* -------------------------------------------------------------------------- */
 
-static const char EMPTY_STRING[] = "";
-static const char S_CHAR_STRING_LOWER_CASE[] = "s";
+#define TXINFO_FIELD_COUNT 4
 
-/* -------------------------------------------------------------------------- */
-
-#define TXINFO_FIELD_COUNT 3
-
-static const uint8_t TXINFO_FIELD_COUNT_INCREMENT = 1u;
 static const uint16_t TXINFO_FIELD_COUNT_ZERO = 0u;
+static const uint8_t TXINFO_FIELD_COUNT_INCREMENT = 1u;
 
 static const uint8_t TXINFO_FIELD_POS_ZERO = 0u;
-static const uint8_t TXINFO_FIELD_POS_ONE = 1u;
-static const uint8_t TXINFO_FIELD_POS_TWO = 2u;
+static const uint8_t TXINFO_FIELD_POS_MAX = 3u;
 
 /* -------------------------------------------------------------------------- */
 
@@ -87,7 +81,7 @@ static void handle_review_error(void) {
 static void txinfo_page_action_callback(int token, uint8_t index, int page) {
     // Extended asset field was tapped.
     if ((page == TXINFO_PAGE) && (token == TXINFO_PAGE_ACTION_TOKEN) &&
-        (index <= TXINFO_FIELD_POS_TWO)) {
+        (index <= TXINFO_FIELD_POS_MAX)) {
         display_modal(&G_ui_txreview_ctx, index);
     }
 }
@@ -102,47 +96,60 @@ static void sign_page_action_callback(int token, uint8_t index, int page) {
 /* -------------------------------------------------------------------------- */
 /* -------------------------- TxInfo Page Helpers --------------------------- */
 
-static uint8_t set_txinfo_asset_field(ui_tx_review_ctx_t *ctx) {
-    // No asset records need to be displayed.
-    if (ctx->asset.record_type == RECORD_TYPE_NONE) {
-        return 0u;
-    }
+static uint8_t set_txinfo_asset_field_pair(ui_tx_review_ctx_t *ctx) {
+    // One asset record pair needs to be displayed.
+    // (single-payment/vote transactions)
+    if (ctx->asset.record_count < ASSET_MODAL_THRESHOLD) {
+        const uint16_t asset_record_pair_count = 2u;
 
-    // One tappable asset record needs to be displayed.
-    if (ctx->asset.record_type == RECORD_TYPE_SINGLE) {
-        (void)G_ui_txreview_ctx.asset.record_provider(ctx->tx_data,
-                                                      txinfo_texts[TXINFO_FIELD_POS_ZERO].item,
-                                                      txinfo_texts[TXINFO_FIELD_POS_ZERO].value,
-                                                      0u);
+        for (uint16_t idx = 0u; idx < asset_record_pair_count; idx++) {
+            (void)G_ui_txreview_ctx.asset.record_provider(ctx->tx_data,
+                                                          txinfo_texts[idx].item,
+                                                          txinfo_texts[idx].value,
+                                                          idx);
 
-        txinfo_pairs[TXINFO_FIELD_POS_ZERO].item = txinfo_texts[TXINFO_FIELD_POS_ZERO].item;
-        txinfo_pairs[TXINFO_FIELD_POS_ZERO].value = txinfo_texts[TXINFO_FIELD_POS_ZERO].value;
+            txinfo_pairs[idx].item = txinfo_texts[idx].item;
+            txinfo_pairs[idx].value = txinfo_texts[idx].value;
 
-        return TXINFO_FIELD_COUNT_INCREMENT;
+#if defined(TARGET_FLEX)
+            const uint16_t line_limit = 2u;
+
+            // Check that an address or username does not wrap to a 3rd line on flex devices when
+            // the optional tx memo contains text, which could result in the memo field being pushed
+            // outside the screen's bounds. While unlikely to happen with a payment address — and
+            // impossible for a username (20 char limit), the transaction is gracefully rejected in
+            // the event that a 3rd line would be used.
+            if ((idx == 0u) && (ctx->tx_data->memo_len > 0u) &&
+                (nbgl_getTextNbLinesInWidth(SMALL_BOLD_FONT,
+                                            txinfo_texts[idx].value,
+                                            AVAILABLE_WIDTH,
+                                            true) > line_limit)) {
+                handle_review_error();
+                return TXINFO_FIELD_COUNT_ZERO;
+            }
+#endif
+        }
+
+        return asset_record_pair_count;
     }
 
     // One tappable asset field needs to be displayed.
-    // The asset record(s) will be displayed via modal.
+    // All asset records will be displayed via modal.
     static char extended_content_title[MAX_ITEM_LEN] = {0};
     static char extended_content_value[MAX_ITEM_LEN] = {0};
 
-    const char *plural_suffix = (ctx->asset.record_count == EXTENDED_ASSET_THRESHOLD)
-                                    ? EMPTY_STRING
-                                    : S_CHAR_STRING_LOWER_CASE;
-
     if (snprintf(extended_content_title, MAX_ITEM_LEN, "%ss", ctx->asset.label) < 0) {
         handle_review_error();
-        return 0u;
+        return TXINFO_FIELD_COUNT_ZERO;
     }
 
     if (snprintf(extended_content_value,
                  MAX_ITEM_LEN,
-                 "%u %s%s",
+                 "%u %ss",
                  (unsigned int)ctx->asset.record_count,
-                 ctx->asset.label,
-                 plural_suffix) < 0) {
+                 ctx->asset.label) < 0) {
         handle_review_error();
-        return 0u;
+        return TXINFO_FIELD_COUNT_ZERO;
     }
 
     txinfo_pairs[TXINFO_FIELD_POS_ZERO].item = extended_content_title;
@@ -152,55 +159,75 @@ static uint8_t set_txinfo_asset_field(ui_tx_review_ctx_t *ctx) {
     return TXINFO_FIELD_COUNT_INCREMENT;
 }
 
-static uint8_t set_txinfo_fee_field(const ui_tx_review_ctx_t *ctx) {
-    const uint8_t txinfo_pos = (ctx->asset.record_count == TXINFO_FIELD_COUNT_ZERO)
-                                   ? TXINFO_FIELD_POS_ZERO
-                                   : TXINFO_FIELD_POS_ONE;
-
-    if (!ui_set_fee(ctx->tx_data, txinfo_texts[txinfo_pos].item, txinfo_texts[txinfo_pos].value)) {
-        return 0u;
+static uint8_t set_txinfo_asset_field(ui_tx_review_ctx_t *ctx) {
+    // No asset records need to be displayed.
+    if (ctx->asset.record_type == RECORD_TYPE_NONE) {
+        return TXINFO_FIELD_COUNT_ZERO;
     }
 
-    txinfo_pairs[txinfo_pos].item = txinfo_texts[txinfo_pos].item;
-    txinfo_pairs[txinfo_pos].value = txinfo_texts[txinfo_pos].value;
+    // One asset record needs to be displayed.
+    if (ctx->asset.record_type == RECORD_TYPE_SINGLE) {
+        (void)G_ui_txreview_ctx.asset.record_provider(ctx->tx_data,
+                                                      txinfo_texts[TXINFO_FIELD_POS_ZERO].item,
+                                                      txinfo_texts[TXINFO_FIELD_POS_ZERO].value,
+                                                      TXINFO_FIELD_POS_ZERO);
+
+        txinfo_pairs[TXINFO_FIELD_POS_ZERO].item = txinfo_texts[TXINFO_FIELD_POS_ZERO].item;
+        txinfo_pairs[TXINFO_FIELD_POS_ZERO].value = txinfo_texts[TXINFO_FIELD_POS_ZERO].value;
+
+        return TXINFO_FIELD_COUNT_INCREMENT;
+    }
+
+    // One or more pair-type asset records need to be displayed.
+    if (ctx->asset.record_type == RECORD_TYPE_PAIR) {
+        return set_txinfo_asset_field_pair(ctx);
+    }
+
+    handle_review_error();
+    return TXINFO_FIELD_COUNT_ZERO;
+}
+
+static uint8_t set_txinfo_fee_field(const ui_tx_review_ctx_t *ctx, const uint8_t offset) {
+    if (!ui_set_fee(ctx->tx_data, txinfo_texts[offset].item, txinfo_texts[offset].value)) {
+        return TXINFO_FIELD_COUNT_ZERO;
+    }
+
+    txinfo_pairs[offset].item = txinfo_texts[offset].item;
+    txinfo_pairs[offset].value = txinfo_texts[offset].value;
 
     return TXINFO_FIELD_COUNT_INCREMENT;
 }
 
-static uint8_t set_txinfo_memo_field(const ui_tx_review_ctx_t *ctx) {
+static uint8_t set_txinfo_memo_field(const ui_tx_review_ctx_t *ctx, const uint8_t offset) {
     if (ctx->tx_data->memo_len == 0u) {
-        return 0u;
+        return TXINFO_FIELD_COUNT_ZERO;
     }
 
-    const uint8_t txinfo_pos = (ctx->asset.record_count == TXINFO_FIELD_COUNT_ZERO)
-                                   ? TXINFO_FIELD_POS_ONE
-                                   : TXINFO_FIELD_POS_TWO;
-
-    if (!ui_set_memo(ctx->tx_data, txinfo_texts[txinfo_pos].item, txinfo_texts[txinfo_pos].value)) {
-        return 0u;
+    if (!ui_set_memo(ctx->tx_data, txinfo_texts[offset].item, txinfo_texts[offset].value)) {
+        return TXINFO_FIELD_COUNT_ZERO;
     }
 
-    txinfo_pairs[txinfo_pos].item = txinfo_texts[txinfo_pos].item;
-    txinfo_pairs[txinfo_pos].value = txinfo_texts[txinfo_pos].value;
+    txinfo_pairs[offset].item = txinfo_texts[offset].item;
+    txinfo_pairs[offset].value = txinfo_texts[offset].value;
 
     // Truncate long memos. The full memo will be displayed via modal.
     if (ctx->tx_data->memo_len > MEMO_TRUNCACTION_THRESHOLD) {
-        (void)strlcpy(&txinfo_texts[txinfo_pos].value[MEMO_TRUNCACTION_THRESHOLD],
+        (void)strlcpy(&txinfo_texts[offset].value[MEMO_TRUNCACTION_THRESHOLD],
                       TEXT_TRUNCATION_SUFFIX,
                       MAX_VALUE_LEN);
-        txinfo_pairs[txinfo_pos].valueIcon = &CHEVRON_NEXT_ICON;
+        txinfo_pairs[offset].valueIcon = &CHEVRON_NEXT_ICON;
     }
 
     return TXINFO_FIELD_COUNT_INCREMENT;
 }
 
 static uint8_t set_txinfo_page_fields(ui_tx_review_ctx_t *ctx) {
-    uint8_t pair_count = 0u;
-    pair_count += set_txinfo_asset_field(ctx);
-    pair_count += set_txinfo_fee_field(ctx);
-    pair_count += set_txinfo_memo_field(ctx);
+    uint8_t field_count = 0u;
+    field_count += set_txinfo_asset_field(ctx);
+    field_count += set_txinfo_fee_field(ctx, field_count);
+    field_count += set_txinfo_memo_field(ctx, field_count);
 
-    return pair_count;
+    return field_count;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -218,12 +245,12 @@ static void set_review_intent_page(const ui_tx_review_ctx_t *ctx, nbgl_content_t
 }
 
 static void set_txinfo_page(ui_tx_review_ctx_t *ctx, nbgl_content_t *content) {
-    const uint8_t pair_count = set_txinfo_page_fields(ctx);
+    const uint8_t field_count = set_txinfo_page_fields(ctx);
 
     content->type = TAG_VALUE_LIST;
     content->content.tagValueList.pairs = txinfo_pairs;
     content->content.tagValueList.callback = NULL;
-    content->content.tagValueList.nbPairs = pair_count;
+    content->content.tagValueList.nbPairs = field_count;
     content->content.tagValueList.startIndex = 0u;
     content->content.tagValueList.nbMaxLinesForValue = 0u;
     content->content.tagValueList.smallCaseForValue = true;

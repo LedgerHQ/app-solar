@@ -20,8 +20,6 @@
 # 	- stax
 #
 # Usage:
-#   - bash tools/cppcheck/cppcheck.sh
-#        -> Run cppcheck for all devices
 #   - bash tools/cppcheck/cppcheck.sh stax
 #        -> Run cppcheck for a specific device
 ################################################################################
@@ -32,7 +30,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-# Optional: Specified device, or all supported devices when empty
+# Required
 DEVICE_TARGET=""
 
 # Parse device argument

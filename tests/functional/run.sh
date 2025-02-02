@@ -8,6 +8,10 @@
 ################################################################################
 
 ################################################################################
+#
+# Uses:
+#   - sudo docker run --rm -ti --privileged -v "$(pwd -P):/app" ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
+#
 # Devices:
 #   - flex
 # 	- nanosp

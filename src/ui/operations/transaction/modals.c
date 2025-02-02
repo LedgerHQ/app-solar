@@ -121,7 +121,7 @@ static inline uint8_t get_asset_bounds(const ui_tx_review_ctx_t *ctx) {
                : (ctx->asset.record_count * EXTENDED_ASSET_MULTIPLIER);
 }
 
-static uint16_t get_field_count_for_page(uint8_t page) {
+static uint16_t get_bar_count_for_page(uint8_t page) {
     const uint16_t bar_count_U16 = (uint16_t)MODAL_PAGE_BAR_COUNT_MAX;
     uint16_t field_count = G_ui_txreview_ctx.asset.record_count;
     uint16_t count_for_page = 0u;
@@ -202,8 +202,8 @@ static nbgl_contentTagValue_t *get_field_value(uint8_t index) {
 
 static bool prepare_paged_modal_fields(
     const ui_tx_review_ctx_t *ctx,
-    uint8_t page,
-    uint16_t field_count_for_page,
+    const uint8_t page,
+    const uint16_t bar_count_for_page,
     char text_storage[MODAL_PAGE_BAR_COUNT_MAX][SUMMARY_LINE_LENGTH_MAX],
     const char *text_ptrs[MODAL_PAGE_BAR_COUNT_MAX]) {
     if (ctx == NULL) {
@@ -215,7 +215,7 @@ static bool prepare_paged_modal_fields(
     const uint8_t label_len = strnlen(ctx->asset.label, MAX_VALUE_LEN);
     const uint8_t available_len =
         SUMMARY_LINE_LENGTH_MAX - label_len - sizeof(TEXT_TRUNCATION_SUFFIX);
-    const uint16_t total_fields = field_count_for_page * EXTENDED_ASSET_MULTIPLIER;
+    const uint16_t total_fields = bar_count_for_page * EXTENDED_ASSET_MULTIPLIER;
 
     // Prepare asset record fields
     for (uint16_t idx = 0u; idx < total_fields; idx++) {
@@ -265,29 +265,49 @@ static bool prepare_paged_modal_fields(
     return true;
 }
 
-/**
- * @brief Handles rendering of a paged modal dialog UI component.
- *
- * The `draw_paged_modal` function is responsible for creating and displaying a modal dialog
- * that can span multiple pages, with each page containing a variable number of interactive
- * UI elements (bars). It supports both single-page and multi-page modals, adjusting the
- * footer design accordingly.
- *
- * @param[in]   page                    The index of the current page to display (0-based)
- * @param[in]   field_count_for_page    The number of fields/bars to display on the current page
- * @param[in]   title                   The title text to display in the modal header
- * @param[in]   text_ptrs               An array of text strings to display in the bars for the
- * current page
- *
- * @return true if the modal was drawn successfully, otherwise false.
- */
-static bool draw_paged_modal(uint8_t page,
-                             uint16_t field_count_for_page,
+static void configure_paged_modal_footer(const uint8_t page,
+                                         nbgl_layoutFooter_t *footer_description) {
+    const uint8_t modal_page_count = get_modal_page_count();
+    const uint8_t footer_nav_threshold = 1u;
+
+    footer_description->separationLine = true;
+
+    // Single-page modals (page_count == 1) use a text button footer.
+    if (modal_page_count == footer_nav_threshold) {
+        footer_description->type = FOOTER_SIMPLE_TEXT;
+        footer_description->button.icon = NULL;
+        footer_description->button.style = NO_BORDER;
+        footer_description->button.fittingContent = false;
+        footer_description->button.onBottom = false;
+        footer_description->button.token = PAGED_MODAL_CLOSE_TOKEN;
+        footer_description->button.tuneId = TUNE_TAP_CASUAL;
+        footer_description->simpleText.text = MODAL_CLOSE_TEXT;
+        footer_description->simpleText.token = PAGED_MODAL_CLOSE_TOKEN;
+        footer_description->simpleText.tuneId = TUNE_TAP_CASUAL;
+    }
+    // Multi-page modals (page_count > 1) use a nav footer.
+    else {
+        footer_description->type = FOOTER_NAV;
+        footer_description->navigation.activePage = page;
+        footer_description->navigation.nbPages = modal_page_count;
+        footer_description->navigation.withExitKey = true;
+        footer_description->navigation.withBackKey = true;
+        footer_description->navigation.withPageIndicator = false;
+        footer_description->navigation.token = PAGED_MODAL_NAV_TOKEN;
+        footer_description->navigation.tuneId = TUNE_TAP_CASUAL;
+    }
+}
+
+static bool draw_paged_modal(const uint8_t page,
+                             const uint16_t bar_count_for_page,
                              const char *title,
                              const char *text_ptrs[MODAL_PAGE_BAR_COUNT_MAX]) {
-    const uint8_t footer_nav_threshold = 1u;
-    const uint8_t modal_page_count = get_modal_page_count();
-    const int SEPARATOR_LINE_THRESHOLD = 10;
+    static const uint8_t bar_tokens_table[] = {BAR_1_TOKEN,
+                                               BAR_2_TOKEN,
+                                               BAR_3_TOKEN,
+                                               BAR_4_TOKEN,
+                                               BAR_5_TOKEN};
+    const int separator_line_threshold = 10;
     int available_height = SCREEN_HEIGHT;
 
     if ((title == NULL) || (text_ptrs == NULL)) {
@@ -304,56 +324,27 @@ static bool draw_paged_modal(uint8_t page,
                                                     .title.text = title};
 
     nbgl_layoutFooter_t footer_description;
-    footer_description.separationLine = true;
-
-    // Single-page modals (page_count == THRESHOLD) use a text button footer.
-    if (modal_page_count == footer_nav_threshold) {
-        footer_description.type = FOOTER_SIMPLE_TEXT;
-        footer_description.button.icon = NULL;
-        footer_description.button.style = NO_BORDER;
-        footer_description.button.fittingContent = false;
-        footer_description.button.onBottom = false;
-        footer_description.button.token = PAGED_MODAL_CLOSE_TOKEN;
-        footer_description.button.tuneId = TUNE_TAP_CASUAL;
-        footer_description.simpleText.text = MODAL_CLOSE_TEXT;
-        footer_description.simpleText.token = PAGED_MODAL_CLOSE_TOKEN;
-        footer_description.simpleText.tuneId = TUNE_TAP_CASUAL;
-    }
-    // Multi-page modals (page_count > THRESHOLD) use a text and nav footer.
-    else {
-        footer_description.type = FOOTER_NAV;
-        footer_description.navigation.activePage = page;
-        footer_description.navigation.nbPages = modal_page_count;
-        footer_description.navigation.withExitKey = true;
-        footer_description.navigation.withBackKey = true;
-        footer_description.navigation.withPageIndicator = false;
-        footer_description.navigation.token = PAGED_MODAL_NAV_TOKEN;
-        footer_description.navigation.tuneId = TUNE_TAP_CASUAL;
-    }
+    configure_paged_modal_footer(page, &footer_description);
 
     modal_layout_ptr = nbgl_layoutGet(&layout_description);
     if (modal_layout_ptr == NULL) {
         return false;
     }
 
-    int header_height = nbgl_layoutAddHeader(modal_layout_ptr, &header_description);
+    const int header_height = nbgl_layoutAddHeader(modal_layout_ptr, &header_description);
     if (header_height < 0) {
         return false;
     }
     available_height -= header_height;
 
-    int footer_height = nbgl_layoutAddExtendedFooter(modal_layout_ptr, &footer_description);
+    const int footer_height = nbgl_layoutAddExtendedFooter(modal_layout_ptr, &footer_description);
     if (footer_height < 0) {
         return false;
     }
     available_height -= footer_height;
 
-    static const uint8_t bar_tokens_table[] = {BAR_1_TOKEN,
-                                               BAR_2_TOKEN,
-                                               BAR_3_TOKEN,
-                                               BAR_4_TOKEN,
-                                               BAR_5_TOKEN};
-    for (uint8_t idx = 0u; idx < (uint8_t)field_count_for_page; idx++) {
+    // Add bars with separator lines to the page iteratively
+    for (uint8_t idx = 0u; idx < (uint8_t)bar_count_for_page; idx++) {
         nbgl_layoutBar_t bar;
         (void)memset(&bar, 0, sizeof(bar));
         bar.text = text_ptrs[idx];
@@ -365,13 +356,13 @@ static bool draw_paged_modal(uint8_t page,
         bar.large = false;
         bar.inactive = false;
 
-        int bar_height = nbgl_layoutAddTouchableBar(modal_layout_ptr, &bar);
+        const int bar_height = nbgl_layoutAddTouchableBar(modal_layout_ptr, &bar);
         if (bar_height < 0) {
             return false;
         }
         available_height -= bar_height;
 
-        if (available_height > SEPARATOR_LINE_THRESHOLD) {
+        if (available_height > separator_line_threshold) {
             if (nbgl_layoutAddSeparationLine(modal_layout_ptr) < 0) {
                 return false;
             }
@@ -390,15 +381,15 @@ static void display_modal_page(uint8_t page) {
     static char text_storage[MODAL_PAGE_BAR_COUNT_MAX][SUMMARY_LINE_LENGTH_MAX] = {0};
     static const char *text_ptrs[MODAL_PAGE_BAR_COUNT_MAX] = {0};
 
-    const uint16_t field_count_for_page = get_field_count_for_page(page);
-    if (field_count_for_page == 0u) {
+    const uint16_t bar_count_for_page = get_bar_count_for_page(page);
+    if (bar_count_for_page == 0u) {
         handle_modal_error();
         return;
     }
 
     const uint8_t page_offset = page * MODAL_PAGE_BAR_COUNT_MAX;
     const uint8_t first_pos = page_offset + FIELD_OFFSET;
-    const uint16_t last_pos = ((uint16_t)page_offset) + field_count_for_page;
+    const uint16_t last_pos = ((uint16_t)page_offset) + bar_count_for_page;
     const uint8_t storage_slot = page % MODAL_PAIRS_BUFFER_SIZE;
     const uint8_t base_index = page * ((uint8_t)EXTENDED_ASSET_MULTIPLIER);
 
@@ -417,7 +408,7 @@ static void display_modal_page(uint8_t page) {
 
     if (!prepare_paged_modal_fields(&G_ui_txreview_ctx,
                                     page,
-                                    field_count_for_page,
+                                    bar_count_for_page,
                                     text_storage,
                                     text_ptrs)) {
         explicit_bzero(asset_modal_title, SUMMARY_LINE_LENGTH_MAX);
@@ -427,13 +418,13 @@ static void display_modal_page(uint8_t page) {
 
     modal_pairs_list.pairs = &modal_pairs[storage_slot];
     modal_pairs_list.callback = NULL;
-    modal_pairs_list.nbPairs = (uint8_t)field_count_for_page;
+    modal_pairs_list.nbPairs = (uint8_t)bar_count_for_page;
     modal_pairs_list.startIndex = base_index;
     modal_pairs_list.nbMaxLinesForValue = 0u;
     modal_pairs_list.smallCaseForValue = true;
     modal_pairs_list.wrapping = true;
 
-    if (!draw_paged_modal(page, field_count_for_page, asset_modal_title, text_ptrs)) {
+    if (!draw_paged_modal(page, bar_count_for_page, asset_modal_title, text_ptrs)) {
         explicit_bzero(asset_modal_title, SUMMARY_LINE_LENGTH_MAX);
         handle_modal_error();
         return;
@@ -526,15 +517,10 @@ static void display_details_modal(const ui_tx_review_ctx_t *ctx, uint8_t token) 
         return;
     }
 
-    if (ctx->asset.record_count == EXTENDED_ASSET_THRESHOLD) {
-        modal_pairs_list.pairs = NULL;
-        modal_pairs_list.callback = get_field_value;
-    } else {
-        const uint16_t field_offset = ((uint16_t)bar_token) * EXTENDED_ASSET_MULTIPLIER;
-        modal_pairs_list.pairs = &modal_pairs[field_offset];
-        modal_pairs_list.callback = NULL;
-    }
+    const uint16_t field_offset = ((uint16_t)bar_token) * EXTENDED_ASSET_MULTIPLIER;
 
+    modal_pairs_list.pairs = &modal_pairs[field_offset];
+    modal_pairs_list.callback = NULL;
     modal_pairs_list.nbPairs = details_modal_pair_count;
     modal_pairs_list.startIndex = 0u;
     modal_pairs_list.nbMaxLinesForValue = 0u;
@@ -637,18 +623,11 @@ void display_modal(ui_tx_review_ctx_t *ctx, uint8_t index) {
     // Extended asset field is tapped.
     if ((index == TXINFO_ITEM_INDEX_0) && (ctx->asset.record_type == RECORD_TYPE_PAIR)) {
         ctx->asset.current_modal_page = 0u;
-
-        // If there's only one asset record (one payment or one vote):
-        if (ctx->asset.record_count == EXTENDED_ASSET_THRESHOLD) {
-            display_details_modal(ctx, (uint8_t)FIRST_USER_TOKEN);
-        } else {
-            display_modal_page(ctx->asset.current_modal_page);
-        }
+        display_modal_page(ctx->asset.current_modal_page);
     }
 
     // Long memo field is tapped.
-    if (((index == TXINFO_ITEM_INDEX_1) || (index == TXINFO_ITEM_INDEX_2)) &&
-        (ctx->tx_data->memo_len > MEMO_TRUNCACTION_THRESHOLD)) {
+    if ((index >= TXINFO_ITEM_INDEX_1) && (ctx->tx_data->memo_len > MEMO_TRUNCACTION_THRESHOLD)) {
         display_memo_modal(ctx);
     }
 }
@@ -683,15 +662,7 @@ static void modal_action_callback(int token, uint8_t index) {
 
     if (token == DETAILS_MODAL_DISMISS_TOKEN) {
         release_layout(modal_layout_ptr);
-
-        // If there's only one asset record, we're returning from a details modal.
-        if (G_ui_txreview_ctx.asset.record_count == EXTENDED_ASSET_THRESHOLD) {
-            // Return to the txinfo page.
-            nbgl_screenRedraw();
-        } else {
-            // Otherwise, display the paged bar modal.
-            display_modal_page(G_ui_txreview_ctx.asset.current_modal_page);
-        }
+        display_modal_page(G_ui_txreview_ctx.asset.current_modal_page);
     }
 
     if (token == PAGED_MODAL_CLOSE_TOKEN) {

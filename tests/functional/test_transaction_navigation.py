@@ -43,6 +43,7 @@ LONG_MEMO = (
 # Screen Tap Helpers  (Flex, Stax)                                             #
 ################################################################################
 
+
 # TxInfo Page Taps
 TXINFO_TAP_FIELD_1_FLEX = NavIns(NavInsID.TOUCH, (430, 100))
 TXINFO_TAP_FIELD_1_STAX = NavIns(NavInsID.TOUCH, (360, 105))
@@ -52,6 +53,9 @@ TXINFO_TAP_FIELD_2_STAX = NavIns(NavInsID.TOUCH, (360, 195))
 
 TXINFO_TAP_FIELD_3_FLEX = NavIns(NavInsID.TOUCH, (430, 304))
 TXINFO_TAP_FIELD_3_STAX = NavIns(NavInsID.TOUCH, (360, 285))
+
+TXINFO_TAP_FIELD_4_FLEX = NavIns(NavInsID.TOUCH, (430, 450))
+TXINFO_TAP_FIELD_4_STAX = NavIns(NavInsID.TOUCH, (360, 410))
 
 
 # Modal Taps
@@ -71,7 +75,6 @@ MODAL_TAP_FIELD_5_STAX = NavIns(NavInsID.TOUCH, (360, 515))
 
 
 # Navigation Taps
-# NAV_TAP_CLOSE_FLEX = NavIns(NavInsID.TOUCH, (90, 550))
 NAV_TAP_CLOSE_FLEX = NavIns(NavInsID.TOUCH, (90, 550))
 NAV_TAP_CLOSE_STAX = NavIns(NavInsID.TOUCH, (40, 625))
 
@@ -344,13 +347,9 @@ def test_transaction_navigation_transfer_single_payment(
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
 
-            # Payment 1 of 1
-            TXINFO_TAP_FIELD_1_FLEX,
-            NAV_TAP_DISMISS_FLEX,
-
             # Memo details modal
             # tap extended memo field, then dismiss details modal
-            TXINFO_TAP_FIELD_3_FLEX,
+            TXINFO_TAP_FIELD_4_FLEX,
             NAV_TAP_DISMISS_FLEX,
 
             NAV_TAP_NEXT_FLEX,
@@ -363,12 +362,8 @@ def test_transaction_navigation_transfer_single_payment(
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
 
-            # Payment 1 of 1
-            TXINFO_TAP_FIELD_1_STAX,
-            NAV_TAP_DISMISS_STAX,
-
             # Memo details modal
-            TXINFO_TAP_FIELD_3_STAX,
+            TXINFO_TAP_FIELD_4_STAX,
             NAV_TAP_DISMISS_STAX,
 
             NAV_TAP_NEXT_STAX,

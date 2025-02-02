@@ -11,9 +11,8 @@
 
 #include <stdint.h>  // uint*_t
 
-const uint8_t EXTENDED_ASSET_THRESHOLD = 1u;
+const uint8_t ASSET_MODAL_THRESHOLD = 2u;
 const uint8_t FIELD_OFFSET = 1u;
-const uint8_t MEMO_TRUNCACTION_THRESHOLD = 36u;
 const char TEXT_TRUNCATION_SUFFIX[4] = "...";
 
 #endif

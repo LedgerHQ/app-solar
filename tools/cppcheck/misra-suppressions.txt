@@ -149,6 +149,13 @@ misra-c2012-10.1:src/crypto/crypto.c:178
 
 
 ################################################################################
+# MISRA-C:2012 Deviation: Rule 12.1 (Advisory)
+# Justification: 'AVAILABLE_WIDTH' is a Ledger SDK-defined macro used to calculate
+# the screen width for NBGL devices.
+misra-c2012-12.1:src/ui/operations/transaction/review.c:125
+
+
+################################################################################
 # MISRA-C:2012 Deviation: Rule 12.2 (Required)
 # Justification: The bitwise OR operation between CX_ECSCHNORR_BIP0340 and CX_RND_TRNG 
 # constants is safe as these are pre-defined flag values by the Ledger SDK that are 
