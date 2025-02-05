@@ -195,9 +195,16 @@ static nbgl_contentTagValue_t *get_field_value(uint8_t index) {
 /* ------------------------------ Paged Modal ------------------------------- */
 
 /*
- * A paged modal is used for displaying multiple asset records (many payments or votes) for review.
- * This is always called from the TxInfo page and uses 'bars' to display a summary of each asset
- * record alongside a tappable icon. Upon being tapped, the full values are displayed via modal.
+ * A paged modal is used to display multiple multi-value asset records (payments or votes).
+ * Its layout contains:
+ *   - a title header
+ *   - a list of bar items (each containing a summary of an asset record)
+ *   - a navigation footer
+ * It's called from the TxInfo page when a user taps the icon to the right of a summarised asset
+ * field.
+ * When a bar item is tapped, the associated record's full values are displayed in a details modal.
+ * When the 'X' footer navigation icon is tapped, the paged modal is closed and the user is
+ * returned to the TxInfo page.
  */
 
 static bool prepare_paged_modal_fields(
@@ -435,10 +442,13 @@ static void display_modal_page(uint8_t page) {
 /* ----------------------------- Details Modal ------------------------------ */
 
 /*
- * A details modal is used to when a user taps a particular asset record (a payment
- * or vote) for review. This may be called from either:
- *   - the TxInfo page when only one asset exists and it is tapped, or
- *   - the paged asset modal when there are many assets and one of them is tapped.
+ * A details modal is used to display a single multi-value asset record (a payment or vote).
+ * Its layout contains:
+ *   - multiple tag-value pairs
+ *   - a "Dismiss" button in the footer
+ * It is called from a paged modal when a user taps the bar item for a specific record.
+ * When "Dismiss" is tapped, the details modal is closed and the user is returned to the paged
+ * modal.
  */
 
 static bool draw_details_modal(char title[SUMMARY_LINE_LENGTH_MAX]) {
@@ -537,8 +547,15 @@ static void display_details_modal(const ui_tx_review_ctx_t *ctx, uint8_t token) 
 /* ------------------------------- Memo Modal ------------------------------- */
 
 /*
- * If a memo is longer than what can reasonably fit on the TxInfo page, a truncated summary is shown
- * alongside a tappable icon. Upon being tapped, the full memo is displayed via modal.
+ * A memo modal is used to display the full text of a memo that is too long to fit on the TxInfo
+ * page.
+ * Its layout contains:
+ *   - a single tag-value pair
+ *   - a "Dismiss" button in the footer
+ * It is called from the TxInfo page when a user taps the icon to the right of a truncated memo
+ * field.
+ * When "Dismiss" is tapped, the memo modal is closed and the user is returned to the TxInfo
+ * page.
  */
 
 static bool draw_memo_modal(void) {
