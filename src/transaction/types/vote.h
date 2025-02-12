@@ -2,35 +2,27 @@
 
 #include <stdint.h>  // uint*_t
 
-#include "buffer.h"
+#include <buffer.h>  // buffer_t
 
-#include "transaction/errors.h"
+#include "transaction/transaction_errors.h"
 
-#define MAX_NUM_VOTES       53
-#define MIN_USERNAME_LENGTH 1
-#define MAX_USERNAME_LENGTH 20
-#define MAX_PERCENTAGE      10000
+/* -------------------------------------------------------------------------- */
 
-typedef struct {
-    uint8_t username_length;  /// Length of the username (1 byte)
-    uint8_t *username;        /// Username (1-20 bytes)
-    uint16_t percentage;      /// vote percentage (2 bytes)
-} vote_deserialised_t;
+extern const uint8_t CANCEL_VOTE_COUNT;  // 0u
 
 typedef struct {
-    uint8_t vote_length;  /// length (1 byte)
-    uint8_t *votes;       /// vote {username, percentage}
-} vote_transaction_asset_t;
+    const uint8_t *username;
+    uint16_t percent;
+    uint8_t username_length;  // (1..20 bytes)
+    uint8_t reserved;         // padding for alignment
+} vote_record_t;
 
-/**
- * Deserialise asset of transaction in structure.
- *
- * @param[in, out] buf
- *   Pointer to buffer with serialised transaction.
- * @param[out]     tx
- *   Pointer to transaction asset structure.
- *
- * @return PARSING_OK if success, error status otherwise.
- *
- */
-parser_status_e vote_type_deserialise(buffer_t *buf, vote_transaction_asset_t *tx);
+typedef struct {
+    const uint8_t *votes;  // Pointer to start of vote records
+    uint8_t vote_count;
+    uint8_t reserved[3];  // padding for alignment
+} vote_asset_t;
+
+/* -------------------------------------------------------------------------- */
+
+parser_status_e deserialise_vote(buffer_t *buf, vote_asset_t *votes);

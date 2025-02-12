@@ -1,74 +1,22 @@
 #pragma once
 
-/**
- * Status word for success.
- */
-#define SW_OK 0x9000
-/**
- * Status word for denied by user.
- */
-#define SW_DENY 0x6985
-/**
- * Status word for incorrect P1 or P2.
- */
-#define SW_WRONG_P1P2 0x6A86
-/**
- * Status word for either wrong Lc or length of APDU command less than 5.
- */
-#define SW_WRONG_DATA_LENGTH 0x6A87
-/**
- * Status word for unknown command with this INS.
- */
-#define SW_INS_NOT_SUPPORTED 0x6D00
-/**
- * Status word for instruction class is different than CLA.
- */
-#define SW_CLA_NOT_SUPPORTED 0x6E00
-/**
- * Status word for wrong response length (buffer too small or too big).
- */
-#define SW_WRONG_RESPONSE_LENGTH 0xB000
-/**
- * Status word for fail to display BIP32 path.
- */
-#define SW_DISPLAY_BIP32_PATH_FAIL 0xB001
-/**
- * Status word for fail to display a public key.
- */
-#define SW_DISPLAY_PUBLICKEY_FAIL 0xB002
-/**
- * Status word for fail to display amount.
- */
-#define SW_DISPLAY_AMOUNT_FAIL 0xB003
-/**
- * Status word for wrong transaction length.
- */
-#define SW_WRONG_TX_LENGTH 0xB004
-/**
- * Status word for fail of transaction parsing.
- */
-#define SW_TX_PARSING_FAIL 0xB005
-/**
- * Status word for fail of transaction hash.
- */
-#define SW_TX_HASH_FAIL 0xB006
-/**
- * Status word for bad state.
- */
-#define SW_BAD_STATE 0xB007
-/**
- * Status word for signature fail.
- */
-#define SW_SIGNATURE_FAIL 0xB008
-/**
- * Requests are not in order.
- */
-#define SW_OUT_OF_ORDER_REQ 0xB009
-/**
- * Status word for fail to encode an address.
- */
-#define SW_ENCODE_ADDRESS_FAIL 0xB010
-/**
- * Status word for fail to display an address.
- */
-#define SW_DISPLAY_ADDRESS_FAIL 0xB011
+// Standard status words (ISO 7816-4)
+#define SW_OK                ((uint16_t)0x9000)
+#define SW_DENY              ((uint16_t)0x6985)
+#define SW_WRONG_LENGTH      ((uint16_t)0x6700)
+#define SW_WRONG_P1P2        ((uint16_t)0x6B00)
+#define SW_INS_NOT_SUPPORTED ((uint16_t)0x6D00)
+#define SW_CLA_NOT_SUPPORTED ((uint16_t)0x6E00)
+
+#define SW_DISPLAY_BIP32_PATH_FAIL ((uint16_t)0xB001)
+#define SW_DISPLAY_ADDRESS_FAIL    ((uint16_t)0xB002)
+#define SW_WRONG_TX_LENGTH         ((uint16_t)0xB004)
+#define SW_TX_PARSING_FAIL         ((uint16_t)0xB005)
+#define SW_TX_HASH_FAIL            ((uint16_t)0xB006)
+#define SW_BAD_STATE               ((uint16_t)0xB007)
+#define SW_SIGNATURE_FAIL          ((uint16_t)0xB008)
+
+#define SW_REQ_ORDER_FAIL           ((uint16_t)0xB009)
+#define SW_DISPLAY_FAIL             ((uint16_t)0xB00A)
+#define SW_PUBKEY_PARSING_FAIL      ((uint16_t)0xB00B)
+#define SW_VALIDATION_HASH_MISMATCH ((uint16_t)0xB00C)

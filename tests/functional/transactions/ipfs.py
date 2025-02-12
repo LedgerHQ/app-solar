@@ -1,7 +1,8 @@
 from typing import Union
 
-from application_client.solar_utils import UINT64_MAX
 from application_client.solar_transaction import Transaction, TransactionError
+
+# from application_client.solar_utils import UINT64_MAX
 
 
 class Ipfs(Transaction):
@@ -22,7 +23,11 @@ class Ipfs(Transaction):
         self.ipfs: bytes = bytes.fromhex(ipfs) if isinstance(ipfs, str) else ipfs
 
         if len(self.ipfs) != self.ipfs[1] + 2:
-            raise TransactionError(f"Bad ipfs: '{self.ipfs}'!")
+            raise TransactionError(
+                f"Bad ipfs: '{self.ipfs.decode('utf-8', errors='replace')}'!"
+                if isinstance(self.ipfs, bytes)
+                else f"Bad ipfs: '{self.ipfs!r}"
+    )
 
     def serialise(self) -> bytes:
         return super().serialise() + b"".join([self.ipfs])

@@ -4,25 +4,50 @@
 
 #include "transaction/types/types.h"
 
-#define STARTING_BYTE         0xFF
-#define TRANSACTION_VERSION_3 0x03
+/* -------------------------------------------------------------------------- */
 
-typedef enum { TYPEGROUP_CORE = 1, TYPEGROUP_SOLAR = 2 } transaction_typegroup;
+#define STARTING_BYTE ((uint8_t)0xFF)
 
-typedef enum { IPFS = 5, TRANSFER = 6 } transaction_type_core;
-typedef enum { BURN = 0, VOTE = 2 } transaction_type_solar;
+#define TRANSACTION_VERSION_3 ((uint8_t)0x03)
+
+#define TYPEGROUP_CORE  ((uint32_t)0x01)
+#define TYPEGROUP_SOLAR ((uint32_t)0x02)
+
+#define CORE_TRANSACTION_TYPE_IPFS     ((uint16_t)0x05)
+#define CORE_TRANSACTION_TYPE_TRANSFER ((uint16_t)0x06)
+#define SOLAR_TRANSACTION_TYPE_BURN    ((uint16_t)0x00)
+#define SOLAR_TRANSACTION_TYPE_VOTE    ((uint16_t)0x02)
+
+/* -------------------------------------------------------------------------- */
 
 typedef struct {
-    // Message
-    uint16_t message_length;  /// Message length (4 bytes)
-    uint8_t *message;         /// message
-    // Transaction
-    uint32_t typeGroup;         /// typeGroup (4 bytes)
-    uint16_t type;              /// type (2 bytes)
-    uint8_t *sender_publickey;  /// sender public key (33 bytes)
-    uint64_t fee;               /// fee (8 bytes)
-    uint8_t memo_len;           /// length of memo (1 byte)
-    uint8_t *memo;              /// memo (MAX length 255)
-
-    transaction_asset_t core_asset;  /// transaction specific assets (variable length and structure)
+    transaction_asset_t asset;  // transaction specific assets
+    uint64_t fee;               // fee
+    union {
+        const uint8_t *message;  // message
+        const uint8_t *memo;     // memo (MAX length 255)
+    };
+    const uint8_t *sender_publickey;  // sender public key (33 bytes)
+    uint32_t typeGroup;               // typeGroup
+    uint16_t type;                    // type
+    union {
+        uint16_t message_length;  // Message length
+        uint8_t memo_len;         // length of memo
+    };
 } transaction_t;
+
+// typedef struct {
+//     // Message
+//     const uint8_t *message;  // message
+//     uint8_t message_length;   // Message length
+
+//     // Transaction
+//     const uint8_t *sender_publickey;  // sender public key (33 bytes)
+//     uint64_t fee;                     // fee
+//     uint32_t typeGroup;               // typeGroup
+//     uint16_t type;                    // type
+//     uint8_t memo_len;                 // length of memo
+//     const uint8_t *memo;              // memo (MAX length 255)
+//     transaction_asset_t asset;        // transaction specific assets (variable length and
+//     structure)
+// } transaction_t;

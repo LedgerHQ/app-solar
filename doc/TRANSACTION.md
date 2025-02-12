@@ -9,7 +9,7 @@
 The Solar Network currency is the SXP token which has a precision of 8 decimals. Solar transactions make use of raw currency values obtained by multiplying the SXP amount by `10^8` as exampled in the table below:
 
 |                                                                                                                       Unit                                                                                                                        |
-| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | <table><tr> <th>SXP</th> <th>10^8</th> </tr><tr> <td>`1`</td> <td>`100000000`</td> </tr><tr> <td>`25`</td> <td>`2500000000`</td> </tr><tr> <td>`50`</td> <td>`50000000000`</td> </tr><tr> <td>`10000`</td> <td>`1000000000000`</td> </tr></table> |
 
 > `1 SXP => 1.00000000 SXP => 100000000` for raw transactions.
@@ -23,7 +23,7 @@ Solar addresses are [Base58Check](https://en.bitcoin.it/wiki/Base58Check_encodin
 The network/version byte is used to set the leading character of the address and helps to both visually identify and ensure the correct network is being used.
 
 | Network | Dec  |  Hex   | Prefix | Address                              |
-| :-----: | :--: | :----: | :----: | ------------------------------------ |
+|:-------:|:----:|:------:|:------:|--------------------------------------|
 | Mainnet | `63` | `0x3F` |  `S`   | `SNAgA2XCRZDKfm5Vu9h4KR1bZw5xn9EiC3` |
 | Testnet | `30` | `0x1E` |  `D`   | `D61mfSggzbvQgTUe6JhYKH2doHaqJ3Dyib` |
 
@@ -32,15 +32,15 @@ The network/version byte is used to set the leading character of the address and
 <div align="center">
 
 |                              PublicKey                               |
-| :------------------------------------------------------------------: |
+|:--------------------------------------------------------------------:|
 | `034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192` |
 
 |            RIPEMD160(PublicKey)            |
-| :----------------------------------------: |
+|:------------------------------------------:|
 | `0995750207ecaf0ccf251c1265b92ad84f553662` |
 
 |    Base58Check(`0x3F`, RIPEMD160)    |    Base58Check(`0x1E`, RIPEMD160)    |
-| :----------------------------------: | :----------------------------------: |
+|:------------------------------------:|:------------------------------------:|
 | `SNAgA2XCRZDKfm5Vu9h4KR1bZw5xn9EiC3` | `D61mfSggzbvQgTUe6JhYKH2doHaqJ3Dyib` |
 
 </div>

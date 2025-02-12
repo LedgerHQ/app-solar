@@ -1,7 +1,7 @@
-from typing import Union, List
+from typing import List, Union
 
-from application_client.solar_utils import write_varint, UINT64_MAX
 from application_client.solar_transaction import Transaction, TransactionError
+from application_client.solar_utils import UINT64_MAX
 
 
 class Transfer(Transaction):
@@ -24,7 +24,7 @@ class Transfer(Transaction):
         self.amounts = []
         for address in addresses:
             if len(address) != 42:
-                raise TransactionError(f"Bad address: '{address}'!")
+                raise TransactionError(f"Bad address: {address!r}")
             self.addresses.append(
                 bytes.fromhex(address) if isinstance(address, str) else address
             )
@@ -35,7 +35,9 @@ class Transfer(Transaction):
             self.amounts.append(amount)
 
         if len(self.addresses) != len(self.amounts) or len(self.amounts) < 1:
-            raise TransactionError(f"Wrong number of recipients!")
+            raise TransactionError(
+                f"Wrong number of recipients!: '{len(self.amounts)}'!"
+            )
 
     def serialise(self) -> bytes:
         asset = b""

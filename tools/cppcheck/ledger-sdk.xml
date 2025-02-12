@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<def format="2">
+  <!-- Base58 Functions -->
+  <function name="base58_encode">
+    <noreturn>false</noreturn>
+    <returnValue type="int"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+    <arg nr="3"><not-null/></arg>
+    <arg nr="4"><valid>0:</valid></arg>
+  </function>
+
+  <!-- IO Functions -->
+  <function name="io_send_sw">
+    <noreturn>false</noreturn>
+    <returnValue type="int"/>
+    <arg nr="1"><valid>0:</valid></arg>
+  </function>
+
+  <function name="io_init">
+    <noreturn>false</noreturn>
+  </function>
+
+  <function name="io_recv_command">
+    <noreturn>false</noreturn>
+    <returnValue type="size_t"/>
+  </function>
+
+  <function name="io_send_response_pointer">
+    <noreturn>false</noreturn>
+    <returnValue type="int"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+    <arg nr="3"><valid>0:</valid></arg>
+  </function>
+
+  <!-- Buffer Functions -->
+  <function name="buffer_read_u8">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+  </function>
+
+  <function name="buffer_read_u16">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+  </function>
+
+  <function name="buffer_read_u32">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+  </function>
+
+  <function name="buffer_read_u64">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+  </function>
+
+  <function name="buffer_read_bip32_path">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+    <arg nr="3"><valid>0:</valid></arg>
+  </function>
+
+  <function name="buffer_seek_cur">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+  </function>
+
+  <function name="buffer_move">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+    <arg nr="3"><valid>0:</valid></arg>
+  </function>
+
+  <!-- Crypto Functions -->
+  <function name="cx_hash_ripemd160">
+    <noreturn>false</noreturn>
+    <returnValue type="size_t"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+    <arg nr="3"><not-null/></arg>
+    <arg nr="4"><valid>0:</valid></arg>
+  </function>
+
+  <function name="cx_hash_sha256">
+    <noreturn>false</noreturn>
+    <returnValue type="size_t"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+    <arg nr="3"><not-null/></arg>
+    <arg nr="4"><valid>0:</valid></arg>
+  </function>
+
+  <function name="cx_ecfp_generate_pair_no_throw">
+    <noreturn>false</noreturn>
+    <returnValue type="cx_err_t"/>
+    <arg nr="1"><valid>0:</valid></arg>
+    <arg nr="2"><not-null/></arg>
+    <arg nr="3"><not-null/></arg>
+    <arg nr="4"><valid>0:1</valid></arg>
+  </function>
+
+  <function name="cx_ecschnorr_sign_no_throw">
+    <noreturn>false</noreturn>
+    <returnValue type="cx_err_t"/>
+    <arg nr="1"><not-null/></arg>
+  </function>
+
+  <!-- Memory Functions -->
+  <function name="explicit_bzero">
+    <noreturn>false</noreturn>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+  </function>
+
+  <!-- Standard Functions -->
+  <function name="strlcat">
+    <noreturn>false</noreturn>
+    <returnValue type="size_t"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+    <arg nr="3"><valid>0:</valid></arg>
+  </function>
+
+  <function name="strlcpy">
+    <noreturn>false</noreturn>
+    <returnValue type="size_t"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><not-null/></arg>
+    <arg nr="3"><valid>0:</valid></arg>
+  </function>
+
+  <function name="strnlen">
+    <noreturn>false</noreturn>
+    <pure/>
+    <returnValue type="size_t"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+  </function>
+
+  <function name="check_ascii">
+    <noreturn>false</noreturn>
+    <returnValue type="bool"/>
+    <arg nr="1"><not-null/></arg>
+    <arg nr="2"><valid>0:</valid></arg>
+    <arg nr="3"><valid>0:1</valid></arg>
+  </function>
+
+  <!-- Types -->
+  <podtype name="cx_err_t" sign="s"/>
+  <podtype name="bolos_bool_t" sign="u"/>
+  <podtype name="size_t" sign="u"/>
+
+  <!-- Common Defines -->
+  <define name="PRINTF" value=""/>
+  <define name="PIC(x)" value="x"/>
+  <define name="APPNAME" value="Solar"/>
+</def>

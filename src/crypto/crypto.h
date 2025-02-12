@@ -1,60 +1,21 @@
 #pragma once
 
+#include <stdbool.h>
+#include <stddef.h>  // size_t
 #include <stdint.h>  // uint*_t
 
-#include "cx.h"
-#include "os.h"
+#include <buffer.h>
 
-/**
- * Derive private key given BIP32 path.
- *
- * @param[out] private_key
- *   Pointer to private key.
- * @param[out] chain_code
- *   Pointer to 32 bytes array for chain code.
- * @param[in]  bip32_path
- *   Pointer to buffer with BIP32 path.
- * @param[in]  bip32_path_len
- *   Number of path in BIP32 path.
- *
- * @return 0 if success, -1 otherwise.
- *
- * @throw INVALID_PARAMETER
- *
- */
-int crypto_derive_private_key(cx_ecfp_private_key_t *private_key,
-                              uint8_t chain_code[32],
-                              const uint32_t *bip32_path,
-                              uint8_t bip32_path_len);
+#include "constants.h"
 
-/**
- * Initialise public key given private key.
- *
- * @param[in]  private_key
- *   Pointer to private key.
- * @param[out] public_key
- *   Pointer to public key.
- * @param[out] raw_public_key
- *   Pointer to raw public key.
- *
- * @return 0 if success, -1 otherwise.
- *
- * @throw INVALID_PARAMETER
- *
- */
-int crypto_init_public_key(cx_ecfp_private_key_t *private_key,
-                           cx_ecfp_public_key_t *public_key,
-                           uint8_t raw_public_key[static 33]);
+bool hash_ripemd160(const uint8_t *in, size_t in_len, uint8_t out[HASH_20_LEN]);
 
-/**
- * Sign message hash in global context.
- *
- * @see G_context.bip32_path, G_context.tx_info.m_hash,
- * G_context.tx_info.signature.
- *
- * @return 0 if success, -1 otherwise.
- *
- * @throw INVALID_PARAMETER
- *
- */
-int crypto_sign_message(void);
+bool hash_sha256(const uint8_t *in, size_t in_len, uint8_t out[HASH_32_LEN]);
+
+int parse_bip32_path(buffer_t *cdata);
+
+int prepare_public_key(buffer_t *cdata, bool use_chain_code);
+
+int sign_message(void);
+
+int verify_message_hash(void);

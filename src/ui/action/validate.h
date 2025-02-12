@@ -1,30 +1,7 @@
 #pragma once
 
-#include <stdbool.h>  // bool
+#include <stdbool.h>
 
-/**
- * Action for public key validation and export.
- *
- * @param[in] choice
- *   User choice (either approved or rejectd).
- *
- */
-void ui_action_validate_pubkey(bool choice);
+#include "helper/send_response.h"
 
-/**
- * Action for address validation and export.
- *
- * @param[in] choice
- *   User choice (either approved or rejectd).
- *
- */
-void ui_action_validate_address(bool choice);
-
-/**
- * Action for transaction information validation.
- *
- * @param[in] choice
- *   User choice (either approved or rejectd).
- *
- */
-void ui_action_validate_transaction(bool choice);
+void ui_validate(helper_response_t response_type, bool choice);

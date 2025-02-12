@@ -1,11 +1,10 @@
 from io import BytesIO
-from typing import List, Optional, Literal
+from typing import List, Literal, Optional
 
-
-UINT64_MAX: int = 18446744073709551615
-UINT32_MAX: int = 4294967295
-UINT16_MAX: int = 65535
-UINT8_MAX: int = 255
+UINT64_MAX: int = 0xFFFFFFFFFFFFFFFF
+UINT32_MAX: int = 0xFFFFFFFF
+UINT16_MAX: int = 0xFFFF
+UINT8_MAX: int = 0xFF
 
 
 def bip32_path_from_string(path: str) -> List[bytes]:
@@ -18,9 +17,11 @@ def bip32_path_from_string(path: str) -> List[bytes]:
         splitted_path = splitted_path[1:]
 
     return [
-        int(p).to_bytes(4, byteorder="big")
-        if "'" not in p
-        else (0x80000000 | int(p[:-1])).to_bytes(4, byteorder="big")
+        (
+            int(p).to_bytes(4, byteorder="big")
+            if "'" not in p
+            else (0x80000000 | int(p[:-1])).to_bytes(4, byteorder="big")
+        )
         for p in splitted_path
     ]
 

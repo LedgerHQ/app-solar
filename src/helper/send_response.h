@@ -1,43 +1,13 @@
 #pragma once
 
-#include "os.h"
+#include <stdint.h>  // uint*_t
 
-#include "macros.h"
+/* -------------------------------------------------------------------------- */
 
-/**
- * Length of chain code.
- */
-#define CHAINCODE_LEN (MEMBER_SIZE(pubkey_ctx_t, chain_code))
+#define CHAINCODE_LEN ((uint8_t)32)
 
-/**
- * Helper to send APDU response with public key and chain code.
- *
- * response = PUBKEY_LEN (1) ||
- *            G_context.pk_info.public_key (PUBKEY_LEN) ||
- *            CHAINCODE_LEN (1) ||
- *            G_context.pk_info.chain_code (CHAINCODE_LEN)
- *
- * @return zero or positive integer if success, -1 otherwise.
- *
- */
-int helper_send_response_pubkey(void);
+typedef enum { ADDRESS_RESPONSE, PUBKEY_RESPONSE, SIGNATURE_RESPONSE } helper_response_t;
 
-/**
- * Helper to send APDU response with public key and chain code.
- *
- * response = ADDRESS_LEN(1) | ADDRESS(34)
- *
- * @return zero or positive integer if success, -1 otherwise.
- *
- */
-int helper_send_response_address(void);
+/* -------------------------------------------------------------------------- */
 
-/**
- * Helper to send APDU response with signature.
- *
- * response = G_context.tx_info.signature
- *
- * @return zero or positive integer if success, -1 otherwise.
- *
- */
-int helper_send_response_sig(void);
+int helper_send(helper_response_t responseType);
