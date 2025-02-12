@@ -59,10 +59,6 @@
  * @return zero or positive integer if successful, otherwise a negative integer.
  */
 int handler_get_public_key(buffer_t *cdata, bool user_approval, bool use_chain_code) {
-    if (cdata->size != PUBKEY_HASH_LEN) {
-        return io_send_sw(SW_PUBKEY_PARSING_FAIL);
-    }
-
     reset_app_context();
 
     G_context.req_type = CONFIRM_PUBLICKEY;
