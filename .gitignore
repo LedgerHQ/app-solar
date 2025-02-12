@@ -6,6 +6,7 @@ build/
 debug/
 dep/
 deps/
+ledger/
 obj/
 
 # tests and code coverage
