@@ -33,7 +33,7 @@ static const char TEXT_LABEL_ADDRESS_VERIFY[] = "Verify Address";
 
 /* -------------------------------------------------------------------------- */
 
-static char ui_address_text[ADDRESS_CHAR_LEN] = {0};
+static char ui_address_text[ADDRESS_CHAR_LEN + NULL_TERMINATOR_LEN] = {0};
 
 /* -------------------------------------------------------------------------- */
 

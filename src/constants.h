@@ -28,7 +28,6 @@
 #define PUBKEY_CHAR_LEN ((uint8_t)66)  // not including null-terminator
 
 #define MIN_BIP32_PATH ((size_t)0x02)
-// #define BIP32_PATH_MAX_LEN 10 (in Ledger SDK <bip32.h>)
 
 /* -------------------------------- Network --------------------------------- */
 

@@ -25,6 +25,10 @@
 /* -------------------------------------------------------------------------- */
 
 static bool configure_core_strategy(ui_tx_review_ctx_t *ctx) {
+    if (ctx == NULL) {
+        return false;
+    }
+
     switch (ctx->tx_data->type) {
         case CORE_TRANSACTION_TYPE_IPFS: {
             ctx->review_intent = REVIEW_INTENT(IPFS_INTENT);
@@ -54,6 +58,10 @@ static bool configure_core_strategy(ui_tx_review_ctx_t *ctx) {
 }
 
 static bool configure_solar_strategy(ui_tx_review_ctx_t *ctx) {
+    if (ctx == NULL) {
+        return false;
+    }
+
     switch (ctx->tx_data->type) {
         case SOLAR_TRANSACTION_TYPE_BURN: {
             ctx->review_intent = REVIEW_INTENT(BURN_INTENT);

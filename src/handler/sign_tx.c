@@ -99,6 +99,7 @@ static int handle_last_chunk(void) {
  * @return SW_OK if successful, otherwise an error code.
  */
 static int handle_chunks(buffer_t *cdata, bool more) {
+    // Verify that adding the new data won't exceed the maximum transaction length
     if ((G_context.tx_info.raw_tx_len + cdata->size) > TRANSACTION_LEN_MAX) {
         return io_send_sw(SW_WRONG_TX_LENGTH);
     }

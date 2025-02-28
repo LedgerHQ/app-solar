@@ -253,7 +253,7 @@ static int configure_solar_strategy(void) {
         case SOLAR_TRANSACTION_TYPE_BURN: {
             (void)strlcpy(txreview_ctx.label, BURN_LABEL, MAX_ITEM_LEN);
             txreview_ctx.asset_record_provider = get_burn_record;
-            txreview_ctx.asset_record_count = IPFS_RECORD_COUNT;
+            txreview_ctx.asset_record_count = BURN_RECORD_COUNT;
             break;
         }
         case SOLAR_TRANSACTION_TYPE_VOTE: {

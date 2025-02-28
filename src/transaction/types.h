@@ -35,19 +35,3 @@ typedef struct {
         uint8_t memo_len;         // length of memo
     };
 } transaction_t;
-
-// typedef struct {
-//     // Message
-//     const uint8_t *message;  // message
-//     uint8_t message_length;   // Message length
-
-//     // Transaction
-//     const uint8_t *sender_publickey;  // sender public key (33 bytes)
-//     uint64_t fee;                     // fee
-//     uint32_t typeGroup;               // typeGroup
-//     uint16_t type;                    // type
-//     uint8_t memo_len;                 // length of memo
-//     const uint8_t *memo;              // memo (MAX length 255)
-//     transaction_asset_t asset;        // transaction specific assets (variable length and
-//     structure)
-// } transaction_t;

@@ -35,7 +35,7 @@ static const char TEXT_LABEL_PUBKEY_VERIFY[] = "Verify Public Key";
 
 /* -------------------------------------------------------------------------- */
 
-static char ui_pubkey_text[PUBKEY_CHAR_LEN] = {0};
+static char ui_pubkey_text[PUBKEY_CHAR_LEN + NULL_TERMINATOR_LEN] = {0};
 
 /* -------------------------------------------------------------------------- */
 
@@ -77,7 +77,7 @@ int ui_display_public_key(void) {
     if (format_hex_lower(G_context.pk_info.raw_public_key,
                          PUBKEY_BYTE_LEN,
                          ui_pubkey_text,
-                         MAX_VALUE_LEN) < 0) {
+                         PUBKEY_CHAR_LEN + NULL_TERMINATOR_LEN) < 0) {
         return io_send_sw(SW_PUBKEY_PARSING_FAIL);
     }
 

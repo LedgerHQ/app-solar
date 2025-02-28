@@ -60,7 +60,7 @@ static void handle_rejection(void) {
  *
  * @param[in]   type                The type of helper response.
  * @param[in]   choice_confirmed    The text to display on the "confirmed" status screen.
- * @param[in]   choice_rejectThe    The text to display on the "reject" confirmation dialog.
+ * @param[in]   choice_reject       The text to display on the "reject" confirmation dialog.
  * @param[in]   choice_rejected     The text to display on the "rejected" status screen.
  *
  * @return true if initialisation was successful, otherwise false.

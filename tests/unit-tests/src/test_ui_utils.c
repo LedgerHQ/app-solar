@@ -282,6 +282,61 @@ static void test_ui_utils_format_hex_lower(void **state) {
     assert_string_equal(temp_out, "");
 }
 
+static void test_unpad_amount(void **state) {
+    (void)state;
+
+    char amount[30] = {0};
+
+    // Test case 1: Normal case - remove trailing zeros
+    strcpy(amount, "10.5000");
+    unpad_amount(amount, strlen(amount), 1);
+    assert_string_equal(amount, "10.5");
+
+    // Test case 2: Keep decimal point with padding 2
+    strcpy(amount, "25.00");
+    unpad_amount(amount, strlen(amount), 2);
+    assert_string_equal(amount, "25.00");
+
+    // Test case 3: Value with no decimal point
+    strcpy(amount, "100");
+    unpad_amount(amount, strlen(amount), 1);
+    assert_string_equal(amount, "1");
+
+    // Test case 4: Value with all trailing zeros
+    strcpy(amount, "0.000");
+    unpad_amount(amount, strlen(amount), 1);
+    assert_string_equal(amount, "0.0");
+
+    // Test case 5: Empty string
+    strcpy(amount, "");
+    unpad_amount(amount, strlen(amount), 1);
+    assert_string_equal(amount, "");
+
+    // Test case 6: NULL pointer handling
+    unpad_amount(NULL, 10, 1);
+    // No assertion needed, just making sure it doesn't crash
+
+    // Test case 7: Length less than or equal to NULL_TERMINATOR_LEN
+    strcpy(amount, "10.00");
+    unpad_amount(amount, NULL_TERMINATOR_LEN, 2);
+    assert_string_equal(amount, "10.00");
+
+    // Test case 8: Length exactly matching string length + null terminator
+    strcpy(amount, "15.3000");
+    unpad_amount(amount, strlen(amount), 1);
+    assert_string_equal(amount, "15.3");
+
+    // Test case 9: Padding larger than string length
+    strcpy(amount, "27.50");
+    unpad_amount(amount, strlen(amount), 10);
+    assert_string_equal(amount, "27.5");
+
+    // Test case 10: Value with no padding to remove
+    strcpy(amount, "5.");
+    unpad_amount(amount, strlen(amount), 0);
+    assert_string_equal(amount, "5.");
+}
+
 int main() {
     const struct CMUnitTest tests[] = {cmocka_unit_test(test_ui_utils_format_amount),
                                        cmocka_unit_test(test_ui_utils_format_sxp_amount),
@@ -289,7 +344,8 @@ int main() {
                                        cmocka_unit_test(test_ui_utils_format_hex_lower),
                                        cmocka_unit_test(test_format_percent_edge_case),
                                        cmocka_unit_test(test_format_percent_buffer_too_small),
-                                       cmocka_unit_test(test_format_percent_success)};
+                                       cmocka_unit_test(test_format_percent_success),
+                                       cmocka_unit_test(test_unpad_amount)};
 
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -132,6 +132,7 @@ int prepare_public_key(buffer_t *cdata, bool use_chain_code) {
                                            &private_key,
                                            (use_chain_code) ? G_context.pk_info.chain_code : NULL);
     if (status != CX_OK) {
+        explicit_bzero(&private_key, sizeof(cx_ecfp_private_key_t));
         return status;
     }
 

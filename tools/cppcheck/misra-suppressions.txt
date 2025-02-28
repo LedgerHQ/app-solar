@@ -145,7 +145,7 @@ misra-c2012-8.11:build/flex/gen_src/glyphs.h
 # is intentional and type-safe as both operands are defined constants of compatible types 
 # for the cx_ecschnorr_sign_no_throw function parameter. The operation combines mode flags 
 # as required by the Ledger cryptographic API.
-misra-c2012-10.1:src/crypto/crypto.c:178
+misra-c2012-10.1:src/crypto/crypto.c:179
 
 
 ################################################################################
@@ -161,7 +161,7 @@ misra-c2012-12.1:src/ui/operations/transaction/review.c:125
 # constants is safe as these are pre-defined flag values by the Ledger SDK that are 
 # designed to be combined. The resulting value cannot exceed the width of the parameter 
 # type expected by cx_ecschnorr_sign_no_throw.
-misra-c2012-12.2:src/crypto/crypto.c:178
+misra-c2012-12.2:src/crypto/crypto.c:179
 
 
 ################################################################################

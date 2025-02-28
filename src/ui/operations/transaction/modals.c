@@ -213,7 +213,7 @@ static bool prepare_paged_modal_fields(
     const uint16_t bar_count_for_page,
     char text_storage[MODAL_PAGE_BAR_COUNT_MAX][SUMMARY_LINE_LENGTH_MAX],
     const char *text_ptrs[MODAL_PAGE_BAR_COUNT_MAX]) {
-    if (ctx == NULL) {
+    if ((ctx == NULL) || (text_ptrs == NULL)) {
         return false;
     }
 

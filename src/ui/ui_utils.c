@@ -55,7 +55,7 @@ static const uint8_t SPACE_CHAR_LEN = 1u;
 static const size_t PERCENT_BUFFER_MIN_LEN = 9u;
 
 static const unsigned char NULL_TERMINATOR_CHAR = 0x00;  // '\0'
-static const unsigned char PERIOD_CHAR = 0x2e;           // '.'
+static const unsigned char DECIMAL_CHAR = 0x2e;          // '.'
 static const unsigned char ZERO_CHAR = 0x30;             // '0'
 static const unsigned char A_CHAR_UPPER_CASE = 0x41;     // 'A'
 static const unsigned char Z_CHAR_UPPER_CASE = 0x5A;     // 'Z'
@@ -164,7 +164,7 @@ bool format_percent(char *dst, size_t dst_len, const uint16_t value, uint8_t dec
  * @param[in]   in      Pointer to input byte buffer.
  * @param[in]   in_len  Length of input.
  * @param[out]  out     Pointer to the output string.
- * @param[in]   out_len Length of the output string (must account for
+ * @param[in]   out_len Length of the output string (must account for null-terminator).
  *
  * @return the number of characters written (including null-terminator) if successful, otherwise -1.
  */
@@ -193,16 +193,20 @@ int format_hex_lower(const uint8_t *in, size_t in_len, char *out, size_t out_len
 /**
  * @brief Remove trailing zeros up to the decimal + padding.
  *
- * @param[in]   amount  Pointer to amount string.
- * @param[in]   len     Length of amount string.
+ * @param[in]   amount  Pointer to amount string (must be null-terminated).
+ * @param[in]   len     Length of amount string (excluding the null-terminator).
  * @param[in]   padding Length of zero padding to keep.
  */
 void unpad_amount(char *amount, size_t len, size_t padding) {
+    if ((amount == NULL) || (len <= 1u)) {
+        return;
+    }
+
     size_t idx = len - NULL_TERMINATOR_LEN;
 
     // Loop backwards over the amount string
     while ((idx > 0u) && ((unsigned char)amount[idx] == ZERO_CHAR)) {
-        if ((idx >= padding) && ((unsigned char)amount[idx - padding] == PERIOD_CHAR)) {
+        if ((idx >= padding) && ((unsigned char)amount[idx - padding] == DECIMAL_CHAR)) {
             break;
         }
 
