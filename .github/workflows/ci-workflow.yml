@@ -30,7 +30,7 @@ jobs:
     needs: prepare
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:3.47.0
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
@@ -52,7 +52,7 @@ jobs:
     needs: prepare
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:3.47.0
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
@@ -74,7 +74,7 @@ jobs:
     needs: prepare
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:3.47.0
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
@@ -96,7 +96,7 @@ jobs:
     needs: prepare
 
     container:
-      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:3.47.0
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
 
     steps:
       - name: Clone
