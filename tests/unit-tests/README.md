@@ -13,24 +13,30 @@ and for code coverage generation:
 
 ## Overview
 
+Launch the Ledger App Builder (Dev Tools) Docker image
+
+```bash
+sudo docker run  --rm -ti --user "$(id -u):$(id -g)" --privileged -v "$(pwd -P):/app" ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
+```
+
 In `unit-tests` folder, compile with
 
-```
-cmake -Bbuild -H. && make -C build
+```bash
+cmake -DBOLOS_SDK=/opt/ledger-secure-sdk -Bbuild -H. && make -C build
 ```
 
 and run tests with
 
-```
+```bash
 CTEST_OUTPUT_ON_FAILURE=1 make -C build test
 ```
 
-## Generate code coverage
+## One-shot coverage
 
-Just execute in `unit-tests` folder
+Build, run and coverage can be executed in one shot using the following command (while in the `unit-tests` folder):
 
+```bash
+bash cov.sh clean
 ```
-./gen_coverage.sh
-```
 
-it will output `coverage.total` and `coverage/` folder with HTML details (in `coverage/index.html`).
+It will output the `coverage/` folder with HTML details (in `coverage/index.html`).

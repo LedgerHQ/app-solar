@@ -1,6 +1,6 @@
 from typing import Union
 
-from application_client.solar_utils import write_varint, UINT64_MAX, UINT32_MAX, UINT16_MAX, UINT8_MAX
+from application_client.solar_utils import UINT8_MAX, UINT16_MAX, UINT32_MAX, UINT64_MAX
 
 
 class TransactionError(Exception):
@@ -32,29 +32,29 @@ class Transaction:
         self.version: int = version
         self.startingByte: int = startingByte
 
-        if not (0 <= self.network <= UINT8_MAX):
+        if not 0 <= self.network <= UINT8_MAX:
             raise TransactionError(f"Bad network: '{self.network}'!")
 
-        if not (0 <= self.version <= UINT8_MAX):
+        if not 0 <= self.version <= UINT8_MAX:
             raise TransactionError(f"Bad version: '{self.version}'!")
 
-        if not (0 <= self.typeGroup <= UINT32_MAX):
+        if not 0 <= self.typeGroup <= UINT32_MAX:
             raise TransactionError(f"Bad typeGroup: '{self.typeGroup}'!")
 
-        if not (0 <= self.type <= UINT16_MAX):
+        if not 0 <= self.type <= UINT16_MAX:
             raise TransactionError(f"Bad type: '{self.type}'!")
 
-        if not (0 <= self.nonce <= UINT64_MAX):
+        if not 0 <= self.nonce <= UINT64_MAX:
             raise TransactionError(f"Bad nonce: '{self.nonce}'!")
 
-        if not (0 <= self.fee <= UINT64_MAX):
+        if not 0 <= self.fee <= UINT64_MAX:
             raise TransactionError(f"Bad fee: '{self.fee}'!")
 
         if len(self.senderPkey) != 33:
-            raise TransactionError(f"Bad senderPkey: '{self.senderPkey}'!")
+            raise TransactionError(f"Bad senderPkey: '{self.senderPkey.decode('utf-8')}'!")
 
         if len(self.memo) > 255:
-            raise TransactionError(f"Bad memo: '{self.memo}'!")
+            raise TransactionError(f"Bad memo: '{self.memo.decode('utf-8')}'!")
 
     def serialise(self) -> bytes:
         return b"".join(
@@ -67,7 +67,9 @@ class Transaction:
                 self.nonce.to_bytes(8, byteorder="little"),
                 self.senderPkey,
                 self.fee.to_bytes(8, byteorder="little"),
-                write_varint(len(self.memo)),
+                len(self.memo).to_bytes(
+                    1, byteorder="little"
+                ),  # write_varint(len(self.memo)),
                 self.memo,
             ]
         )

@@ -1,79 +1,57 @@
-/*****************************************************************************
- *  Copyright (c) Solar Network <hello@solar.org>
+/*******************************************************************************
+ *  Copyright (c) Solar Network [hello@solar.org]
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
- *
- *****************************************************************************
- *
- *  This work is licensed under a Creative Commons Attribution-NoDerivatives
- *  4.0 International License.
- *
- *  This software also incorporates work covered by the following copyright
- *  and permission notice:
- *
- *   Ledger App Boilerplate.
- *   (c) Ledger SAS.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *****************************************************************************/
+ ******************************************************************************/
 
 #include "ui/action/validate.h"
 
-#include <stdbool.h>  // bool
+#include <stdbool.h>
 
-#include "io.h"
+#include <cx.h>  // CX_OK
+#include <io.h>  // io_send_sw
 
-#include "context.h"
+#include "app_types.h"
 #include "globals.h"
 #include "sw.h"
 
 #include "crypto/crypto.h"
+
 #include "helper/send_response.h"
-#include "ui/menu.h"
 
-void ui_action_validate_pubkey(bool choice) {
+#include "ui/menu/display_menu.h"
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Handles the validation and APDU response based on the user's choice.
+ *
+ * @param[in]   response_type   The type of helper response.
+ * @param[in]   choice          User choice (either approved or rejected).
+ */
+void ui_validate(helper_response_t response_type, bool choice) {
     if (choice) {
-        helper_send_response_pubkey();
-    } else {
-        io_send_sw(SW_DENY);
-    }
+        if (response_type == SIGNATURE_RESPONSE) {
+            G_context.state = STATE_APPROVED;
 
-    ui_menu_main();
-}
+            // Third and final verification of the message hash
+            if (verify_message_hash() != CX_OK) {
+                (void)io_send_sw(SW_VALIDATION_HASH_MISMATCH);
+            }
 
-void ui_action_validate_address(bool choice) {
-    if (choice) {
-        helper_send_response_address();
-    } else {
-        io_send_sw(SW_DENY);
-    }
+            // Sign if hash verification passes
+            if (sign_message() != CX_OK) {
+                (void)io_send_sw(SW_SIGNATURE_FAIL);
+            }
+        }
 
-    ui_menu_main();
-}
-
-void ui_action_validate_transaction(bool choice) {
-    if (choice) {
-        G_context.state = STATE_APPROVED;
-
-        if (crypto_sign_message() < 0) {
-            io_send_sw(SW_SIGNATURE_FAIL);
-        } else {
-            helper_send_response_sig();
+        if (helper_send(response_type) < 0) {
+            (void)io_send_sw(SW_SIGNATURE_FAIL);
         }
     } else {
-        io_send_sw(SW_DENY);
+        (void)io_send_sw(SW_DENY);
     }
-    reset_app_context();
+
     ui_menu_main();
 }

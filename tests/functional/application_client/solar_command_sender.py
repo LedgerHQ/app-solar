@@ -1,13 +1,16 @@
-from enum import IntEnum
-from typing import Generator, List, Optional, Union
+import struct
 from contextlib import contextmanager
+from enum import IntEnum
+
+# from typing import Generator, List, Optional, Union
+from typing import List, Optional, Union, cast, Generator
 
 from application_client.solar_transaction import Transaction
+from ragger.backend.interface import RAPDU, BackendInterface
+from ragger.bip import pack_derivation_path
 
 # from application_client.solar_utils import bip32_path_from_string
-
-from ragger.backend.interface import BackendInterface, RAPDU
-from ragger.bip import pack_derivation_path
+# from ragger.backend import RaisePolicy
 
 
 MAX_APDU_LEN: int = 255
@@ -42,14 +45,12 @@ class InsType(IntEnum):
 
 class Errors(IntEnum):
     SW_DENY = 0x6985
-    SW_WRONG_P1P2 = 0x6A86
-    SW_WRONG_DATA_LENGTH = 0x6A87
+    SW_WRONG_LENGTH = 0x6700
+    SW_WRONG_P1P2 = 0x6B00
     SW_INS_NOT_SUPPORTED = 0x6D00
     SW_CLA_NOT_SUPPORTED = 0x6E00
-    SW_WRONG_RESPONSE_LENGTH = 0xB000
     SW_DISPLAY_BIP32_PATH_FAIL = 0xB001
     SW_DISPLAY_ADDRESS_FAIL = 0xB002
-    SW_DISPLAY_AMOUNT_FAIL = 0xB003
     SW_WRONG_TX_LENGTH = 0xB004
     SW_TX_PARSING_FAIL = 0xB005
     SW_TX_HASH_FAIL = 0xB006
@@ -58,12 +59,13 @@ class Errors(IntEnum):
 
 
 def split_message(message: bytes, max_size: int) -> List[bytes]:
-    return [message[x : x + max_size] for x in range(0, len(message), max_size)]
+    return [message[x: x + max_size] for x in range(0, len(message), max_size)]
 
 
 class SolarCommandSender:
     def __init__(self, backend: BackendInterface) -> None:
         self.backend = backend
+        # self.backend.timeout=3
 
     def serialise(
         self,
@@ -79,10 +81,6 @@ class SolarCommandSender:
         header: bytes = struct.pack(
             "BBBBB", cla, ins, p1, p2, len(data)
         )  # add Lc to APDU header
-
-        if self.debug:
-            logging.info("header: %s", header.hex())
-            logging.info("data:  %s", data.hex())
 
         return header + data
 
@@ -116,7 +114,7 @@ class SolarCommandSender:
         )
 
     @contextmanager
-    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> RAPDU:
+    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> Generator[RAPDU, None, None]:
         with self.backend.exchange_async(
             cla=CLA,
             ins=InsType.GET_PUBLIC_KEY,
@@ -124,7 +122,7 @@ class SolarCommandSender:
             p2=chaincode,
             data=pack_derivation_path(path),
         ) as response:
-            yield response
+            yield cast(RAPDU, response)
 
     def get_address(self, path: str, display: int = 0, network: int = 0) -> RAPDU:
         return self.backend.exchange(
@@ -136,7 +134,7 @@ class SolarCommandSender:
         )
 
     @contextmanager
-    def get_address_with_confirmation(self, path: str, network: int = 0) -> RAPDU:
+    def get_address_with_confirmation(self, path: str, network: int = 0) -> Generator[RAPDU, None, None]:
         with self.backend.exchange_async(
             cla=CLA,
             ins=InsType.GET_ADDRESS,
@@ -144,10 +142,10 @@ class SolarCommandSender:
             p2=network,
             data=pack_derivation_path(path),
         ) as response:
-            yield response
+            yield cast(RAPDU, response)
 
     @contextmanager
-    def sign_message(self, path: str, message: str) -> RAPDU:
+    def sign_message(self, path: str, message: str) -> Generator[RAPDU, None, None]:
         msg: bytes = b"".join(
             [len(message).to_bytes(2, byteorder="little"), bytes(message, "ascii")]
         )
@@ -171,10 +169,37 @@ class SolarCommandSender:
         with self.backend.exchange_async(
             cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_LAST, data=chunks[-1]
         ) as response:
-            yield response
+            yield cast(RAPDU, response)
 
     @contextmanager
-    def sign_transaction(self, path: str, transaction: Transaction) -> RAPDU:
+    def sign_message_sync(self, path: str, message: str) -> Generator[RAPDU, None, None]:
+        msg: bytes = b"".join(
+            [len(message).to_bytes(2, byteorder="little"), bytes(message, "ascii")]
+        )
+
+        self.backend.exchange(
+            cla=CLA,
+            ins=InsType.SIGN_MESSAGE,
+            p1=P1.P1_START,
+            p2=P2.P2_MORE,
+            data=pack_derivation_path(path),
+        )
+        chunks = split_message(msg, MAX_APDU_LEN)
+        idx: int = P1.P1_START + 1
+
+        for chunk in chunks[:-1]:
+            self.backend.exchange(
+                cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_MORE, data=chunk
+            )
+            idx += 1
+
+        response = self.backend.exchange(
+            cla=CLA, ins=InsType.SIGN_MESSAGE, p1=idx, p2=P2.P2_LAST, data=chunks[-1]
+        )
+        yield response
+
+    @contextmanager
+    def sign_transaction(self, path: str, transaction: Transaction) -> Generator[RAPDU, None, None]:
         tx: bytes = transaction.serialise()
 
         self.backend.exchange(
@@ -196,7 +221,7 @@ class SolarCommandSender:
         with self.backend.exchange_async(
             cla=CLA, ins=InsType.SIGN_TX, p1=idx, p2=P2.P2_LAST, data=chunks[-1]
         ) as response:
-            yield response
+            yield cast(RAPDU, response)
 
     def get_async_response(self) -> Optional[RAPDU]:
         return self.backend.last_async_response
