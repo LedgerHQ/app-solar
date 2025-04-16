@@ -1,26 +1,19 @@
 #pragma once
 
-#include "buffer.h"
+#include <stdint.h>  // uint*_t
 
-#include "transaction/errors.h"
+#include <buffer.h>  // buffer_t
 
-#define MIN_NUM_TRANSFERS 1
-#define MAX_NUM_TRANSFERS 40  // Limited respect to protocol maximum due to SRAM limitations
+#include "transaction/transaction_errors.h"
+
+/* -------------------------------------------------------------------------- */
 
 typedef struct {
-    uint16_t transfers_length;  /// length (2 bytes)
-    uint8_t *transfers;         /// transfer {address, amount}
-} transfer_transaction_asset_t;
+    const uint8_t *payments;  // Pointer to the start of payments records.
+    uint16_t payment_count;
+    uint16_t reserved;  // padding for alignment
+} transfer_asset_t;
 
-/**
- * Deserialise asset of transaction in structure.
- *
- * @param[in, out] buf
- *   Pointer to buffer with serialised transaction.
- * @param[out]     tx
- *   Pointer to transaction asset structure.
- *
- * @return PARSING_OK if success, error status otherwise.
- *
- */
-parser_status_e transfer_type_deserialise(buffer_t *buf, transfer_transaction_asset_t *tx);
+/* -------------------------------------------------------------------------- */
+
+parser_status_e deserialise_transfer(buffer_t *buf, transfer_asset_t *transfer);

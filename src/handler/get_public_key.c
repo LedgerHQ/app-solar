@@ -1,10 +1,5 @@
-/*****************************************************************************
- *  Copyright (c) Solar Network <hello@solar.org>
- *
- *  This work is licensed under a Creative Commons Attribution-NoDerivatives
- *  4.0 International License.
- *
- *****************************************************************************
+/*******************************************************************************
+ *  Copyright (c) Solar Network [hello@solar.org]
  *
  *  This work is licensed under a Creative Commons Attribution-NoDerivatives
  *  4.0 International License.
@@ -13,7 +8,7 @@
  *  and permission notice:
  *
  *   Ledger App Boilerplate.
- *   (c) Ledger SAS.
+ *   (c) 2020 Ledger SAS.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,57 +21,57 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *****************************************************************************/
+ ******************************************************************************/
 
-#include "get_public_key.h"
+#include "handler/get_public_key.h"
 
-#include <stdint.h>   // uint*_t
-#include <stdbool.h>  // bool
-#include <stddef.h>   // size_t
-#include <string.h>   // memset, explicit_bzero
+#include <stdbool.h>
 
-#include "buffer.h"
-#include "cx.h"
-#include "io.h"
-#include "os.h"
+#include <buffer.h>     // buffer_t
+#include <cx_errors.h>  // CX_OK
+#include <io.h>         // io_send_sw
 
+#include "app_types.h"
+#include "constants.h"
 #include "context.h"
 #include "globals.h"
-#include "types.h"
 #include "sw.h"
 
 #include "crypto/crypto.h"
-#include "helper/send_response.h"
-#include "ui/display.h"
 
+#include "helper/send_response.h"
+
+#include "ui/operations/public_key/display_pubkey.h"
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * @brief Handler for GET_PUBLIC_KEY command.
+ *
+ * Sends an APDU response containing an public key.
+ *
+ * @see G_context.bip32_path, G_context.pk_info.raw_public_key, G_context.pk_info.chain_code.
+ *
+ * @param[in,out]   cdata           Command data with BIP32 path.
+ * @param[in]       user_approval   0 for not displaying on screen, otherwise 1.
+ * @param[in]       use_chain_code  0 for not requesting the chain code, otherwise 1.
+ *
+ * @return zero or positive integer if successful, otherwise a negative integer.
+ */
 int handler_get_public_key(buffer_t *cdata, bool user_approval, bool use_chain_code) {
     reset_app_context();
+
     G_context.req_type = CONFIRM_PUBLICKEY;
     G_context.pk_info.use_chaincode = use_chain_code;
 
-    cx_ecfp_private_key_t private_key = {0};
-    cx_ecfp_public_key_t public_key = {0};
-
-    if (!buffer_read_u8(cdata, &G_context.bip32_path_len) ||
-        !buffer_read_bip32_path(cdata, G_context.bip32_path, (size_t) G_context.bip32_path_len)) {
-        return io_send_sw(SW_WRONG_DATA_LENGTH);
+    const int status = prepare_public_key(cdata, use_chain_code);
+    if (status != CX_OK) {
+        return io_send_sw(status);
     }
-
-    // derive private key according to BIP32 path
-    crypto_derive_private_key(&private_key,
-                              use_chain_code ? G_context.pk_info.chain_code : NULL,
-                              G_context.bip32_path,
-                              G_context.bip32_path_len);
-
-    // generate corresponding public key
-    crypto_init_public_key(&private_key, &public_key, G_context.pk_info.raw_public_key);
-
-    // reset private key
-    explicit_bzero(&private_key, sizeof(private_key));
 
     if (user_approval) {
         return ui_display_public_key();
     }
 
-    return helper_send_response_pubkey();
+    return helper_send(PUBKEY_RESPONSE);
 }

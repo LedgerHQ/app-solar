@@ -1,4 +1,4 @@
-# ****************************************************************************
+################################################################################
 #    Ledger App Boilerplate
 #    (c) Ledger SAS.
 #
@@ -13,7 +13,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-# ****************************************************************************
+################################################################################
 
 ifeq ($(BOLOS_SDK),)
 $(error Environment variable BOLOS_SDK is not set)
@@ -25,26 +25,24 @@ include $(BOLOS_SDK)/Makefile.defines
 #        Mandatory configuration       #
 ########################################
 
-ENABLE_PENDING_REVIEW_SCREEN = 1
-
 # Application name
 APPNAME = "Solar"
+DEFINES += APPNAME=\"Solar\"
 
 # Application version
 APPVERSION_M = 1
-APPVERSION_N = 1
-APPVERSION_P = 3
+APPVERSION_N = 2
+APPVERSION_P = 0
 APPVERSION = "$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)"
 
 # Application source files
 APP_SOURCE_PATH += src
 
-# Application icons following guidelines:
-# https://developers.ledger.com/docs/embedded-app/design-requirements/#device-icon
-ICON_NANOS = icons/app_solar_16px.gif
-ICON_NANOX = icons/app_solar_14px.gif
+# Application icons
 ICON_NANOSP = icons/app_solar_14px.gif
-# ICON_STAX = icons/app_boilerplate_32px.gif
+ICON_NANOX = icons/app_solar_14px.gif
+ICON_STAX = icons/app_solar_32px.gif
+ICON_FLEX = icons/app_solar_40px.gif
 
 # Application allowed derivation curves.
 CURVE_APP_LOAD_PARAMS = secp256k1
@@ -62,14 +60,14 @@ VARIANT_VALUES = SXP
 ########################################
 # Application communication interfaces #
 ########################################
+
 ENABLE_BLUETOOTH = 1
 #ENABLE_NFC = 1
 
 ########################################
 #         NBGL custom features         #
 ########################################
-#ENABLE_NBGL_QRCODE = 1
-#ENABLE_NBGL_KEYBOARD = 1
-#ENABLE_NBGL_KEYPAD = 1
+
+ENABLE_NBGL_QRCODE = 1
 
 include $(BOLOS_SDK)/Makefile.standard_app
