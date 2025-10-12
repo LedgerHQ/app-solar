@@ -769,7 +769,7 @@ def test_transaction_navigation_transfer_max_payments(
 
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
-        ]        
+        ]
 
     with client.sign_transaction(path=PATH_MAINNET, transaction=transfer_transaction):
         navigator.navigate_and_compare(

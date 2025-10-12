@@ -21,7 +21,7 @@ class Burn(Transaction):
         )
         self.amount: int = amount
 
-        if not (0 <= self.amount <= UINT64_MAX):
+        if not 0 <= self.amount <= UINT64_MAX:
             raise TransactionError(f"Bad amount: '{self.amount}'!")
 
     def serialise(self) -> bytes:

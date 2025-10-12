@@ -2,7 +2,6 @@ import pytest
 
 from ragger.bip import CurveChoice, calculate_public_key_and_chaincode
 from ragger.error import ExceptionRAPDU
-from ragger.firmware import Firmware
 from ragger.navigator import NavInsID
 
 from application_client.solar_command_sender import Errors, SolarCommandSender

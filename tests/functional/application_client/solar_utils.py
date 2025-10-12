@@ -11,7 +11,7 @@ def bip32_path_from_string(path: str) -> List[bytes]:
     splitted_path: List[str] = path.split("/")
 
     if not splitted_path:
-        raise Exception(f"BIP32 path format error: '{path}'")
+        raise ValueError(f"BIP32 path format error: '{path}'")
 
     if "m" in splitted_path and splitted_path[0] == "m":
         splitted_path = splitted_path[1:]

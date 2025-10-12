@@ -34,7 +34,7 @@ class Vote(Transaction):
             if len(username) < 1 or len(username) > 20:
                 raise TransactionError(f"Bad username: '{username}'!")
 
-            if not (0 <= percentage <= UINT16_MAX):
+            if not 0 <= percentage <= UINT16_MAX:
                 raise TransactionError(f"Bad percentage: '{percentage}'!")
 
             total_percentage += percentage

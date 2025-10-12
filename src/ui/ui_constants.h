@@ -13,4 +13,3 @@
 #elif defined(TARGET_APEX_P)
 #define ICON_APP_HOME C_logo_solar_48px
 #endif
-
