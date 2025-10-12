@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/menu/display_menu.h"
 
@@ -15,9 +15,10 @@
 #include <nbgl_content.h>   // nbgl_contentInfoList_t
 #include <nbgl_use_case.h>  // nbgl_useCaseHomeAndSettings, INIT_HOME_PAGE
 
-#include "glyphs.h"  // C_logo_solar_64px
+#include "glyphs.h"  // ICON_APP_HOME
 
 #include "ui/action/quit.h"
+#include "ui/ui_constants.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -51,7 +52,7 @@ static const nbgl_contentInfoList_t MENU_INFO_LIST = {.infoTypes = INFO_TYPES,
  */
 void ui_menu_main(void) {
     nbgl_useCaseHomeAndSettings(APPNAME,
-                                &C_logo_solar_64px,
+                                &ICON_APP_HOME,
                                 MENU_TAGLINE,
                                 (const uint8_t)INIT_HOME_PAGE,
                                 NULL,

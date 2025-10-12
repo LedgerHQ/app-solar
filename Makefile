@@ -31,7 +31,7 @@ DEFINES += APPNAME=\"Solar\"
 
 # Application version
 APPVERSION_M = 1
-APPVERSION_N = 2
+APPVERSION_N = 3
 APPVERSION_P = 0
 APPVERSION = "$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)"
 
@@ -43,6 +43,7 @@ ICON_NANOSP = icons/app_solar_14px.gif
 ICON_NANOX = icons/app_solar_14px.gif
 ICON_STAX = icons/app_solar_32px.gif
 ICON_FLEX = icons/app_solar_40px.gif
+ICON_APEX_P = icons/app_solar_32px_apex.png
 
 # Application allowed derivation curves.
 CURVE_APP_LOAD_PARAMS = secp256k1

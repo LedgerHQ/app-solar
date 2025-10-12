@@ -15,7 +15,7 @@ extern const uint16_t BURN_RECORD_COUNT;  // 1u
 extern const char BURN_LABEL[5];  // "Burn"
 #endif
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 #define BURN_INTENT "burn SXP"
 #endif
 

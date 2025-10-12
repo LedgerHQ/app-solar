@@ -43,7 +43,7 @@ def test_sign_message_short_signed(backend, firmware, scenario_navigator):
     client = SolarCommandSender(backend)
 
     message = (
-        MESSAGE_SHORT if firmware.device.startswith("nano") else MESSAGE_SHORT_NBGL
+        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
     )
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
@@ -82,7 +82,7 @@ def test_sign_message_long_signed(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         with client.sign_message(path=PATH_MAINNET, message=MESSAGE_LONG):
             scenario_navigator.review_approve()
     else:
@@ -101,6 +101,16 @@ def test_sign_message_long_signed(
                 NavInsID.USE_CASE_REVIEW_TAP,
                 NavIns(NavInsID.TOUCH, (200, 420)),
                 *([NavInsID.USE_CASE_VIEW_DETAILS_NEXT] * 4),
+                NavInsID.USE_CASE_VIEW_DETAILS_EXIT,
+                NavInsID.USE_CASE_REVIEW_TAP,
+                NavInsID.USE_CASE_REVIEW_CONFIRM,
+                NavInsID.USE_CASE_STATUS_DISMISS,
+            ]
+        elif firmware is Firmware.APEX_P:
+            instructions = [
+                NavInsID.USE_CASE_REVIEW_TAP,
+                NavIns(NavInsID.TOUCH, (150, 246)),
+                *([NavInsID.USE_CASE_VIEW_DETAILS_NEXT] * 5),
                 NavInsID.USE_CASE_VIEW_DETAILS_EXIT,
                 NavInsID.USE_CASE_REVIEW_TAP,
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
@@ -131,7 +141,7 @@ def test_sign_message_rejected(backend, firmware, scenario_navigator):
     client = SolarCommandSender(backend)
 
     message = (
-        MESSAGE_SHORT if firmware.device.startswith("nano") else MESSAGE_SHORT_NBGL
+        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
     )
 
     with pytest.raises(ExceptionRAPDU) as error:

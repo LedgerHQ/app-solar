@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/operations/transaction/review.h"
 
@@ -18,7 +18,7 @@
 #include <nbgl_use_case.h>  // FIRST_USER_TOKEN, nbgl_contentTagValue_t
 #include <os.h>             // explicit_bzero, snprintf
 
-#include "glyphs.h"  // C_logo_solar_64px
+#include "glyphs.h"  // ICON_APP_HOME
 
 #include "transaction/types.h"
 
@@ -111,7 +111,7 @@ static uint8_t set_txinfo_asset_field_pair(ui_tx_review_ctx_t *ctx) {
             txinfo_pairs[idx].item = txinfo_texts[idx].item;
             txinfo_pairs[idx].value = txinfo_texts[idx].value;
 
-#if defined(TARGET_FLEX)
+#if defined(TARGET_FLEX) || defined(TARGET_APEX_P)
             const uint16_t line_limit = 2u;
 
             // Check that an address or username does not wrap to a 3rd line on flex devices when
@@ -236,7 +236,7 @@ static uint8_t set_txinfo_page_fields(ui_tx_review_ctx_t *ctx) {
 static void set_review_intent_page(const ui_tx_review_ctx_t *ctx, nbgl_content_t *content) {
     content->type = CENTERED_INFO;
     content->contentActionCallback = NULL;
-    content->content.centeredInfo.icon = &C_logo_solar_64px;
+    content->content.centeredInfo.icon = &ICON_APP_HOME;
     content->content.centeredInfo.style = LARGE_CASE_GRAY_INFO;
     content->content.centeredInfo.offsetY = 0u;
     content->content.centeredInfo.text1 = ctx->review_intent;
@@ -268,7 +268,7 @@ static void set_sign_page(const ui_tx_review_ctx_t *ctx, nbgl_content_t *content
     content->type = INFO_LONG_PRESS;
     content->contentActionCallback = sign_page_action_callback;
     content->content.infoLongPress.text = ctx->sign_intent;
-    content->content.infoLongPress.icon = &C_logo_solar_64px;
+    content->content.infoLongPress.icon = &ICON_APP_HOME;
     content->content.infoLongPress.longPressText = SIGN_ACTION_TEXT;
     content->content.infoLongPress.longPressToken = SIGN_PAGE_ACTION_TOKEN;
 }

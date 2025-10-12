@@ -4,7 +4,7 @@
 	<img src="./banner.png" />
 </p>
 
-> The official [Solar Network](https://solar.org) App for the Ledger Nano S+, Nano X, Flex and Stax devices.
+> The official [Solar Network](https://solar.org) App for all Ledger devices.
 
 ## Development
 
