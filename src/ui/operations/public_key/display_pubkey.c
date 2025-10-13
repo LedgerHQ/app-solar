@@ -18,7 +18,7 @@
 #include <nbgl_page.h>      // nbgl_pageInfoLongPress_t
 #include <nbgl_use_case.h>  // nbgl_useCaseReviewStart...
 
-#include "glyphs.h"  // C_Check_Circle_64px, ICON_APP_HOME
+#include "glyphs.h"  // CHECK_CIRCLE_ICON, ICON_APP_HOME
 
 #include "app_types.h"
 #include "constants.h"
