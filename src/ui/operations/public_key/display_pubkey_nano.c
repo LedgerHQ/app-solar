@@ -15,7 +15,7 @@
 #include <os.h>  // explicit_bzero
 #include <ux.h>  // UX_FLOW, UX_STEP_NOCB
 
-#include "glyphs.h"  // C_Check_Circle_64px, C_logo_solar_64px
+#include "glyphs.h"  // CHECK_CIRCLE_ICON, ICON_APP_HOME
 
 #include "app_types.h"  // global_ctx_t
 

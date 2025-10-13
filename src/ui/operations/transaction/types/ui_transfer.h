@@ -11,11 +11,11 @@
 
 #if defined(SCREEN_SIZE_NANO)         // nanosp, NanoX
 extern const char TRANSFER_LABEL[9];  // "Transfer"
-#elif defined(SCREEN_SIZE_WALLET)     // stax, flex
+#elif defined(SCREEN_SIZE_WALLET)
 extern const char PAYMENT_LABEL[8];  // "Payment"
 #endif
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 #define TRANSFER_INTENT "send SXP"
 #endif
 

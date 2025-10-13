@@ -40,36 +40,44 @@ LONG_MEMO = (
 
 
 ################################################################################
-# Screen Tap Helpers  (Flex, Stax)                                             #
+# Screen Tap Helpers  (Flex, Stax, Apex)                                       #
 ################################################################################
 
 
 # TxInfo Page Taps
 TXINFO_TAP_FIELD_1_FLEX = NavIns(NavInsID.TOUCH, (430, 100))
 TXINFO_TAP_FIELD_1_STAX = NavIns(NavInsID.TOUCH, (360, 105))
+TXINFO_TAP_FIELD_1_APEX_P = NavIns(NavInsID.TOUCH, (140, 63))
 
 TXINFO_TAP_FIELD_2_FLEX = NavIns(NavInsID.TOUCH, (430, 202))
 TXINFO_TAP_FIELD_2_STAX = NavIns(NavInsID.TOUCH, (360, 195))
+TXINFO_TAP_FIELD_2_APEX_P = NavIns(NavInsID.TOUCH, (140, 130))
 
 TXINFO_TAP_FIELD_3_FLEX = NavIns(NavInsID.TOUCH, (430, 304))
 TXINFO_TAP_FIELD_3_STAX = NavIns(NavInsID.TOUCH, (360, 285))
+TXINFO_TAP_FIELD_3_APEX_P = NavIns(NavInsID.TOUCH, (140, 200))
 
 TXINFO_TAP_FIELD_4_FLEX = NavIns(NavInsID.TOUCH, (430, 450))
 TXINFO_TAP_FIELD_4_STAX = NavIns(NavInsID.TOUCH, (360, 410))
+TXINFO_TAP_FIELD_4_APEX_P = NavIns(NavInsID.TOUCH, (140, 270))
 
 
 # Modal Taps
 MODAL_TAP_FIELD_1_FLEX = NavIns(NavInsID.TOUCH, (240, 140))
 MODAL_TAP_FIELD_1_STAX = NavIns(NavInsID.TOUCH, (360, 135))
+MODAL_TAP_FIELD_1_APEX_P = NavIns(NavInsID.TOUCH, (140, 96))
 
 MODAL_TAP_FIELD_2_FLEX = NavIns(NavInsID.TOUCH, (240, 230))
 MODAL_TAP_FIELD_2_STAX = NavIns(NavInsID.TOUCH, (360, 230))
+MODAL_TAP_FIELD_2_APEX_P = NavIns(NavInsID.TOUCH, (140, 160))
 
 MODAL_TAP_FIELD_3_FLEX = NavIns(NavInsID.TOUCH, (240, 320))
 MODAL_TAP_FIELD_3_STAX = NavIns(NavInsID.TOUCH, (360, 325))
+MODAL_TAP_FIELD_3_APEX_P = NavIns(NavInsID.TOUCH, (140, 230))
 
 MODAL_TAP_FIELD_4_FLEX = NavIns(NavInsID.TOUCH, (240, 410))
 MODAL_TAP_FIELD_4_STAX = NavIns(NavInsID.TOUCH, (360, 420))
+MODAL_TAP_FIELD_4_APEX_P = NavIns(NavInsID.TOUCH, (140, 300))
 
 MODAL_TAP_FIELD_5_STAX = NavIns(NavInsID.TOUCH, (360, 515))
 
@@ -77,12 +85,15 @@ MODAL_TAP_FIELD_5_STAX = NavIns(NavInsID.TOUCH, (360, 515))
 # Navigation Taps
 NAV_TAP_CLOSE_FLEX = NavIns(NavInsID.TOUCH, (90, 550))
 NAV_TAP_CLOSE_STAX = NavIns(NavInsID.TOUCH, (40, 625))
+NAV_TAP_CLOSE_APEX_P = NavIns(NavInsID.TOUCH, (27, 371))
 
 NAV_TAP_DISMISS_FLEX = NavIns(NavInsID.TOUCH, (240, 550))
 NAV_TAP_DISMISS_STAX = NavIns(NavInsID.TOUCH, (200, 620))
+NAV_TAP_DISMISS_APEX_P = NavIns(NavInsID.TOUCH, (140, 370))
 
 NAV_TAP_NEXT_FLEX = NavIns(NavInsID.TOUCH, (430, 550))
 NAV_TAP_NEXT_STAX = NavIns(NavInsID.TOUCH, (360, 625))
+NAV_TAP_NEXT_APEX_P = NavIns(NavInsID.TOUCH, (268, 367))
 
 
 ################################################################################
@@ -185,7 +196,7 @@ def test_transaction_navigation_transfer(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         clicks = 36
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -236,6 +247,53 @@ def test_transaction_navigation_transfer(
             NAV_TAP_DISMISS_FLEX,
 
             NAV_TAP_NEXT_FLEX,
+
+            NavInsID.USE_CASE_REVIEW_CONFIRM,
+            NavInsID.USE_CASE_STATUS_DISMISS,
+        ]
+    elif firmware is Firmware.APEX_P:
+        instructions = [
+            # Continue review (to txinfo page)
+            NavInsID.SWIPE_CENTER_TO_LEFT,
+
+            # Open asset modal
+            TXINFO_TAP_FIELD_1_APEX_P,
+
+            # Payments modal: 14 Payments
+            * (
+                # Pages: (1-4), (5-8), (9-12),
+                [
+                    MODAL_TAP_FIELD_1_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_2_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_3_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_4_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    NAV_TAP_NEXT_APEX_P,
+                ] * 3
+            ),
+
+            # Page: (13-14)
+            MODAL_TAP_FIELD_1_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_2_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            # Close modal
+            NAV_TAP_CLOSE_APEX_P,
+
+            # Memo details modal
+            TXINFO_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            NAV_TAP_NEXT_APEX_P,
 
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
@@ -334,7 +392,7 @@ def test_transaction_navigation_transfer_single_payment(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         clicks = 10
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -367,6 +425,21 @@ def test_transaction_navigation_transfer_single_payment(
             NAV_TAP_DISMISS_STAX,
 
             NAV_TAP_NEXT_STAX,
+
+            NavInsID.USE_CASE_REVIEW_CONFIRM,
+            NavInsID.USE_CASE_STATUS_DISMISS,
+        ]
+    elif firmware is Firmware.APEX_P:
+        instructions = [
+            # continue review (to txinfo page)
+            NavInsID.SWIPE_CENTER_TO_LEFT,
+
+            # Memo details modal
+            # tap extended memo field, then dismiss details modal
+            TXINFO_TAP_FIELD_4_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            NAV_TAP_NEXT_APEX_P,
 
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
@@ -409,7 +482,7 @@ def test_transaction_navigation_transfer_two_payments(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         clicks = 12
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -473,6 +546,34 @@ def test_transaction_navigation_transfer_two_payments(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
+    elif firmware is Firmware.APEX_P:
+        instructions = [
+            # continue review (to txinfo page)
+            NavInsID.SWIPE_CENTER_TO_LEFT,
+
+            # Open asset modal
+            TXINFO_TAP_FIELD_1_APEX_P,
+
+            # Payments modal: 2 Payments
+            # Page: (1-2)
+            MODAL_TAP_FIELD_1_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_2_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            # Close modal
+            NAV_TAP_CLOSE_APEX_P,
+
+            # Memo details modal
+            TXINFO_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            NAV_TAP_NEXT_APEX_P,
+
+            NavInsID.USE_CASE_REVIEW_CONFIRM,
+            NavInsID.USE_CASE_STATUS_DISMISS,
+        ]
 
     with client.sign_transaction(path=PATH_MAINNET, transaction=transfer_transaction):
         navigator.navigate_and_compare(
@@ -511,7 +612,7 @@ def test_transaction_navigation_transfer_max_payments(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         clicks = 262
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -615,6 +716,56 @@ def test_transaction_navigation_transfer_max_payments(
             NAV_TAP_DISMISS_STAX,
 
             NAV_TAP_NEXT_STAX,
+
+            NavInsID.USE_CASE_REVIEW_CONFIRM,
+            NavInsID.USE_CASE_STATUS_DISMISS,
+        ]
+    elif firmware is Firmware.APEX_P:
+        instructions = [
+            # Continue review (to txinfo page)
+            NavInsID.SWIPE_CENTER_TO_LEFT,
+
+            # Open asset modal
+            TXINFO_TAP_FIELD_1_APEX_P,
+
+            # Payments modal: 127 Payments
+            * (
+                # Pages: (1-4), (5-8), ..., (121-124),
+                [
+                    MODAL_TAP_FIELD_1_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_2_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_3_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_4_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    NAV_TAP_NEXT_APEX_P,
+                ] * 31
+            ),
+
+            # Page: (125-127)
+            MODAL_TAP_FIELD_1_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_2_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            # Close modal
+            NAV_TAP_CLOSE_APEX_P,
+
+            # Memo details modal
+            TXINFO_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            NAV_TAP_NEXT_APEX_P,
 
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
@@ -728,7 +879,7 @@ def test_transaction_navigation_vote(
 
     instructions = []
 
-    if firmware.device.startswith("nano"):
+    if firmware.is_nano:
         clicks = 40
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -836,6 +987,59 @@ def test_transaction_navigation_vote(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
+    elif firmware is Firmware.APEX_P:
+        instructions = [
+            # Continue review (to txinfo page)
+            NavInsID.SWIPE_CENTER_TO_LEFT,
+
+            # Open asset modal
+            TXINFO_TAP_FIELD_1_APEX_P,
+
+            # Votes modal: 16 Votes
+            * (
+                # Pages: (1-4), (5-8), (9-12),
+                [
+                    MODAL_TAP_FIELD_1_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_2_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_3_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    MODAL_TAP_FIELD_4_APEX_P,
+                    NAV_TAP_DISMISS_APEX_P,
+
+                    NAV_TAP_NEXT_APEX_P,
+                ] * 3
+            ),
+
+            # Page: (13-16)
+            MODAL_TAP_FIELD_1_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_2_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            MODAL_TAP_FIELD_4_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            # Close modal
+            NAV_TAP_CLOSE_APEX_P,
+
+            # Memo details modal
+            TXINFO_TAP_FIELD_3_APEX_P,
+            NAV_TAP_DISMISS_APEX_P,
+
+            NAV_TAP_NEXT_APEX_P,
+
+            NavInsID.USE_CASE_REVIEW_CONFIRM,
+            NavInsID.USE_CASE_STATUS_DISMISS,
+        ]
 
     with client.sign_transaction(path=PATH_MAINNET, transaction=vote_transaction):
         navigator.navigate_and_compare(
@@ -874,7 +1078,7 @@ def test_transaction_navigation_vote_cancel(
 
         instructions = []
 
-        if firmware.device.startswith("nano"):
+        if firmware.is_nano:
             clicks = nano_button_clicks[i]
             instructions = [
                 *([NavInsID.RIGHT_CLICK] * clicks),
@@ -912,6 +1116,23 @@ def test_transaction_navigation_vote_cancel(
                 ),
 
                 NAV_TAP_NEXT_STAX,
+
+                NavInsID.USE_CASE_REVIEW_CONFIRM,
+                NavInsID.USE_CASE_STATUS_DISMISS,
+            ]
+        elif firmware is Firmware.APEX_P:
+            instructions = [
+                # Continue review (to txinfo page)
+                NavInsID.SWIPE_CENTER_TO_LEFT,
+
+                * (  # Memo details modal (for long memos)
+                    [
+                        TXINFO_TAP_FIELD_2_APEX_P,
+                        NAV_TAP_DISMISS_APEX_P,
+                    ] if i == 2 else []
+                ),
+
+                NAV_TAP_NEXT_APEX_P,
 
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,

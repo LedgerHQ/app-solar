@@ -61,18 +61,19 @@ def test_get_address_with_qr_confirmed(
     backend, firmware, navigator, default_screenshot_path, test_name
 ):
     if firmware.is_nano:
-        pytest.skip("Test only applicable to e-ink (Flex,Stax) devices")
+        pytest.skip("Test only applicable to e-ink devices")
     else:
         client = SolarCommandSender(backend)
 
         with client.get_address_with_confirmation(
             path=PATH_MAINNET, network=NETWORK_MAINNET
         ):
-            qr_tap = (
-                NavIns(NavInsID.TOUCH, (64, 520))
-                if firmware is Firmware.STAX
-                else NavIns(NavInsID.TOUCH, (77, 466))
-            )
+            if firmware is Firmware.STAX:
+                qr_tap = NavIns(NavInsID.TOUCH, (64, 520))
+            elif firmware is Firmware.FLEX:
+                qr_tap = NavIns(NavInsID.TOUCH, (77, 466))
+            else:
+                qr_tap = NavIns(NavInsID.TOUCH, (43, 299))
 
             instructions = [
                 NavInsID.SWIPE_CENTER_TO_LEFT,

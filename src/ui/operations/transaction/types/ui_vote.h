@@ -15,7 +15,7 @@
 extern const char CANCEL_VOTE_LABEL[12];  // "Cancel vote"
 #endif
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 #define VOTE_INTENT        "vote for block producers"
 #define CANCEL_VOTE_INTENT "cancel voting for block producers"
 #endif

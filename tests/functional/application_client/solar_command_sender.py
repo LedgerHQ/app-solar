@@ -5,9 +5,9 @@ from enum import IntEnum
 # from typing import Generator, List, Optional, Union
 from typing import List, Optional, Union, cast, Generator
 
-from application_client.solar_transaction import Transaction
 from ragger.backend.interface import RAPDU, BackendInterface
 from ragger.bip import pack_derivation_path
+from application_client.solar_transaction import Transaction
 
 # from application_client.solar_utils import bip32_path_from_string
 # from ragger.backend import RaisePolicy

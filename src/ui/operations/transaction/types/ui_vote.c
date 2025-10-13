@@ -29,7 +29,7 @@ const char CANCEL_VOTE_LABEL[12] = "Cancel vote";
 
 #if defined(SCREEN_SIZE_NANO)  // nanosp, nanox
 static const char VOTE_PERCENT_LABEL[] = "Vote %";
-#elif defined(SCREEN_SIZE_WALLET)  // stax, flex
+#elif defined(SCREEN_SIZE_WALLET)
 static const char BLOCK_PRODUCER_LABEL[] = "Block Producer";
 static const char VOTE_PERCENT_LABEL[] = "Vote Percent";
 #endif
@@ -158,7 +158,7 @@ static inline void prepare_vote_percent_label(char label[MAX_ITEM_LEN],
                    vote_count);
 }
 
-#elif defined(SCREEN_SIZE_WALLET)  // flex, stax
+#elif defined(SCREEN_SIZE_WALLET)
 
 static inline void prepare_block_producer_label(char label[MAX_ITEM_LEN],
                                                 uint16_t position,

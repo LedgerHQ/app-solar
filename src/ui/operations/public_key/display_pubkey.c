@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/operations/public_key/display_pubkey.h"
 
@@ -18,7 +18,7 @@
 #include <nbgl_page.h>      // nbgl_pageInfoLongPress_t
 #include <nbgl_use_case.h>  // nbgl_useCaseReviewStart...
 
-#include "glyphs.h"  // C_Check_Circle_64px, C_logo_solar_64px
+#include "glyphs.h"  // CHECK_CIRCLE_ICON, ICON_APP_HOME
 
 #include "app_types.h"
 #include "constants.h"
@@ -52,7 +52,7 @@ static void handle_review_continue(void) {
     // Confirmation / long press page
     static const nbgl_pageInfoLongPress_t LONG_PRESS_INFO_PUBKEY = {
         .text = PUBKEY_CONFIRM_INTENT,
-        .icon = &C_Check_Circle_64px,
+        .icon = &CHECK_CIRCLE_ICON,
         .longPressText = PUBKEY_CONFIRM_BUTTON_TEXT,
     };
 
@@ -106,7 +106,7 @@ int ui_display_public_key(void) {
     pair_list.smallCaseForValue = true;
     pair_list.wrapping = true;
 
-    nbgl_useCaseReviewStart(&C_logo_solar_64px,
+    nbgl_useCaseReviewStart(&ICON_APP_HOME,
                             PUBKEY_REVIEW_INTENT,
                             NULL,
                             PUBKEY_CANCEL_TEXT,

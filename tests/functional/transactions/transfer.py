@@ -30,7 +30,7 @@ class Transfer(Transaction):
             )
 
         for amount in amounts:
-            if not (0 <= amount <= UINT64_MAX):
+            if not 0 <= amount <= UINT64_MAX:
                 raise TransactionError(f"Bad amount: '{amount}'!")
             self.amounts.append(amount)
 
@@ -41,9 +41,9 @@ class Transfer(Transaction):
 
     def serialise(self) -> bytes:
         asset = b""
-        for i in range(len(self.addresses)):
-            asset += self.amounts[i].to_bytes(8, byteorder="little")
-            asset += self.addresses[i]
+        for address, amount in zip(self.addresses, self.amounts):
+            asset += amount.to_bytes(8, byteorder="little")
+            asset += address
         return super().serialise() + b"".join(
             [len(self.addresses).to_bytes(2, byteorder="little"), asset]
         )

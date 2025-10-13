@@ -28,7 +28,7 @@ const char BURN_LABEL[5] = "Burn";
 
 #if defined(SCREEN_SIZE_NANO)  // nanosp, nanox
 static const char BURN_AMOUNT_LABEL[] = "Amount";
-#elif defined(SCREEN_SIZE_WALLET)  // stax, flex
+#elif defined(SCREEN_SIZE_WALLET)
 static const char BURN_AMOUNT_LABEL[] = "Amount (to burn)";
 #endif
 
