@@ -6,7 +6,7 @@ extern const uint8_t ASSET_MODAL_THRESHOLD;   // 2u
 extern const uint8_t FIELD_OFFSET;            // 1u
 extern const char TEXT_TRUNCATION_SUFFIX[4];  // "..."
 
-#if defined(TARGET_FLEX)
+#if defined(TARGET_FLEX) || defined(TARGET_APEX_P)
 #define MEMO_TRUNCACTION_THRESHOLD ((uint8_t)18)
 #elif defined(TARGET_STAX)
 #define MEMO_TRUNCACTION_THRESHOLD ((uint8_t)36)

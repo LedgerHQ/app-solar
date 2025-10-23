@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/operations/address/display_address.h"
 
@@ -14,7 +14,7 @@
 #include <io.h>             // io_send_sw
 #include <nbgl_use_case.h>  // nbgl_useCaseAddressReview
 
-#include "glyphs.h"  // C_logo_solar_64px
+#include "glyphs.h"  // ICON_APP_HOME
 
 #include "address.h"
 #include "app_types.h"
@@ -25,6 +25,7 @@
 #include "helper/send_response.h"
 
 #include "ui/action/choice.h"
+#include "ui/ui_constants.h"
 
 /* -------------------------------------------------------------------------- */
 
@@ -61,7 +62,7 @@ int ui_display_address(void) {
 
     nbgl_useCaseAddressReview(ui_address_text,
                               NULL,
-                              &C_logo_solar_64px,
+                              &ICON_APP_HOME,
                               REVIEW_INTENT_ADDRESS,
                               NULL,
                               handle_review_choice);

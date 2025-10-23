@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include <stdbool.h>
 #include <stdint.h>  // uint*_t

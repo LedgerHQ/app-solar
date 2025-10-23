@@ -15,7 +15,7 @@ extern const uint16_t IPFS_RECORD_COUNT;  // 1u
 extern const char IPFS_LABEL[5];  // "IPFS"
 #endif
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 #define IPFS_INTENT "register an IPFS hash"
 #endif
 

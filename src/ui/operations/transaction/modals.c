@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/operations/transaction/modals.h"
 
@@ -40,13 +40,13 @@ static const char MODAL_DISMISS_TEXT[] = "Dismiss";
 
 /* -------------------------------------------------------------------------- */
 
-#if defined(TARGET_FLEX)
+#if defined(TARGET_FLEX) || defined(TARGET_APEX_P)
 #define MODAL_PAGE_BAR_COUNT_MAX ((uint8_t)4u)
 #elif defined(TARGET_STAX)
 #define MODAL_PAGE_BAR_COUNT_MAX ((uint8_t)5u)
 #endif
 
-#if defined(TARGET_FLEX)
+#if defined(TARGET_FLEX) || defined(TARGET_APEX_P)
 #define TEXT_TRUNCATION_THRESHOLD ((unsigned int)14u)
 #elif defined(TARGET_STAX)
 #define TEXT_TRUNCATION_THRESHOLD ((unsigned int)13u)

@@ -2,7 +2,6 @@ import pytest
 
 from ragger.bip import CurveChoice, calculate_public_key_and_chaincode
 from ragger.error import ExceptionRAPDU
-from ragger.firmware import Firmware
 from ragger.navigator import NavInsID
 
 from application_client.solar_command_sender import Errors, SolarCommandSender
@@ -57,7 +56,7 @@ def test_get_public_key_confirmed(
 
     instructions = []
 
-    if firmware is Firmware.STAX or firmware is Firmware.FLEX:
+    if not firmware.is_nano:
         instructions = [
             NavInsID.SWIPE_CENTER_TO_LEFT,
             NavInsID.USE_CASE_REVIEW_TAP,
@@ -66,7 +65,7 @@ def test_get_public_key_confirmed(
         ]
 
     with client.get_public_key_with_confirmation(path=path):
-        if firmware.device.startswith("nano"):
+        if firmware.is_nano:
             scenario_navigator.review_approve()
         else:
             navigator.navigate_and_compare(
@@ -102,7 +101,7 @@ def test_get_public_key_with_chaincode_confirmed(
 
     instructions = []
 
-    if firmware is Firmware.STAX or firmware is Firmware.FLEX:
+    if not firmware.is_nano:
         instructions = [
             NavInsID.SWIPE_CENTER_TO_LEFT,
             NavInsID.USE_CASE_REVIEW_TAP,
@@ -111,7 +110,7 @@ def test_get_public_key_with_chaincode_confirmed(
         ]
 
     with client.get_public_key_with_confirmation(path=path, chaincode=1):
-        if firmware.device.startswith("nano"):
+        if firmware.is_nano:
             scenario_navigator.review_approve()
         else:
             navigator.navigate_and_compare(

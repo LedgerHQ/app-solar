@@ -5,7 +5,7 @@
  *  4.0 International License.
  ******************************************************************************/
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 #include "ui/operations/message/display_message.h"
 
@@ -83,7 +83,7 @@ int ui_display_message(void) {
 
     nbgl_useCaseReview(TYPE_MESSAGE,
                        &pair_list,
-                       &C_Review_64px,
+                       &LARGE_REVIEW_ICON,
                        REVIEW_INTENT_MESSAGE,
                        NULL,
                        SIGN_INTENT_MESSAGE,

@@ -29,17 +29,17 @@
 
 #if defined(SCREEN_SIZE_NANO)  // nanosp, nanox
 const char TRANSFER_LABEL[9] = "Transfer";
-#elif defined(SCREEN_SIZE_WALLET)  // stax, flex
+#elif defined(SCREEN_SIZE_WALLET)
 const char PAYMENT_LABEL[8] = "Payment";
 #endif
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 #define TRANSFER_INTENT "send SXP"
 #endif
 
 #if defined(SCREEN_SIZE_NANO)  // nanosp, nanox
 static const char RECIPIENT_LABEL[] = "Address";
-#elif defined(SCREEN_SIZE_WALLET)  // stax, flex
+#elif defined(SCREEN_SIZE_WALLET)
 static const char RECIPIENT_LABEL[] = "Recipient";
 #endif
 
@@ -116,7 +116,7 @@ bool get_payment_record(const transaction_t *transaction,
 
 /* -------------------------------------------------------------------------- */
 
-#if defined(SCREEN_SIZE_WALLET)  // stax, flex
+#if defined(SCREEN_SIZE_WALLET)
 
 static inline void prepare_recipient_label(char label[MAX_ITEM_LEN],
                                            uint16_t index,
