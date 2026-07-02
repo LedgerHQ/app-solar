@@ -51,7 +51,9 @@ class Transaction:
             raise TransactionError(f"Bad fee: '{self.fee}'!")
 
         if len(self.senderPkey) != 33:
-            raise TransactionError(f"Bad senderPkey: '{self.senderPkey.decode('utf-8')}'!")
+            raise TransactionError(
+                f"Bad senderPkey: '{self.senderPkey.decode('utf-8')}'!"
+            )
 
         if len(self.memo) > 255:
             raise TransactionError(f"Bad memo: '{self.memo.decode('utf-8')}'!")

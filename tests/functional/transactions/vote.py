@@ -26,10 +26,14 @@ class Vote(Transaction):
             username, percentage = vote
 
             if not isinstance(username, str):
-                raise TransactionError(f"Username must be a string, got: {type(username).__name__}")
+                raise TransactionError(
+                    f"Username must be a string, got: {type(username).__name__}"
+                )
 
             if not isinstance(percentage, int):
-                raise TransactionError(f"Percentage must be an integer, got: {type(percentage).__name__}")
+                raise TransactionError(
+                    f"Percentage must be an integer, got: {type(percentage).__name__}"
+                )
 
             if len(username) < 1 or len(username) > 20:
                 raise TransactionError(f"Bad username: '{username}'!")

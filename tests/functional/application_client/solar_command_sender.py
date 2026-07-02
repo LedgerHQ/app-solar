@@ -59,7 +59,7 @@ class Errors(IntEnum):
 
 
 def split_message(message: bytes, max_size: int) -> List[bytes]:
-    return [message[x: x + max_size] for x in range(0, len(message), max_size)]
+    return [message[x : x + max_size] for x in range(0, len(message), max_size)]
 
 
 class SolarCommandSender:
@@ -114,7 +114,9 @@ class SolarCommandSender:
         )
 
     @contextmanager
-    def get_public_key_with_confirmation(self, path: str, chaincode: int = 0) -> Generator[RAPDU, None, None]:
+    def get_public_key_with_confirmation(
+        self, path: str, chaincode: int = 0
+    ) -> Generator[RAPDU, None, None]:
         with self.backend.exchange_async(
             cla=CLA,
             ins=InsType.GET_PUBLIC_KEY,
@@ -134,7 +136,9 @@ class SolarCommandSender:
         )
 
     @contextmanager
-    def get_address_with_confirmation(self, path: str, network: int = 0) -> Generator[RAPDU, None, None]:
+    def get_address_with_confirmation(
+        self, path: str, network: int = 0
+    ) -> Generator[RAPDU, None, None]:
         with self.backend.exchange_async(
             cla=CLA,
             ins=InsType.GET_ADDRESS,
@@ -172,7 +176,9 @@ class SolarCommandSender:
             yield cast(RAPDU, response)
 
     @contextmanager
-    def sign_message_sync(self, path: str, message: str) -> Generator[RAPDU, None, None]:
+    def sign_message_sync(
+        self, path: str, message: str
+    ) -> Generator[RAPDU, None, None]:
         msg: bytes = b"".join(
             [len(message).to_bytes(2, byteorder="little"), bytes(message, "ascii")]
         )
@@ -199,7 +205,9 @@ class SolarCommandSender:
         yield response
 
     @contextmanager
-    def sign_transaction(self, path: str, transaction: Transaction) -> Generator[RAPDU, None, None]:
+    def sign_transaction(
+        self, path: str, transaction: Transaction
+    ) -> Generator[RAPDU, None, None]:
         tx: bytes = transaction.serialise()
 
         self.backend.exchange(

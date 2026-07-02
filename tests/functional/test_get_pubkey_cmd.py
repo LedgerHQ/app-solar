@@ -44,12 +44,7 @@ def test_get_public_key_with_chaincode_nonconfirm(backend):
 
 # Verify the behaviour of GET_PUBLIC_KEY in confirmation mode when confirmed.
 def test_get_public_key_confirmed(
-    backend,
-    navigator,
-    firmware,
-    test_name,
-    default_screenshot_path,
-    scenario_navigator
+    backend, navigator, firmware, test_name, default_screenshot_path, scenario_navigator
 ):
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
@@ -89,12 +84,7 @@ def test_get_public_key_confirmed(
 
 # Verify the behaviour of GET_PUBLIC_KEY (with chaincode) in confirmation mode when confirmed.
 def test_get_public_key_with_chaincode_confirmed(
-    backend,
-    navigator,
-    firmware,
-    test_name,
-    default_screenshot_path,
-    scenario_navigator
+    backend, navigator, firmware, test_name, default_screenshot_path, scenario_navigator
 ):
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
@@ -123,7 +113,9 @@ def test_get_public_key_with_chaincode_confirmed(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    _, public_key, _, chain_code = unpack_get_public_key_chaincode_response(response.data)
+    _, public_key, _, chain_code = unpack_get_public_key_chaincode_response(
+        response.data
+    )
 
     ref_public_key, ref_chain_code = calculate_public_key_and_chaincode(
         CurveChoice.Secp256k1, path=path, compress_public_key=True

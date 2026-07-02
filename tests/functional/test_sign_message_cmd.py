@@ -42,9 +42,7 @@ MESSAGE_LONG: str = (
 def test_sign_message_short_signed(backend, firmware, scenario_navigator):
     client = SolarCommandSender(backend)
 
-    message = (
-        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
-    )
+    message = MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
@@ -68,12 +66,7 @@ def test_sign_message_short_signed(backend, firmware, scenario_navigator):
 
 # Verify the behaviour of SIGN_MESSAGE when asked to sign a long message.
 def test_sign_message_long_signed(
-    backend,
-    navigator,
-    firmware,
-    test_name,
-    default_screenshot_path,
-    scenario_navigator
+    backend, navigator, firmware, test_name, default_screenshot_path, scenario_navigator
 ):
     client = SolarCommandSender(backend)
 
@@ -140,9 +133,7 @@ def test_sign_message_long_signed(
 def test_sign_message_rejected(backend, firmware, scenario_navigator):
     client = SolarCommandSender(backend)
 
-    message = (
-        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
-    )
+    message = MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
 
     with pytest.raises(ExceptionRAPDU) as error:
         with client.sign_message(path=PATH_MAINNET, message=message):
@@ -186,9 +177,6 @@ def test_sign_message_invalid_length(backend):
     _, _ = unpack_get_public_key_response(rapdu.data)
 
     with pytest.raises(ExceptionRAPDU) as error:
-        with client.sign_message_sync(
-            path=PATH_MAINNET, message="X" * 4096
-        ):
-
+        with client.sign_message_sync(path=PATH_MAINNET, message="X" * 4096):
             assert error.value.status == Errors.SW_TX_PARSING_FAIL
             assert len(error.value.data) == 0

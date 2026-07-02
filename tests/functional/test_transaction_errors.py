@@ -107,8 +107,8 @@ def test_transaction_transfer_invalid_limit(backend):
         senderPkey=public_key,
         fee=5645365,
         memo="",
-        addresses=[ "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3" ] * (payment_limit + 1),
-        amounts=[ 1 ] * (payment_limit + 1),
+        addresses=["3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3"] * (payment_limit + 1),
+        amounts=[1] * (payment_limit + 1),
     )
 
     with pytest.raises(ExceptionRAPDU) as error:
