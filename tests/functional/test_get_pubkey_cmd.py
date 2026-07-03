@@ -2,7 +2,9 @@ import pytest
 
 from ragger.bip import CurveChoice, calculate_public_key_and_chaincode
 from ragger.error import ExceptionRAPDU
+from ragger.backend import BackendInterface
 from ragger.navigator import NavInsID
+from ragger.navigator.navigation_scenario import NavigateWithScenario
 
 from application_client.solar_command_sender import Errors, SolarCommandSender
 from application_client.solar_response_unpacker import (
@@ -12,7 +14,7 @@ from application_client.solar_response_unpacker import (
 
 
 # Verify the behaviour of GET_PUBLIC_KEY in non-confirmation mode.
-def test_get_public_key_nonconfirm(backend):
+def test_get_public_key_nonconfirm(backend: BackendInterface):
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
 
@@ -27,7 +29,7 @@ def test_get_public_key_nonconfirm(backend):
 
 
 # Verify the behaviour of GET_PUBLIC_KEY (with chaincode) in non-confirmation mode.
-def test_get_public_key_with_chaincode_nonconfirm(backend):
+def test_get_public_key_with_chaincode_nonconfirm(backend: BackendInterface):
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
 
@@ -43,15 +45,15 @@ def test_get_public_key_with_chaincode_nonconfirm(backend):
 
 
 # Verify the behaviour of GET_PUBLIC_KEY in confirmation mode when confirmed.
-def test_get_public_key_confirmed(
-    backend, navigator, firmware, test_name, default_screenshot_path, scenario_navigator
-):
+def test_get_public_key_confirmed(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
 
     instructions = []
 
-    if not firmware.is_nano:
+    device = backend.device
+    if not device.is_nano:
         instructions = [
             NavInsID.SWIPE_CENTER_TO_LEFT,
             NavInsID.USE_CASE_REVIEW_TAP,
@@ -60,12 +62,12 @@ def test_get_public_key_confirmed(
         ]
 
     with client.get_public_key_with_confirmation(path=path):
-        if firmware.is_nano:
+        if device.is_nano:
             scenario_navigator.review_approve()
         else:
-            navigator.navigate_and_compare(
-                default_screenshot_path,
-                test_name,
+            scenario_navigator.navigator.navigate_and_compare(
+                scenario_navigator.screenshot_path,
+                scenario_navigator.test_name,
                 instructions,
             )
 
@@ -84,14 +86,16 @@ def test_get_public_key_confirmed(
 
 # Verify the behaviour of GET_PUBLIC_KEY (with chaincode) in confirmation mode when confirmed.
 def test_get_public_key_with_chaincode_confirmed(
-    backend, navigator, firmware, test_name, default_screenshot_path, scenario_navigator
+    scenario_navigator: NavigateWithScenario,
 ):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
 
     instructions = []
 
-    if not firmware.is_nano:
+    device = backend.device
+    if not device.is_nano:
         instructions = [
             NavInsID.SWIPE_CENTER_TO_LEFT,
             NavInsID.USE_CASE_REVIEW_TAP,
@@ -100,12 +104,12 @@ def test_get_public_key_with_chaincode_confirmed(
         ]
 
     with client.get_public_key_with_confirmation(path=path, chaincode=1):
-        if firmware.is_nano:
+        if device.is_nano:
             scenario_navigator.review_approve()
         else:
-            navigator.navigate_and_compare(
-                default_screenshot_path,
-                test_name,
+            scenario_navigator.navigator.navigate_and_compare(
+                scenario_navigator.screenshot_path,
+                scenario_navigator.test_name,
                 instructions,
             )
 
@@ -126,11 +130,11 @@ def test_get_public_key_with_chaincode_confirmed(
 
 
 # Verify the behaviour of GET_PUBLIC_KEY in confirmation mode when rejected.
-def test_get_public_key_rejected(backend, scenario_navigator):
+def test_get_public_key_rejected(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
     path = "m/44'/3333'/0'/0/0"
 
-    # if firmware.is_nano:
     with pytest.raises(ExceptionRAPDU) as error:
         with client.get_public_key_with_confirmation(path=path):
             scenario_navigator.address_review_reject()

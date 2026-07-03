@@ -1,8 +1,10 @@
 import pytest
 
+from ledgered.devices import DeviceType
+
 from ragger.error import ExceptionRAPDU
-from ragger.firmware import Firmware
-from ragger.navigator import NavIns, NavInsID
+from ragger.backend import BackendInterface
+from ragger.navigator import NavigateWithScenario, NavIns, NavInsID, BaseNavInsID
 
 from application_client.solar_command_sender import (
     CLA,
@@ -22,7 +24,7 @@ from constants import (
 
 
 # Verify the behaviour of GET_ADDRESS in non-confirmation mode.
-def test_get_address_nonconfirm(backend):
+def test_get_address_nonconfirm(backend: BackendInterface):
     client = SolarCommandSender(backend)
 
     for network in NETWORKS:
@@ -38,7 +40,8 @@ def test_get_address_nonconfirm(backend):
 
 
 # Verify the behaviour of GET_ADDRESS in confirmation mode when confirmed.
-def test_get_address_confirmed(backend, scenario_navigator):
+def test_get_address_confirmed(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
 
     with client.get_address_with_confirmation(
@@ -57,10 +60,9 @@ def test_get_address_confirmed(backend, scenario_navigator):
 
 
 # Verify that GET_ADDRESS (with a QR) works as expected in confirmation mode.
-def test_get_address_with_qr_confirmed(
-    backend, firmware, navigator, default_screenshot_path, test_name
-):
-    if firmware.is_nano:
+def test_get_address_with_qr_confirmed(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
+    if backend.device.is_nano:
         pytest.skip("Test only applicable to e-ink devices")
     else:
         client = SolarCommandSender(backend)
@@ -68,14 +70,15 @@ def test_get_address_with_qr_confirmed(
         with client.get_address_with_confirmation(
             path=PATH_MAINNET, network=NETWORK_MAINNET
         ):
-            if firmware is Firmware.STAX:
+            device = backend.device
+            if device.type == DeviceType.STAX:
                 qr_tap = NavIns(NavInsID.TOUCH, (64, 520))
-            elif firmware is Firmware.FLEX:
+            elif device.type == DeviceType.FLEX:
                 qr_tap = NavIns(NavInsID.TOUCH, (77, 466))
             else:
                 qr_tap = NavIns(NavInsID.TOUCH, (43, 299))
 
-            instructions = [
+            instructions: list[NavIns | BaseNavInsID] = [
                 NavInsID.SWIPE_CENTER_TO_LEFT,
                 qr_tap,
                 NavInsID.USE_CASE_ADDRESS_CONFIRMATION_EXIT_QR,
@@ -83,8 +86,10 @@ def test_get_address_with_qr_confirmed(
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
 
-            navigator.navigate_and_compare(
-                default_screenshot_path, test_name, instructions
+            scenario_navigator.navigator.navigate_and_compare(
+                scenario_navigator.screenshot_path,
+                scenario_navigator.test_name,
+                instructions,
             )
 
         response = client.get_async_response()
@@ -98,7 +103,8 @@ def test_get_address_with_qr_confirmed(
 
 
 # Verify the behaviour of GET_ADDRESS in confirmation mode when rejected.
-def test_get_address_rejected(backend, scenario_navigator):
+def test_get_address_rejected(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
 
     with pytest.raises(ExceptionRAPDU) as error:
@@ -112,7 +118,8 @@ def test_get_address_rejected(backend, scenario_navigator):
 
 
 # Verify the behaviour of GET_ADDRESS when the provided network is not supported.
-def test_get_address_unsupported_network(backend):
+def test_get_address_unsupported_network(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     # client = SolarCommandSender(backend)
     no_confirm = 0x00
     unsupported_network = 0x3E

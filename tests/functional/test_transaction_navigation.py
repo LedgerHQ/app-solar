@@ -1,11 +1,14 @@
 import hashlib
 
 import pytest
+from pathlib import Path
 
 from btclib.ecc import ssa
 
-from ragger.firmware import Firmware
-from ragger.navigator import NavIns, NavInsID
+from ledgered.devices import DeviceType
+
+from ragger.backend import BackendInterface
+from ragger.navigator import Navigator, NavIns, NavInsID, BaseNavInsID
 
 from application_client.solar_command_sender import SolarCommandSender
 from application_client.solar_response_unpacker import unpack_get_public_key_response
@@ -104,9 +107,12 @@ NAV_TAP_NEXT_APEX_P = NavIns(NavInsID.TOUCH, (268, 367))
 
 # Verify the navigation behaviour of SIGN_TX while reviewing an ipfs transaction.
 def test_transaction_navigation_ipfs(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
-    if not firmware.is_nano:
+    if not backend.device.is_nano:
         pytest.skip("Test only applicable to Nano (X,S+) devices")
 
     client = SolarCommandSender(backend)
@@ -175,7 +181,10 @@ def create_address(i):
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer transaction.
 def test_transaction_navigation_transfer(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -193,9 +202,10 @@ def test_transaction_navigation_transfer(
         amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 36
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -203,7 +213,7 @@ def test_transaction_navigation_transfer(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -239,7 +249,7 @@ def test_transaction_navigation_transfer(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -275,7 +285,7 @@ def test_transaction_navigation_transfer(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -336,7 +346,10 @@ def test_transaction_navigation_transfer(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with a single payment.
 def test_transaction_navigation_transfer_single_payment(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -354,9 +367,10 @@ def test_transaction_navigation_transfer_single_payment(
         amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 10
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -364,7 +378,7 @@ def test_transaction_navigation_transfer_single_payment(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -376,7 +390,7 @@ def test_transaction_navigation_transfer_single_payment(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -387,7 +401,7 @@ def test_transaction_navigation_transfer_single_payment(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -418,7 +432,10 @@ def test_transaction_navigation_transfer_single_payment(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with two payments.
 def test_transaction_navigation_transfer_two_payments(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -436,9 +453,11 @@ def test_transaction_navigation_transfer_two_payments(
         amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+
+    if device.is_nano:
         clicks = 12
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -446,7 +465,7 @@ def test_transaction_navigation_transfer_two_payments(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -467,7 +486,7 @@ def test_transaction_navigation_transfer_two_payments(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -488,7 +507,7 @@ def test_transaction_navigation_transfer_two_payments(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -528,7 +547,10 @@ def test_transaction_navigation_transfer_two_payments(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with 127 payments.
 def test_transaction_navigation_transfer_max_payments(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -546,9 +568,11 @@ def test_transaction_navigation_transfer_max_payments(
         amounts=[1234567890] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+
+    if device.is_nano:
         clicks = 262
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -556,7 +580,7 @@ def test_transaction_navigation_transfer_max_payments(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -594,7 +618,7 @@ def test_transaction_navigation_transfer_max_payments(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -632,7 +656,7 @@ def test_transaction_navigation_transfer_max_payments(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -695,9 +719,12 @@ def test_transaction_navigation_transfer_max_payments(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a burn transaction.
 def test_transaction_navigation_burn(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
-    if not firmware.is_nano:
+    if not backend.device.is_nano:
         pytest.skip("Test only applicable to Nano (X,S+) devices")
 
     client = SolarCommandSender(backend)
@@ -747,7 +774,10 @@ def test_transaction_navigation_burn(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a vote transaction.
 def test_transaction_navigation_vote(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -779,9 +809,10 @@ def test_transaction_navigation_vote(
         ],
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 40
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -789,7 +820,7 @@ def test_transaction_navigation_vote(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -829,7 +860,7 @@ def test_transaction_navigation_vote(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -865,7 +896,7 @@ def test_transaction_navigation_vote(
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -922,7 +953,10 @@ def test_transaction_navigation_vote(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a cancel vote transaction.
 def test_transaction_navigation_vote_cancel(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -942,9 +976,10 @@ def test_transaction_navigation_vote_cancel(
             votes=[],
         )
 
-        instructions = []
+        instructions: list[NavIns | BaseNavInsID] = []
 
-        if firmware.is_nano:
+        device = backend.device
+        if device.is_nano:
             clicks = nano_button_clicks[i]
             instructions = [
                 *([NavInsID.RIGHT_CLICK] * clicks),
@@ -952,7 +987,7 @@ def test_transaction_navigation_vote_cancel(
                 *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
                 NavInsID.BOTH_CLICK,
             ]
-        elif firmware is Firmware.FLEX:
+        elif device.type is DeviceType.FLEX:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -968,7 +1003,7 @@ def test_transaction_navigation_vote_cancel(
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.STAX:
+        elif device.type is DeviceType.STAX:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
@@ -984,7 +1019,7 @@ def test_transaction_navigation_vote_cancel(
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.APEX_P:
+        elif device.type is DeviceType.APEX_P:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
