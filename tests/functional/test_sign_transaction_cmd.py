@@ -42,21 +42,16 @@ REJECT_MEMO = "This transaction should be rejected."
 
 def approve_tx(client, scenario_navigator, case_name, transaction, public_key):
     with client.sign_transaction(path=PATH_MAINNET, transaction=transaction):
-        scenario_navigator.review_approve(
-            test_name=case_name + "_signed"
-        )
+        scenario_navigator.review_approve(test_name=case_name + "_signed")
 
     response = client.get_async_response().data
-    assert ssa.verify(transaction.serialise(),
-                      public_key, response) is True
+    assert ssa.verify(transaction.serialise(), public_key, response) is True
 
 
 def reject_tx(client, scenario_navigator, case_name, transaction):
     with pytest.raises(ExceptionRAPDU) as error:
         with client.sign_transaction(path=PATH_MAINNET, transaction=transaction):
-            scenario_navigator.review_reject(
-                test_name=case_name + "_rejected"
-            )
+            scenario_navigator.review_reject(test_name=case_name + "_rejected")
 
     assert error.value.status == Errors.SW_DENY
     assert len(error.value.data) == 0
@@ -75,7 +70,9 @@ def test_sign_transaction_ipfs(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate([NO_MEMO, "This is an IPFS transaction.", LONG_MEMO, REJECT_MEMO]):
+    for i, memo in enumerate(
+        [NO_MEMO, "This is an IPFS transaction.", LONG_MEMO, REJECT_MEMO]
+    ):
         ipfs_transaction = Ipfs(
             nonce=1,
             senderPkey=public_key,
@@ -85,16 +82,20 @@ def test_sign_transaction_ipfs(backend, scenario_navigator, test_name):
         )
 
         if memo == REJECT_MEMO:
-            reject_tx(client,
-                      scenario_navigator,
-                      test_name + TEST_NAME_EXTENSION[i],
-                      ipfs_transaction)
+            reject_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                ipfs_transaction,
+            )
         else:
-            approve_tx(client,
-                       scenario_navigator,
-                       test_name + TEST_NAME_EXTENSION[i],
-                       ipfs_transaction,
-                       public_key)
+            approve_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                ipfs_transaction,
+                public_key,
+            )
 
 
 ################################################################################
@@ -110,7 +111,9 @@ def test_sign_transaction_transfer(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate([NO_MEMO, "This is a Transfer transaction.", LONG_MEMO, REJECT_MEMO]):
+    for i, memo in enumerate(
+        [NO_MEMO, "This is a Transfer transaction.", LONG_MEMO, REJECT_MEMO]
+    ):
         transfer_transaction = Transfer(
             nonce=2,
             senderPkey=public_key,
@@ -165,16 +168,20 @@ def test_sign_transaction_transfer(backend, scenario_navigator, test_name):
         )
 
         if memo == REJECT_MEMO:
-            reject_tx(client,
-                      scenario_navigator,
-                      test_name + TEST_NAME_EXTENSION[i],
-                      transfer_transaction)
+            reject_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                transfer_transaction,
+            )
         else:
-            approve_tx(client,
-                       scenario_navigator,
-                       test_name + TEST_NAME_EXTENSION[i],
-                       transfer_transaction,
-                       public_key)
+            approve_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                transfer_transaction,
+                public_key,
+            )
 
 
 ################################################################################
@@ -190,7 +197,9 @@ def test_sign_transaction_burn(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate([NO_MEMO, "This is a Burn transaction.", LONG_MEMO, REJECT_MEMO]):
+    for i, memo in enumerate(
+        [NO_MEMO, "This is a Burn transaction.", LONG_MEMO, REJECT_MEMO]
+    ):
         burn_transaction = Burn(
             nonce=3,
             senderPkey=public_key,
@@ -200,16 +209,20 @@ def test_sign_transaction_burn(backend, scenario_navigator, test_name):
         )
 
         if memo == REJECT_MEMO:
-            reject_tx(client,
-                      scenario_navigator,
-                      test_name + TEST_NAME_EXTENSION[i],
-                      burn_transaction)
+            reject_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                burn_transaction,
+            )
         else:
-            approve_tx(client,
-                       scenario_navigator,
-                       test_name + TEST_NAME_EXTENSION[i],
-                       burn_transaction,
-                       public_key)
+            approve_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                burn_transaction,
+                public_key,
+            )
 
 
 ################################################################################
@@ -225,7 +238,9 @@ def test_sign_transaction_vote(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate([NO_MEMO, "This is a Vote transaction.", LONG_MEMO, REJECT_MEMO]):
+    for i, memo in enumerate(
+        [NO_MEMO, "This is a Vote transaction.", LONG_MEMO, REJECT_MEMO]
+    ):
         vote_transaction = Vote(
             nonce=4,
             senderPkey=public_key,
@@ -235,16 +250,20 @@ def test_sign_transaction_vote(backend, scenario_navigator, test_name):
         )
 
         if memo == REJECT_MEMO:
-            reject_tx(client,
-                      scenario_navigator,
-                      test_name + TEST_NAME_EXTENSION[i],
-                      vote_transaction)
+            reject_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                vote_transaction,
+            )
         else:
-            approve_tx(client,
-                       scenario_navigator,
-                       test_name + TEST_NAME_EXTENSION[i],
-                       vote_transaction,
-                       public_key)
+            approve_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                vote_transaction,
+                public_key,
+            )
 
 
 # Verify the behaviour of SIGN_TX when asked to sign a cancel vote transaction.
@@ -266,13 +285,17 @@ def test_sign_transaction_vote_cancel(backend, scenario_navigator, test_name):
         )
 
         if memo == REJECT_MEMO:
-            reject_tx(client,
-                      scenario_navigator,
-                      test_name + TEST_NAME_EXTENSION[i],
-                      cancel_vote_transaction)
+            reject_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                cancel_vote_transaction,
+            )
         else:
-            approve_tx(client,
-                       scenario_navigator,
-                       test_name + TEST_NAME_EXTENSION[i],
-                       cancel_vote_transaction,
-                       public_key)
+            approve_tx(
+                client,
+                scenario_navigator,
+                test_name + TEST_NAME_EXTENSION[i],
+                cancel_vote_transaction,
+                public_key,
+            )

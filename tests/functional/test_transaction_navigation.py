@@ -1,11 +1,14 @@
 import hashlib
 
 import pytest
+from pathlib import Path
 
 from btclib.ecc import ssa
 
-from ragger.firmware import Firmware
-from ragger.navigator import NavIns, NavInsID
+from ledgered.devices import DeviceType
+
+from ragger.backend import BackendInterface
+from ragger.navigator import Navigator, NavIns, NavInsID, BaseNavInsID
 
 from application_client.solar_command_sender import SolarCommandSender
 from application_client.solar_response_unpacker import unpack_get_public_key_response
@@ -104,9 +107,12 @@ NAV_TAP_NEXT_APEX_P = NavIns(NavInsID.TOUCH, (268, 367))
 
 # Verify the navigation behaviour of SIGN_TX while reviewing an ipfs transaction.
 def test_transaction_navigation_ipfs(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
-    if not firmware.is_nano:
+    if not backend.device.is_nano:
         pytest.skip("Test only applicable to Nano (X,S+) devices")
 
     client = SolarCommandSender(backend)
@@ -145,8 +151,7 @@ def test_transaction_navigation_ipfs(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(ipfs_transaction.serialise(),
-                      public_key, response.data) is True
+    assert ssa.verify(ipfs_transaction.serialise(), public_key, response.data) is True
 
 
 ################################################################################
@@ -159,14 +164,14 @@ def test_transaction_navigation_ipfs(
 def create_address(i):
     """Generate a single deterministic address using RIPEMD160"""
     # Start with '3f' network byte
-    network = '3f'
+    network = "3f"
 
     # Create a deterministic input for the hash
     # Convert i to bytes and add some salt to make it unique
-    data = i.to_bytes(4, 'big') + b'solar_app_tests'
+    data = i.to_bytes(4, "big") + b"solar_app_tests"
 
     # Generate RIPEMD160 hash
-    h = hashlib.new('ripemd160')
+    h = hashlib.new("ripemd160")
     h.update(data)
     hash_bytes = h.digest()  # This gives us exactly 20 bytes
 
@@ -176,7 +181,10 @@ def create_address(i):
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer transaction.
 def test_transaction_navigation_transfer(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -191,12 +199,13 @@ def test_transaction_navigation_transfer(
         fee=5645365,
         memo=LONG_MEMO,
         addresses=[create_address(i) for i in range(payment_count)],
-        amounts=[ 1234567 ] * payment_count,
+        amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 36
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -204,153 +213,117 @@ def test_transaction_navigation_transfer(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_FLEX,
-
             # Payments modal: 14 Payments
-            * (
+            *(
                 # Pages: (1-4), (5-8), (9-12),
                 [
                     MODAL_TAP_FIELD_1_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_2_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_3_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_4_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     NAV_TAP_NEXT_FLEX,
-                ] * 3
+                ]
+                * 3
             ),
-
             # Page: (13-14)
             MODAL_TAP_FIELD_1_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_2_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             # Close modal
             NAV_TAP_CLOSE_FLEX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             NAV_TAP_NEXT_FLEX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_APEX_P,
-
             # Payments modal: 14 Payments
-            * (
+            *(
                 # Pages: (1-4), (5-8), (9-12),
                 [
                     MODAL_TAP_FIELD_1_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_2_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_3_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_4_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     NAV_TAP_NEXT_APEX_P,
-                ] * 3
+                ]
+                * 3
             ),
-
             # Page: (13-14)
             MODAL_TAP_FIELD_1_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_2_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             # Close modal
             NAV_TAP_CLOSE_APEX_P,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             NAV_TAP_NEXT_APEX_P,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_STAX,
-
             # Payments modal: 14 Payments
-            * (
+            *(
                 # Pages: (1-5), (6-10), (11-14)
                 [
                     MODAL_TAP_FIELD_1_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_2_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_3_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_4_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_5_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     NAV_TAP_NEXT_STAX,
-                ] * 2
+                ]
+                * 2
             ),
-
             # Page: (11-14)
             MODAL_TAP_FIELD_1_STAX,
             NAV_TAP_DISMISS_STAX,
-
             MODAL_TAP_FIELD_2_STAX,
             NAV_TAP_DISMISS_STAX,
-
             MODAL_TAP_FIELD_3_STAX,
             NAV_TAP_DISMISS_STAX,
-
             MODAL_TAP_FIELD_4_STAX,
             NAV_TAP_DISMISS_STAX,
-
             # Close modal
             NAV_TAP_CLOSE_STAX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_STAX,
             NAV_TAP_DISMISS_STAX,
-
             NAV_TAP_NEXT_STAX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
@@ -366,13 +339,17 @@ def test_transaction_navigation_transfer(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(transfer_transaction.serialise(),
-                      public_key, response.data) is True
+    assert (
+        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
+    )
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with a single payment.
 def test_transaction_navigation_transfer_single_payment(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -387,12 +364,13 @@ def test_transaction_navigation_transfer_single_payment(
         fee=5645365,
         memo=LONG_MEMO,
         addresses=[create_address(i) for i in range(payment_count)],
-        amounts=[ 1234567 ] * payment_count,
+        amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 10
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -400,47 +378,38 @@ def test_transaction_navigation_transfer_single_payment(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Memo details modal
             # tap extended memo field, then dismiss details modal
             TXINFO_TAP_FIELD_4_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             NAV_TAP_NEXT_FLEX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Memo details modal
             TXINFO_TAP_FIELD_4_STAX,
             NAV_TAP_DISMISS_STAX,
-
             NAV_TAP_NEXT_STAX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Memo details modal
             # tap extended memo field, then dismiss details modal
             TXINFO_TAP_FIELD_4_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             NAV_TAP_NEXT_APEX_P,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
@@ -456,13 +425,17 @@ def test_transaction_navigation_transfer_single_payment(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(transfer_transaction.serialise(),
-                      public_key, response.data) is True
+    assert (
+        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
+    )
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with two payments.
 def test_transaction_navigation_transfer_two_payments(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -477,12 +450,14 @@ def test_transaction_navigation_transfer_two_payments(
         fee=5645365,
         memo=LONG_MEMO,
         addresses=[create_address(i) for i in range(payment_count)],
-        amounts=[ 1234567 ] * payment_count,
+        amounts=[1234567] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+
+    if device.is_nano:
         clicks = 12
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -490,87 +465,66 @@ def test_transaction_navigation_transfer_two_payments(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_FLEX,
-
             # Payments modal: 2 Payments
             # Page: (1-2)
             MODAL_TAP_FIELD_1_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_2_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             # Close modal
             NAV_TAP_CLOSE_FLEX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             NAV_TAP_NEXT_FLEX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_STAX,
-
             # Payments modal: 2 Payments
             # Page: (1-2)
             MODAL_TAP_FIELD_1_STAX,
             NAV_TAP_DISMISS_STAX,
-
             MODAL_TAP_FIELD_2_STAX,
             NAV_TAP_DISMISS_STAX,
-
             # Close modal
             NAV_TAP_CLOSE_STAX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_STAX,
             NAV_TAP_DISMISS_STAX,
-
             NAV_TAP_NEXT_STAX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_APEX_P,
-
             # Payments modal: 2 Payments
             # Page: (1-2)
             MODAL_TAP_FIELD_1_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_2_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             # Close modal
             NAV_TAP_CLOSE_APEX_P,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             NAV_TAP_NEXT_APEX_P,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
@@ -586,13 +540,17 @@ def test_transaction_navigation_transfer_two_payments(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(transfer_transaction.serialise(),
-                      public_key, response.data) is True
+    assert (
+        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
+    )
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with 127 payments.
 def test_transaction_navigation_transfer_max_payments(
-    backend, firmware, navigator, default_screenshot_path, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -607,12 +565,14 @@ def test_transaction_navigation_transfer_max_payments(
         fee=5645365,
         memo=LONG_MEMO,
         addresses=[create_address(i) for i in range(payment_count)],
-        amounts=[ 1234567890 ] * payment_count,
+        amounts=[1234567890] * payment_count,
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+
+    if device.is_nano:
         clicks = 262
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -620,153 +580,117 @@ def test_transaction_navigation_transfer_max_payments(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_FLEX,
-
             # Payments modal: 127 Payments
-            * (
+            *(
                 # Pages: (1-4), (5-8), ..., (121-124),
                 [
                     MODAL_TAP_FIELD_1_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_2_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_3_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_4_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     NAV_TAP_NEXT_FLEX,
-                ] * 31
+                ]
+                * 31
             ),
-
             # Page: (125-127)
             MODAL_TAP_FIELD_1_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_2_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             # Close modal
             NAV_TAP_CLOSE_FLEX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             NAV_TAP_NEXT_FLEX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_STAX,
-
             # Payments modal: 14 Payments
-            * (
+            *(
                 # Pages: (1-5), (6-10), (121-125)
                 [
                     MODAL_TAP_FIELD_1_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_2_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_3_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_4_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_5_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     NAV_TAP_NEXT_STAX,
-                ] * 25
+                ]
+                * 25
             ),
-
             # Page: (126-127)
             MODAL_TAP_FIELD_1_STAX,
             NAV_TAP_DISMISS_STAX,
-
             MODAL_TAP_FIELD_2_STAX,
             NAV_TAP_DISMISS_STAX,
-
             # Close modal
             NAV_TAP_CLOSE_STAX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_STAX,
             NAV_TAP_DISMISS_STAX,
-
             NAV_TAP_NEXT_STAX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_APEX_P,
-
             # Payments modal: 127 Payments
-            * (
+            *(
                 # Pages: (1-4), (5-8), ..., (121-124),
                 [
                     MODAL_TAP_FIELD_1_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_2_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_3_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_4_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     NAV_TAP_NEXT_APEX_P,
-                ] * 31
+                ]
+                * 31
             ),
-
             # Page: (125-127)
             MODAL_TAP_FIELD_1_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_2_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             # Close modal
             NAV_TAP_CLOSE_APEX_P,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             NAV_TAP_NEXT_APEX_P,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
@@ -782,8 +706,9 @@ def test_transaction_navigation_transfer_max_payments(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(transfer_transaction.serialise(),
-                      public_key, response.data) is True
+    assert (
+        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
+    )
 
 
 ################################################################################
@@ -794,9 +719,12 @@ def test_transaction_navigation_transfer_max_payments(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a burn transaction.
 def test_transaction_navigation_burn(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
-    if not firmware.is_nano:
+    if not backend.device.is_nano:
         pytest.skip("Test only applicable to Nano (X,S+) devices")
 
     client = SolarCommandSender(backend)
@@ -833,8 +761,9 @@ def test_transaction_navigation_burn(
         if response is None:
             raise ValueError("get_async_response returned None")
 
-        assert ssa.verify(burn_transaction.serialise(),
-                          public_key, response.data) is True
+        assert (
+            ssa.verify(burn_transaction.serialise(), public_key, response.data) is True
+        )
 
 
 ################################################################################
@@ -845,7 +774,10 @@ def test_transaction_navigation_burn(
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a vote transaction.
 def test_transaction_navigation_vote(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -874,12 +806,13 @@ def test_transaction_navigation_vote(
             ["osrn", 625],
             ["pfeili", 625],
             ["sl33p", 625],
-        ]
+        ],
     )
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    device = backend.device
+    if device.is_nano:
         clicks = 40
         instructions = [
             *([NavInsID.RIGHT_CLICK] * clicks),
@@ -887,156 +820,119 @@ def test_transaction_navigation_vote(
             *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
             NavInsID.BOTH_CLICK,
         ]
-    elif firmware is Firmware.FLEX:
+    elif device.type is DeviceType.FLEX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_FLEX,
-
             # Votes modal: 16 Votes
-            * (
+            *(
                 # Pages: (1-4), (5-8), (9-12),
                 [
                     MODAL_TAP_FIELD_1_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_2_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_3_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     MODAL_TAP_FIELD_4_FLEX,
                     NAV_TAP_DISMISS_FLEX,
-
                     NAV_TAP_NEXT_FLEX,
-                ] * 3
+                ]
+                * 3
             ),
-
             # Page: (13-16)
             MODAL_TAP_FIELD_1_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_2_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             MODAL_TAP_FIELD_4_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             # Close modal
             NAV_TAP_CLOSE_FLEX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_FLEX,
             NAV_TAP_DISMISS_FLEX,
-
             NAV_TAP_NEXT_FLEX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.STAX:
+    elif device.type is DeviceType.STAX:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_STAX,
-
             # Votes modal: 16 Payments
-            * (
+            *(
                 # Pages: (1-5), (6-10), (11-15)
                 [
                     MODAL_TAP_FIELD_1_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_2_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_3_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_4_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     MODAL_TAP_FIELD_5_STAX,
                     NAV_TAP_DISMISS_STAX,
-
                     NAV_TAP_NEXT_STAX,
-                ] * 3
+                ]
+                * 3
             ),
-
             # Page: (11-14)
             MODAL_TAP_FIELD_1_STAX,
             NAV_TAP_DISMISS_STAX,
-
             # Close modal
             NAV_TAP_CLOSE_STAX,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_STAX,
             NAV_TAP_DISMISS_STAX,
-
             NAV_TAP_NEXT_STAX,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
-    elif firmware is Firmware.APEX_P:
+    elif device.type is DeviceType.APEX_P:
         instructions = [
             # Continue review (to txinfo page)
             NavInsID.SWIPE_CENTER_TO_LEFT,
-
             # Open asset modal
             TXINFO_TAP_FIELD_1_APEX_P,
-
             # Votes modal: 16 Votes
-            * (
+            *(
                 # Pages: (1-4), (5-8), (9-12),
                 [
                     MODAL_TAP_FIELD_1_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_2_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_3_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     MODAL_TAP_FIELD_4_APEX_P,
                     NAV_TAP_DISMISS_APEX_P,
-
                     NAV_TAP_NEXT_APEX_P,
-                ] * 3
+                ]
+                * 3
             ),
-
             # Page: (13-16)
             MODAL_TAP_FIELD_1_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_2_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             MODAL_TAP_FIELD_4_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             # Close modal
             NAV_TAP_CLOSE_APEX_P,
-
             # Memo details modal
             TXINFO_TAP_FIELD_3_APEX_P,
             NAV_TAP_DISMISS_APEX_P,
-
             NAV_TAP_NEXT_APEX_P,
-
             NavInsID.USE_CASE_REVIEW_CONFIRM,
             NavInsID.USE_CASE_STATUS_DISMISS,
         ]
@@ -1052,13 +948,15 @@ def test_transaction_navigation_vote(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert ssa.verify(vote_transaction.serialise(),
-                      public_key, response.data) is True
+    assert ssa.verify(vote_transaction.serialise(), public_key, response.data) is True
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a cancel vote transaction.
 def test_transaction_navigation_vote_cancel(
-    backend, default_screenshot_path, firmware, navigator, test_name
+    backend: BackendInterface,
+    default_screenshot_path: Path,
+    navigator: Navigator,
+    test_name: str,
 ):
     client = SolarCommandSender(backend)
 
@@ -1067,7 +965,9 @@ def test_transaction_navigation_vote_cancel(
 
     nano_button_clicks = [3, 4, 8]
 
-    for i, memo in enumerate([NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO]):
+    for i, memo in enumerate(
+        [NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO]
+    ):
         cancel_vote_transaction = Vote(
             nonce=4,
             senderPkey=public_key,
@@ -1076,9 +976,10 @@ def test_transaction_navigation_vote_cancel(
             votes=[],
         )
 
-        instructions = []
+        instructions: list[NavIns | BaseNavInsID] = []
 
-        if firmware.is_nano:
+        device = backend.device
+        if device.is_nano:
             clicks = nano_button_clicks[i]
             instructions = [
                 *([NavInsID.RIGHT_CLICK] * clicks),
@@ -1086,54 +987,51 @@ def test_transaction_navigation_vote_cancel(
                 *([NavInsID.RIGHT_CLICK] * (clicks - 1)),
                 NavInsID.BOTH_CLICK,
             ]
-        elif firmware is Firmware.FLEX:
+        elif device.type is DeviceType.FLEX:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
-
-                * (  # Memo details modal (for long memos)
+                *(  # Memo details modal (for long memos)
                     [
                         TXINFO_TAP_FIELD_2_FLEX,
                         NAV_TAP_DISMISS_FLEX,
-                    ] if i == 2 else []
+                    ]
+                    if i == 2
+                    else []
                 ),
-
                 NAV_TAP_NEXT_FLEX,
-
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.STAX:
+        elif device.type is DeviceType.STAX:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
-
-                * (  # Memo details modal (for long memos)
+                *(  # Memo details modal (for long memos)
                     [
                         TXINFO_TAP_FIELD_2_STAX,
                         NAV_TAP_DISMISS_STAX,
-                    ] if i == 2 else []
+                    ]
+                    if i == 2
+                    else []
                 ),
-
                 NAV_TAP_NEXT_STAX,
-
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.APEX_P:
+        elif device.type is DeviceType.APEX_P:
             instructions = [
                 # Continue review (to txinfo page)
                 NavInsID.SWIPE_CENTER_TO_LEFT,
-
-                * (  # Memo details modal (for long memos)
+                *(  # Memo details modal (for long memos)
                     [
                         TXINFO_TAP_FIELD_2_APEX_P,
                         NAV_TAP_DISMISS_APEX_P,
-                    ] if i == 2 else []
+                    ]
+                    if i == 2
+                    else []
                 ),
-
                 NAV_TAP_NEXT_APEX_P,
-
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
@@ -1152,7 +1050,6 @@ def test_transaction_navigation_vote_cancel(
             raise ValueError("get_async_response returned None")
 
         assert (
-            ssa.verify(cancel_vote_transaction.serialise(),
-                       public_key, response.data)
+            ssa.verify(cancel_vote_transaction.serialise(), public_key, response.data)
             is True
         )

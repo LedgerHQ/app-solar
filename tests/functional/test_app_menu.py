@@ -1,12 +1,21 @@
-from ragger.navigator import NavInsID
+from pathlib import Path
+
+from ragger.backend import BackendInterface
+from ragger.navigator import Navigator, NavInsID
 
 
 # Verify the behaviour of the device's main menu.
-def test_app_menu_main(firmware, navigator, test_name, default_screenshot_path):
+def test_app_menu_main(
+    backend: BackendInterface,
+    navigator: Navigator,
+    test_name: str,
+    default_screenshot_path: Path,
+):
     instructions = []
 
+    device = backend.device
     # Navigate in the main menu
-    if firmware.is_nano:
+    if device.is_nano:
         instructions = [
             NavInsID.RIGHT_CLICK,
             NavInsID.RIGHT_CLICK,
@@ -24,11 +33,17 @@ def test_app_menu_main(firmware, navigator, test_name, default_screenshot_path):
 
 
 # Verify the behaviour of the device's info menu.
-def test_app_menu_info(firmware, navigator, test_name, default_screenshot_path):
+def test_app_menu_info(
+    backend: BackendInterface,
+    navigator: Navigator,
+    test_name: str,
+    default_screenshot_path: Path,
+):
     instructions = []
 
+    device = backend.device
     # Navigate in the main menu
-    if firmware.is_nano:
+    if device.is_nano:
         instructions = [
             NavInsID.RIGHT_CLICK,
             NavInsID.RIGHT_CLICK,

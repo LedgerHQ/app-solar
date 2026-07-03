@@ -27,7 +27,7 @@ class Ipfs(Transaction):
                 f"Bad ipfs: '{self.ipfs.decode('utf-8', errors='replace')}'!"
                 if isinstance(self.ipfs, bytes)
                 else f"Bad ipfs: '{self.ipfs!r}"
-    )
+            )
 
     def serialise(self) -> bytes:
         return super().serialise() + b"".join([self.ipfs])

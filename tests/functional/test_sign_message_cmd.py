@@ -2,9 +2,11 @@ import pytest
 
 from btclib.ecc import ssa
 
+from ledgered.devices import DeviceType
+
 from ragger.error import ExceptionRAPDU
-from ragger.firmware import Firmware
-from ragger.navigator import NavIns, NavInsID
+from ragger.backend import BackendInterface
+from ragger.navigator import NavigateWithScenario, NavIns, NavInsID, BaseNavInsID
 
 from application_client.solar_command_sender import Errors, SolarCommandSender
 from application_client.solar_response_unpacker import unpack_get_public_key_response
@@ -39,12 +41,11 @@ MESSAGE_LONG: str = (
 
 
 # Verify the behaviour of SIGN_MESSAGE when asked to sign a short message.
-def test_sign_message_short_signed(backend, firmware, scenario_navigator):
+def test_sign_message_short_signed(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
 
-    message = (
-        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
-    )
+    message = MESSAGE_SHORT if backend.device.is_nano else MESSAGE_SHORT_NBGL
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
@@ -67,26 +68,21 @@ def test_sign_message_short_signed(backend, firmware, scenario_navigator):
 
 
 # Verify the behaviour of SIGN_MESSAGE when asked to sign a long message.
-def test_sign_message_long_signed(
-    backend,
-    navigator,
-    firmware,
-    test_name,
-    default_screenshot_path,
-    scenario_navigator
-):
+def test_sign_message_long_signed(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    instructions = []
+    instructions: list[NavIns | BaseNavInsID] = []
 
-    if firmware.is_nano:
+    if backend.device.is_nano:
         with client.sign_message(path=PATH_MAINNET, message=MESSAGE_LONG):
             scenario_navigator.review_approve()
     else:
-        if firmware is Firmware.FLEX:
+        device = backend.device
+        if device.type == DeviceType.FLEX:
             instructions = [
                 NavInsID.USE_CASE_REVIEW_TAP,
                 NavIns(NavInsID.TOUCH, (240, 380)),
@@ -96,7 +92,7 @@ def test_sign_message_long_signed(
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.STAX:
+        elif device.type == DeviceType.STAX:
             instructions = [
                 NavInsID.USE_CASE_REVIEW_TAP,
                 NavIns(NavInsID.TOUCH, (200, 420)),
@@ -106,7 +102,7 @@ def test_sign_message_long_signed(
                 NavInsID.USE_CASE_REVIEW_CONFIRM,
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
-        elif firmware is Firmware.APEX_P:
+        elif device.type == DeviceType.APEX_P:
             instructions = [
                 NavInsID.USE_CASE_REVIEW_TAP,
                 NavIns(NavInsID.TOUCH, (150, 246)),
@@ -118,8 +114,10 @@ def test_sign_message_long_signed(
             ]
 
         with client.sign_message(path=PATH_MAINNET, message=MESSAGE_LONG):
-            navigator.navigate_and_compare(
-                default_screenshot_path, test_name, instructions
+            scenario_navigator.navigator.navigate_and_compare(
+                scenario_navigator.screenshot_path,
+                scenario_navigator.test_name,
+                instructions,
             )
 
     response = client.get_async_response()
@@ -137,12 +135,11 @@ def test_sign_message_long_signed(
 
 
 # Verify the behaviour of SIGN_MESSAGE when the user rejects signing.
-def test_sign_message_rejected(backend, firmware, scenario_navigator):
+def test_sign_message_rejected(scenario_navigator: NavigateWithScenario):
+    backend = scenario_navigator.backend
     client = SolarCommandSender(backend)
 
-    message = (
-        MESSAGE_SHORT if firmware.is_nano else MESSAGE_SHORT_NBGL
-    )
+    message = MESSAGE_SHORT if backend.device.is_nano else MESSAGE_SHORT_NBGL
 
     with pytest.raises(ExceptionRAPDU) as error:
         with client.sign_message(path=PATH_MAINNET, message=message):
@@ -153,7 +150,7 @@ def test_sign_message_rejected(backend, firmware, scenario_navigator):
 
 
 # Verify the behaviour of SIGN_MESSAGE when the message contains invalid text.
-def test_sign_message_invalid_ascii(backend):
+def test_sign_message_invalid_ascii(backend: BackendInterface):
     client = SolarCommandSender(backend)
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
@@ -166,7 +163,7 @@ def test_sign_message_invalid_ascii(backend):
 
 
 # Verify the behaviour of SIGN_MESSAGE when the message is empty.
-def test_sign_message_empty(backend):
+def test_sign_message_empty(backend: BackendInterface):
     client = SolarCommandSender(backend)
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
@@ -179,16 +176,13 @@ def test_sign_message_empty(backend):
 
 
 # Verify the behaviour of SIGN_MESSAGE when the message is too long.
-def test_sign_message_invalid_length(backend):
+def test_sign_message_invalid_length(backend: BackendInterface):
     client = SolarCommandSender(backend)
 
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, _ = unpack_get_public_key_response(rapdu.data)
 
     with pytest.raises(ExceptionRAPDU) as error:
-        with client.sign_message_sync(
-            path=PATH_MAINNET, message="X" * 4096
-        ):
-
+        with client.sign_message_sync(path=PATH_MAINNET, message="X" * 4096):
             assert error.value.status == Errors.SW_TX_PARSING_FAIL
             assert len(error.value.data) == 0
