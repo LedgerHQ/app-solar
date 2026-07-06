@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import List, Literal, Optional
+from typing import Literal
 
 UINT64_MAX: int = 0xFFFFFFFFFFFFFFFF
 UINT32_MAX: int = 0xFFFFFFFF
@@ -7,8 +7,8 @@ UINT16_MAX: int = 0xFFFF
 UINT8_MAX: int = 0xFF
 
 
-def bip32_path_from_string(path: str) -> List[bytes]:
-    splitted_path: List[str] = path.split("/")
+def bip32_path_from_string(path: str) -> list[bytes]:
+    splitted_path: list[str] = path.split("/")
 
     if not splitted_path:
         raise ValueError(f"BIP32 path format error: '{path}'")
@@ -17,11 +17,7 @@ def bip32_path_from_string(path: str) -> List[bytes]:
         splitted_path = splitted_path[1:]
 
     return [
-        (
-            int(p).to_bytes(4, byteorder="big")
-            if "'" not in p
-            else (0x80000000 | int(p[:-1])).to_bytes(4, byteorder="big")
-        )
+        (int(p).to_bytes(4, byteorder="big") if "'" not in p else (0x80000000 | int(p[:-1])).to_bytes(4, byteorder="big"))
         for p in splitted_path
     ]
 
@@ -31,18 +27,18 @@ def write_varint(n: int) -> bytes:
         return n.to_bytes(1, byteorder="little")
 
     if n <= UINT16_MAX:
-        return b"\xFD" + n.to_bytes(2, byteorder="little")
+        return b"\xfd" + n.to_bytes(2, byteorder="little")
 
     if n <= UINT32_MAX:
-        return b"\xFE" + n.to_bytes(4, byteorder="little")
+        return b"\xfe" + n.to_bytes(4, byteorder="little")
 
     if n <= UINT64_MAX:
-        return b"\xFF" + n.to_bytes(8, byteorder="little")
+        return b"\xff" + n.to_bytes(8, byteorder="little")
 
     raise ValueError(f"Can't write to varint: '{n}'!")
 
 
-def read_varint(buf: BytesIO, prefix: Optional[bytes] = None) -> int:
+def read_varint(buf: BytesIO, prefix: bytes | None = None) -> int:
     b: bytes = prefix if prefix else buf.read(1)
 
     if not b:
@@ -67,9 +63,7 @@ def read(buf: BytesIO, size: int) -> bytes:
     return b
 
 
-def read_uint(
-    buf: BytesIO, bit_len: int, byteorder: Literal["big", "little"] = "little"
-) -> int:
+def read_uint(buf: BytesIO, bit_len: int, byteorder: Literal["big", "little"] = "little") -> int:
     size: int = bit_len // 8
     b: bytes = buf.read(size)
 

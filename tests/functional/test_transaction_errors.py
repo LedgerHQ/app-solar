@@ -1,7 +1,4 @@
 import pytest
-
-from ragger.error import ExceptionRAPDU
-
 from application_client.solar_command_sender import (
     CLA,
     MAX_APDU_LEN,
@@ -14,11 +11,10 @@ from application_client.solar_command_sender import (
 )
 from application_client.solar_response_unpacker import unpack_get_public_key_response
 from application_client.solar_transaction import Transaction
-
+from constants import PATH_MAINNET
+from ragger.error import ExceptionRAPDU
 from transactions.transfer import Transfer
 from transactions.vote import Vote
-
-from constants import PATH_MAINNET
 
 
 # Verify the behaviour of SIGN_TX when a transfer uses an invalid typegroup.
@@ -107,8 +103,8 @@ def test_transaction_transfer_invalid_limit(backend):
         senderPkey=public_key,
         fee=5645365,
         memo="",
-        addresses=[ "3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3" ] * (payment_limit + 1),
-        amounts=[ 1 ] * (payment_limit + 1),
+        addresses=["3fc91327b917bf2b464e9b8f1acf0588f4cb6e7bb3"] * (payment_limit + 1),
+        amounts=[1] * (payment_limit + 1),
     )
 
     with pytest.raises(ExceptionRAPDU) as error:

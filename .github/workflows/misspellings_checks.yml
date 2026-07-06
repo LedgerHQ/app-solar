@@ -18,14 +18,6 @@ on:
 jobs:
   misspell:
     name: Check misspellings
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone
-        uses: actions/checkout@v4.1.5
-
-      - name: Check misspellings
-        uses: codespell-project/actions-codespell@v2.1
-        with:
-          path: tests
-          builtin: clear,rare
-          check_filenames: true
+    uses: LedgerHQ/ledger-app-workflows/.github/workflows/reusable_spell_check.yml@v1
+    with:
+      src_path: tests

@@ -1,5 +1,3 @@
-from typing import List, Union
-
 from application_client.solar_transaction import Transaction, TransactionError
 from application_client.solar_utils import UINT16_MAX
 
@@ -8,17 +6,15 @@ class Vote(Transaction):
     def __init__(
         self,
         nonce: int,
-        senderPkey: Union[str, bytes],
+        senderPkey: str | bytes,
         fee: int,
         memo: str,
-        votes: List[List[Union[int, str]]],
+        votes: list[list[int | str]],
         network: int = 63,
         version: int = 3,
         startingByte: int = 0xFF,
     ) -> None:
-        super().__init__(
-            2, 2, nonce, senderPkey, fee, memo, network, version, startingByte
-        )
+        super().__init__(2, 2, nonce, senderPkey, fee, memo, network, version, startingByte)
         self.votes = []
         total_percentage = 0
 
@@ -54,6 +50,4 @@ class Vote(Transaction):
             asset += len(username).to_bytes(1, byteorder="little")
             asset += username.encode("ascii")
             asset += percentage.to_bytes(2, byteorder="little")
-        return super().serialise() + b"".join(
-            [len(self.votes).to_bytes(1, byteorder="little"), asset]
-        )
+        return super().serialise() + b"".join([len(self.votes).to_bytes(1, byteorder="little"), asset])

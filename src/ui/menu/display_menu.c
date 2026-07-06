@@ -34,10 +34,10 @@ static const char INFO_CONTENT_COPYRIGHT[] = "(c) Solar Network";
 
 /* -------------------------------------------------------------------------- */
 
-static const char* const INFO_TYPES[MENU_INFO_NB] = {INFO_TYPE_VERSION,
+static const char *const INFO_TYPES[MENU_INFO_NB] = {INFO_TYPE_VERSION,
                                                      INFO_TYPE_DEVELOPER,
                                                      INFO_TYPE_COPYRIGHT};
-static const char* const INFO_CONTENTS[MENU_INFO_NB] = {APPVERSION,
+static const char *const INFO_CONTENTS[MENU_INFO_NB] = {APPVERSION,
                                                         APPNAME,
                                                         INFO_CONTENT_COPYRIGHT};
 

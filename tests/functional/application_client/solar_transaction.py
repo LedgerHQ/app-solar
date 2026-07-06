@@ -1,5 +1,3 @@
-from typing import Union
-
 from application_client.solar_utils import UINT8_MAX, UINT16_MAX, UINT32_MAX, UINT64_MAX
 
 
@@ -13,7 +11,7 @@ class Transaction:
         typeGroup: int,
         type: int,
         nonce: int,
-        senderPkey: Union[str, bytes],
+        senderPkey: str | bytes,
         fee: int,
         memo: str,
         network: int = 63,
@@ -23,9 +21,7 @@ class Transaction:
         self.nonce: int = nonce
         self.typeGroup: int = typeGroup
         self.type: int = type
-        self.senderPkey: bytes = (
-            bytes.fromhex(senderPkey) if isinstance(senderPkey, str) else senderPkey
-        )
+        self.senderPkey: bytes = bytes.fromhex(senderPkey) if isinstance(senderPkey, str) else senderPkey
         self.fee: int = fee
         self.memo: bytes = memo.encode("ascii")
         self.network: int = network
@@ -67,9 +63,7 @@ class Transaction:
                 self.nonce.to_bytes(8, byteorder="little"),
                 self.senderPkey,
                 self.fee.to_bytes(8, byteorder="little"),
-                len(self.memo).to_bytes(
-                    1, byteorder="little"
-                ),  # write_varint(len(self.memo)),
+                len(self.memo).to_bytes(1, byteorder="little"),  # write_varint(len(self.memo)),
                 self.memo,
             ]
         )
