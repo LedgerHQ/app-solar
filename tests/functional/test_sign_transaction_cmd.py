@@ -1,22 +1,16 @@
 import pytest
-
-from btclib.ecc import ssa
-
-from ragger.error import ExceptionRAPDU
-
 from application_client.solar_command_sender import (
     Errors,
     SolarCommandSender,
 )
 from application_client.solar_response_unpacker import unpack_get_public_key_response
-
+from btclib.ecc import ssa
+from constants import PATH_MAINNET
+from ragger.error import ExceptionRAPDU
 from transactions.burn import Burn
 from transactions.ipfs import Ipfs
 from transactions.transfer import Transfer
 from transactions.vote import Vote
-
-from constants import PATH_MAINNET
-
 
 ################################################################################
 # Test Variables                                                               #
@@ -70,9 +64,7 @@ def test_sign_transaction_ipfs(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is an IPFS transaction.", LONG_MEMO, REJECT_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is an IPFS transaction.", LONG_MEMO, REJECT_MEMO]):
         ipfs_transaction = Ipfs(
             nonce=1,
             senderPkey=public_key,
@@ -111,9 +103,7 @@ def test_sign_transaction_transfer(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is a Transfer transaction.", LONG_MEMO, REJECT_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is a Transfer transaction.", LONG_MEMO, REJECT_MEMO]):
         transfer_transaction = Transfer(
             nonce=2,
             senderPkey=public_key,
@@ -197,9 +187,7 @@ def test_sign_transaction_burn(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is a Burn transaction.", LONG_MEMO, REJECT_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is a Burn transaction.", LONG_MEMO, REJECT_MEMO]):
         burn_transaction = Burn(
             nonce=3,
             senderPkey=public_key,
@@ -238,9 +226,7 @@ def test_sign_transaction_vote(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is a Vote transaction.", LONG_MEMO, REJECT_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is a Vote transaction.", LONG_MEMO, REJECT_MEMO]):
         vote_transaction = Vote(
             nonce=4,
             senderPkey=public_key,
@@ -273,9 +259,7 @@ def test_sign_transaction_vote_cancel(backend, scenario_navigator, test_name):
     rapdu = client.get_public_key(path=PATH_MAINNET)
     _, public_key = unpack_get_public_key_response(rapdu.data)
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO, REJECT_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO, REJECT_MEMO]):
         cancel_vote_transaction = Vote(
             nonce=5,
             senderPkey=public_key,

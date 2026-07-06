@@ -1,16 +1,14 @@
 import pytest
-
-from ragger.bip import CurveChoice, calculate_public_key_and_chaincode
-from ragger.error import ExceptionRAPDU
-from ragger.backend import BackendInterface
-from ragger.navigator import NavInsID
-from ragger.navigator.navigation_scenario import NavigateWithScenario
-
 from application_client.solar_command_sender import Errors, SolarCommandSender
 from application_client.solar_response_unpacker import (
     unpack_get_public_key_chaincode_response,
     unpack_get_public_key_response,
 )
+from ragger.backend import BackendInterface
+from ragger.bip import CurveChoice, calculate_public_key_and_chaincode
+from ragger.error import ExceptionRAPDU
+from ragger.navigator import NavInsID
+from ragger.navigator.navigation_scenario import NavigateWithScenario
 
 
 # Verify the behaviour of GET_PUBLIC_KEY in non-confirmation mode.
@@ -21,9 +19,7 @@ def test_get_public_key_nonconfirm(backend: BackendInterface):
     response = client.get_public_key(path=path).data
     _, public_key = unpack_get_public_key_response(response)
 
-    ref_public_key, _ = calculate_public_key_and_chaincode(
-        CurveChoice.Secp256k1, path=path, compress_public_key=True
-    )
+    ref_public_key, _ = calculate_public_key_and_chaincode(CurveChoice.Secp256k1, path=path, compress_public_key=True)
 
     assert public_key.hex() == ref_public_key
 
@@ -77,9 +73,7 @@ def test_get_public_key_confirmed(scenario_navigator: NavigateWithScenario):
 
     _, public_key = unpack_get_public_key_response(response.data)
 
-    ref_public_key, _ = calculate_public_key_and_chaincode(
-        CurveChoice.Secp256k1, path=path, compress_public_key=True
-    )
+    ref_public_key, _ = calculate_public_key_and_chaincode(CurveChoice.Secp256k1, path=path, compress_public_key=True)
 
     assert public_key.hex() == ref_public_key
 
@@ -117,9 +111,7 @@ def test_get_public_key_with_chaincode_confirmed(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    _, public_key, _, chain_code = unpack_get_public_key_chaincode_response(
-        response.data
-    )
+    _, public_key, _, chain_code = unpack_get_public_key_chaincode_response(response.data)
 
     ref_public_key, ref_chain_code = calculate_public_key_and_chaincode(
         CurveChoice.Secp256k1, path=path, compress_public_key=True

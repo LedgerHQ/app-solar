@@ -2,6 +2,7 @@ from application_client.solar_command_sender import SolarCommandSender
 from application_client.solar_response_unpacker import (
     unpack_get_app_and_version_response,
 )
+
 from utils import verify_name, verify_version
 
 

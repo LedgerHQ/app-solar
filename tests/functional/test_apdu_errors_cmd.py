@@ -1,8 +1,6 @@
 import pytest
-
-from ragger.error import ExceptionRAPDU
-
 from application_client.solar_command_sender import CLA, P1, P2, Errors, InsType
+from ragger.error import ExceptionRAPDU
 
 
 # Verify that the Solar app returns an error when a bad CLA is used.
@@ -22,24 +20,16 @@ def test_bad_ins(backend):
 # Verify that the Solar app returns an error when a bad P1 or P2 is used.
 def test_wrong_p1p2(backend):
     with pytest.raises(ExceptionRAPDU) as error:
-        backend.exchange(
-            cla=CLA, ins=InsType.GET_VERSION, p1=P1.P1_START + 1, p2=P2.P2_LAST
-        )
+        backend.exchange(cla=CLA, ins=InsType.GET_VERSION, p1=P1.P1_START + 1, p2=P2.P2_LAST)
     assert error.value.status == Errors.SW_WRONG_P1P2
     with pytest.raises(ExceptionRAPDU) as error:
-        backend.exchange(
-            cla=CLA, ins=InsType.GET_VERSION, p1=P1.P1_START, p2=P2.P2_MORE
-        )
+        backend.exchange(cla=CLA, ins=InsType.GET_VERSION, p1=P1.P1_START, p2=P2.P2_MORE)
     assert error.value.status == Errors.SW_WRONG_P1P2
     with pytest.raises(ExceptionRAPDU) as error:
-        backend.exchange(
-            cla=CLA, ins=InsType.GET_APP_NAME, p1=P1.P1_START + 1, p2=P2.P2_LAST
-        )
+        backend.exchange(cla=CLA, ins=InsType.GET_APP_NAME, p1=P1.P1_START + 1, p2=P2.P2_LAST)
     assert error.value.status == Errors.SW_WRONG_P1P2
     with pytest.raises(ExceptionRAPDU) as error:
-        backend.exchange(
-            cla=CLA, ins=InsType.GET_APP_NAME, p1=P1.P1_START, p2=P2.P2_MORE
-        )
+        backend.exchange(cla=CLA, ins=InsType.GET_APP_NAME, p1=P1.P1_START, p2=P2.P2_MORE)
     assert error.value.status == Errors.SW_WRONG_P1P2
 
 
