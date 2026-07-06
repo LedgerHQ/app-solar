@@ -1,25 +1,18 @@
 import hashlib
-
-import pytest
 from pathlib import Path
 
-from btclib.ecc import ssa
-
-from ledgered.devices import DeviceType
-
-from ragger.backend import BackendInterface
-from ragger.navigator import Navigator, NavIns, NavInsID, BaseNavInsID
-
+import pytest
 from application_client.solar_command_sender import SolarCommandSender
 from application_client.solar_response_unpacker import unpack_get_public_key_response
-
+from btclib.ecc import ssa
+from constants import PATH_MAINNET
+from ledgered.devices import DeviceType
+from ragger.backend import BackendInterface
+from ragger.navigator import BaseNavInsID, Navigator, NavIns, NavInsID
 from transactions.burn import Burn
 from transactions.ipfs import Ipfs
 from transactions.transfer import Transfer
 from transactions.vote import Vote
-
-from constants import PATH_MAINNET
-
 
 ################################################################################
 # The Solar app implements dynamic / runtime navigation.
@@ -339,9 +332,7 @@ def test_transaction_navigation_transfer(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert (
-        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
-    )
+    assert ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with a single payment.
@@ -425,9 +416,7 @@ def test_transaction_navigation_transfer_single_payment(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert (
-        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
-    )
+    assert ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with two payments.
@@ -540,9 +529,7 @@ def test_transaction_navigation_transfer_two_payments(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert (
-        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
-    )
+    assert ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
 
 
 # Verify the navigation behaviour of SIGN_TX while reviewing a transfer with 127 payments.
@@ -706,9 +693,7 @@ def test_transaction_navigation_transfer_max_payments(
     if response is None:
         raise ValueError("get_async_response returned None")
 
-    assert (
-        ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
-    )
+    assert ssa.verify(transfer_transaction.serialise(), public_key, response.data) is True
 
 
 ################################################################################
@@ -761,9 +746,7 @@ def test_transaction_navigation_burn(
         if response is None:
             raise ValueError("get_async_response returned None")
 
-        assert (
-            ssa.verify(burn_transaction.serialise(), public_key, response.data) is True
-        )
+        assert ssa.verify(burn_transaction.serialise(), public_key, response.data) is True
 
 
 ################################################################################
@@ -965,9 +948,7 @@ def test_transaction_navigation_vote_cancel(
 
     nano_button_clicks = [3, 4, 8]
 
-    for i, memo in enumerate(
-        [NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO]
-    ):
+    for i, memo in enumerate([NO_MEMO, "This is a Cancel Vote transaction.", LONG_MEMO]):
         cancel_vote_transaction = Vote(
             nonce=4,
             senderPkey=public_key,
@@ -1036,9 +1017,7 @@ def test_transaction_navigation_vote_cancel(
                 NavInsID.USE_CASE_STATUS_DISMISS,
             ]
 
-        with client.sign_transaction(
-            path=PATH_MAINNET, transaction=cancel_vote_transaction
-        ):
+        with client.sign_transaction(path=PATH_MAINNET, transaction=cancel_vote_transaction):
             navigator.navigate_and_compare(
                 path=default_screenshot_path,
                 test_case_name=test_name + TEST_NAME_EXTENSION[i],
@@ -1049,7 +1028,4 @@ def test_transaction_navigation_vote_cancel(
         if response is None:
             raise ValueError("get_async_response returned None")
 
-        assert (
-            ssa.verify(cancel_vote_transaction.serialise(), public_key, response.data)
-            is True
-        )
+        assert ssa.verify(cancel_vote_transaction.serialise(), public_key, response.data) is True

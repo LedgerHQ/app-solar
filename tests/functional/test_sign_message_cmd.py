@@ -1,18 +1,12 @@
 import pytest
-
-from btclib.ecc import ssa
-
-from ledgered.devices import DeviceType
-
-from ragger.error import ExceptionRAPDU
-from ragger.backend import BackendInterface
-from ragger.navigator import NavigateWithScenario, NavIns, NavInsID, BaseNavInsID
-
 from application_client.solar_command_sender import Errors, SolarCommandSender
 from application_client.solar_response_unpacker import unpack_get_public_key_response
-
+from btclib.ecc import ssa
 from constants import PATH_MAINNET
-
+from ledgered.devices import DeviceType
+from ragger.backend import BackendInterface
+from ragger.error import ExceptionRAPDU
+from ragger.navigator import BaseNavInsID, NavigateWithScenario, NavIns, NavInsID
 
 MESSAGE_SHORT: str = "We are the music makers,\nthe dreamers of dreams...\n"
 MESSAGE_SHORT_NBGL: str = "We are the music makers, the dreamers of dreams..."
